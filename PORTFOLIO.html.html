@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111417;
+      --card: #181C21;
+      --card-border: #282D34;
+      --card-border-soft: #20242A;
+      --text: #E9EBEE;
+      --text-dim: #98A0AC;
+      --text-faint: #5A6270;
+      --accent: #2DD4BF;
+      --accent-hover: #22B7A4;
+      --accent-text: #04211D;
+      --green: #3DD68C;
+      --red: #F0645C;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: #1A1206;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+      }
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 28px 130px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .topbar h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -.01em;
+    }
+
+    .subhead-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12.5px;
+      color: var(--text-dim);
+      margin-top: 5px;
+    }
+
+    .subhead-row a {
+      color: #7C93F5;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .subhead-row a:hover {
+      text-decoration: underline;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 16px;
+      border-radius: 9px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--card-border);
+    }
+
+    .btn-outline:hover {
+      border-color: #3E434F;
+      background: rgba(255, 255, 255, .03);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 7px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card .label {
+      font-size: 12.5px;
+      color: var(--text-dim);
+    }
+
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 10px;
+      letter-spacing: -.01em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card .sub {
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sub.pos {
+      color: var(--green);
+    }
+
+    .sub.neg {
+      color: var(--red);
+    }
+
+    .sub.neutral {
+      color: var(--text-faint);
+      font-weight: 500;
+    }
+
+    .mini-stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .mini-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      color: var(--text-dim);
+    }
+
+    .mini-stat b {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .mini-stat .pct {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mini-stat .pct.pos {
+      color: var(--green);
+    }
+
+    .mini-stat .pct.neg {
+      color: var(--red);
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+
+    .pulse-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-right: 6px;
+      box-shadow: 0 0 0 0 rgba(45, 212, 191, .6);
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(45, 212, 191, .55);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(45, 212, 191, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(45, 212, 191, 0);
+      }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .panel-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--card-border-soft);
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      border: 1px solid var(--card-border);
+      background: transparent;
+      color: var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .filter-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 7px 11px;
+      min-width: 170px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 13px;
+      width: 100%;
+      color: var(--text);
+    }
+
+    .search-box svg {
+      opacity: .5;
+      flex-shrink: 0;
+    }
+
+    .sort-select {
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 7px 30px 7px 11px;
+      font-size: 12.5px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239BA0AC' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 14px;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: var(--bg);
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      color: var(--text);
+      border-color: #3E434F;
+    }
+
+    .holdings-count {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-faint);
+      font-weight: 600;
+      padding: 11px 18px;
+      border-bottom: 1px solid var(--card-border-soft);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--card-border-soft);
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .cell-primary {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cell-sub {
+      font-size: 11.5px;
+      color: var(--text-faint);
+      margin-top: 2px;
+    }
+
+    .cell-under {
+      font-size: 11px;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    .cell-under.pos {
+      color: var(--green);
+    }
+
+    .cell-under.neg {
+      color: var(--red);
+    }
+
+    .cell-under.muted {
+      color: var(--text-faint);
+      font-weight: 500;
+    }
+
+    .gain-text {
+      font-weight: 700;
+    }
+
+    .gain-text.pos {
+      color: var(--green);
+    }
+
+    .gain-text.neg {
+      color: var(--red);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      white-space: nowrap;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+    }
+
+    .link-btn:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .link-btn.danger:hover {
+      color: var(--red);
+    }
+
+    .empty-state {
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--text-dim);
+    }
+
+    .empty-state b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      flex-wrap: wrap;
+      padding: 14px 18px;
+      border-top: 1px solid var(--card-border-soft);
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .footer-bar b {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .footer-bar .gain-text {
+      font-size: 13px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 460px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .modal-body {
+      padding: 26px 26px 22px;
+    }
+
+    .modal-body h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-field label {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .form-field label .req {
+      color: var(--accent);
+    }
+
+    .form-field .hint {
+      font-size: 11.5px;
+      color: var(--text-faint);
+      font-weight: 400;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .form-field input,
+    .form-field select {
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      width: 100%;
+    }
+
+    .form-field select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239BA0AC' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      padding-right: 36px;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+      border-color: var(--accent);
+    }
+
+    .form-field input::placeholder {
+      color: var(--text-faint);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modal-actions .btn-primary {
+      flex: 1;
+      justify-content: center;
+      padding: 13px 0;
+      font-size: 14px;
+    }
+
+    .modal-actions .btn-outline {
+      padding: 13px 20px;
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: #20242C;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 11px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+    }
+
+    /* ---------------- auth screen ---------------- */
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 16px;
+      padding: 32px 30px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .4);
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+
+    .auth-brand .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--accent-text);
+      flex-shrink: 0;
+    }
+
+    .auth-brand .t {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      padding: 3px;
+      margin-bottom: 22px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+
+    .auth-tab.active {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .auth-field label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .auth-field input {
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+    }
+
+    .auth-field input:focus {
+      border-color: var(--accent);
+    }
+
+    .auth-error {
+      font-size: 12px;
+      color: var(--red);
+      background: rgba(240, 100, 92, .1);
+      border: 1px solid rgba(240, 100, 92, .25);
+      border-radius: 7px;
+      padding: 8px 11px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .auth-error.show {
+      display: block;
+    }
+
+    .auth-submit {
+      width: 100%;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .auth-note {
+      font-size: 11px;
+      color: var(--text-faint);
+      text-align: center;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+
+    .auth-switch {
+      font-size: 12.5px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .auth-switch button {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12.5px;
+      padding: 0;
+    }
+
+    /* ---------------- dock (bottom quick-actions bar) ---------------- */
+    .dock-outer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 18px;
+      z-index: 60;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .dock-panel {
+      pointer-events: auto;
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 12px 16px 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+    }
+
+    .dock-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+      flex-shrink: 0;
+      will-change: width, height;
+    }
+
+    .dock-item:hover,
+    .dock-item:focus-visible {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-text);
+      outline: none;
+    }
+
+    .dock-item[data-active="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .dock-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .dock-icon svg {
+      width: 60%;
+      height: 60%;
+    }
+
+    .dock-label {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 5px 10px;
+      border-radius: 7px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .15s ease, transform .15s ease;
+    }
+
+    .dock-item:hover .dock-label,
+    .dock-item:focus-visible .dock-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    @media (hover:none) {
+
+      /* touch devices: no magnification, just a normal tap target row */
+      .dock-item {
+        transition: none;
+      }
+    }
+
+    @media (max-width:700px) {
+      .dock-outer {
+        bottom: 12px;
+      }
+
+      .dock-panel {
+        gap: 10px;
+        padding: 10px 12px 12px;
+      }
+
+      .dock-item {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    @media (max-width:920px) {
+      .stat-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width:700px) {
+      .wrap {
+        padding: 18px 14px 110px;
+      }
+
+      thead {
+        display: none;
+      }
+
+      table,
+      tbody,
+      tr,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      tbody tr {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--card-border-soft);
+      }
+
+      tbody td {
+        padding: 5px 0;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      tbody td::before {
+        content: attr(data-label);
+        font-size: 10.5px;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .row-actions {
+        justify-content: flex-start;
+        padding-top: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="mark">P</div>
+        <div class="t">Portfolio Tracker</div>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin">Log in</button>
+        <button class="auth-tab" id="tabSignup">Sign up</button>
+      </div>
+      <div class="auth-error" id="authError"></div>
+      <form id="authForm">
+        <div class="auth-field">
+          <label>Email</label>
+          <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6"
+            autocomplete="current-password">
+        </div>
+        <div class="auth-field" id="confirmField" style="display:none;">
+          <label>Confirm password</label>
+          <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6"
+            autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
+      </form>
+      <div class="auth-switch" id="authSwitch">
+        Don't have an account? <button id="switchToSignup">Sign up</button>
+      </div>
+      <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in your browser session,
+        not a real server. Don't reuse a password you use elsewhere.</div>
+    </div>
+  </div>
+
+  <div class="wrap" id="dashboardScreen" style="display:none;">
+
+    <div class="topbar">
+      <div>
+        <h1>Portfolio Tracker</h1>
+        <div class="subhead-row">
+          <span id="userEmailLabel"></span>
+          <a id="reportsLink">Reports</a>
+          <a id="accountLink">Account</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- hidden but still present so existing JS wiring (ids) keeps working -->
+    <button class="btn btn-primary" id="addHoldingBtn" style="display:none;">+ Add holding</button>
+    <button class="btn btn-outline" id="refreshBtn" style="display:none;">Refresh</button>
+    <button class="btn btn-outline" id="signOutBtn" style="display:none;">Sign out</button>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Invested</div>
+        <div class="value" id="statInvested">₹0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Current Value</div>
+        <div class="value" id="statValue">₹0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Unrealised Gain</div>
+        <div class="value" id="statGain">₹0</div>
+        <div class="sub" id="statGainPct">0.00% return</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Today's P&amp;L</div>
+        <div class="value" id="statDay">₹0</div>
+        <div class="sub" id="statDayPct">0.00%</div>
+      </div>
+    </div>
+
+    <div class="mini-stats-row" id="miniStatsRow"></div>
+
+    <div class="status-row">
+      <span><span class="pulse-dot"></span><span id="updatedLabel">Updated just now</span> &middot; auto-refresh
+        60s</span>
+      <span class="live" id="liveCount"
+        title="Recognized symbols use real prices captured 13 Jul 2026, not a live tick-by-tick feed. Unrecognized symbols use a simulated estimate.">0/0
+        live prices</span>
+    </div>
+
+    <div class="panel">
+      <div class="panel-toolbar">
+        <div class="toolbar-left">
+          <div class="search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.3-4.3" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search symbol...">
+          </div>
+          <div class="filter-group" id="assetFilters">
+            <button class="filter-pill active" data-class="all">All</button>
+            <button class="filter-pill" data-class="profit">Gainers</button>
+            <button class="filter-pill" data-class="loss">Losers</button>
+          </div>
+          <select class="sort-select" id="sortSelect">
+            <option value="default">Sort: Default order</option>
+            <option value="gainPct">Sort: % Gain</option>
+            <option value="gain">Sort: Gain ₹</option>
+            <option value="value">Sort: Current Value</option>
+            <option value="symbol">Sort: Symbol A-Z</option>
+          </select>
+          <button class="icon-btn" id="sortDirBtn" title="Toggle sort direction">
+            <svg id="sortDirIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2">
+              <path d="M12 5v14M6 13l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+        <span class="holdings-count" id="holdingsCount">0 holdings</span>
+      </div>
+      <div id="tableWrap"></div>
+      <div class="footer-bar" id="footerBar" style="display:none;"></div>
+    </div>
+
+    <!-- System Debug Panel -->
+    <div class="panel" style="margin-top:20px; border-color:rgba(255,255,255,0.05); margin-bottom: 20px;">
+      <div class="panel-toolbar" style="background:rgba(255,255,255,0.01);">
+        <div class="toolbar-left">
+          <span style="font-weight:700; font-size:12px; color:var(--text-dim);">System Debug Panel</span>
+        </div>
+        <button class="btn btn-outline btn-sm"
+          onclick="const dl = document.getElementById('debugLogs'); dl.style.display = dl.style.display === 'none' ? 'block' : 'none'">Toggle
+          Debug Logs</button>
+      </div>
+      <div id="debugLogs"
+        style="display:none; padding:16px; background:#0B0D0F; font-family:monospace; font-size:11.5px; border-top:1px solid var(--card-border-soft);">
+        <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Active Holdings:</div>
+        <pre id="debugHoldings" style="margin:0 0 16px; color:#A4B3C6; overflow-x:auto; white-space:pre-wrap;"></pre>
+
+        <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Price Cache:</div>
+        <pre id="debugPriceCache" style="margin:0 0 16px; color:#A4B3C6; overflow-x:auto; white-space:pre-wrap;"></pre>
+
+        <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Recent Errors:</div>
+        <pre id="debugErrors" style="margin:0; color:var(--red); overflow-x:auto; white-space:pre-wrap;"></pre>
+      </div>
+    </div>
+
+    <div class="dock-outer" id="dockOuter">
+      <div class="dock-panel" id="dockPanel" role="toolbar" aria-label="Quick actions">
+        <button class="dock-item" data-dock-action="add" aria-label="Add holding">
+          <span class="dock-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.3">
+              <path d="M12 5v14M5 12h14" />
+            </svg></span>
+          <span class="dock-label">Add holding</span>
+        </button>
+        <button class="dock-item" data-dock-action="search" aria-label="Search holdings">
+          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.1">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.3-4.3" />
+            </svg></span>
+          <span class="dock-label">Search</span>
+        </button>
+        <button class="dock-item" data-dock-action="sort" aria-label="Cycle sort order">
+          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.1">
+              <path d="M4 6h16M7 12h10M10 18h4" />
+            </svg></span>
+          <span class="dock-label">Sort</span>
+        </button>
+        <button class="dock-item" data-dock-action="refresh" aria-label="Refresh prices">
+          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.1">
+              <path d="M20 11A8 8 0 105.5 5.5L4 7M4 7V3M4 7h4" />
+            </svg></span>
+          <span class="dock-label">Refresh</span>
+        </button>
+        <button class="dock-item" data-dock-action="account" aria-label="Account">
+          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.1">
+              <circle cx="12" cy="8" r="3.5" />
+              <path d="M4.5 20c0-3.6 3.4-6.5 7.5-6.5s7.5 2.9 7.5 6.5" />
+            </svg></span>
+          <span class="dock-label">Account</span>
+        </button>
+        <button class="dock-item" data-dock-action="signout" aria-label="Sign out">
+          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.1">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+              <path d="M16 17l5-5-5-5M21 12H9" />
+            </svg></span>
+          <span class="dock-label">Sign out</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-body">
+        <h3 id="modalTitle">Add holding</h3>
+        <form id="modalForm">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Symbol <span class="req">*</span></label>
+              <input required name="symbol" id="symbolInput" placeholder="NTPC" style="text-transform:uppercase;">
+              <div id="symbolWarning"
+                style="color:var(--red); font-size:11px; margin-top:4px; display:none; line-height:1.4;">Tickers usually
+                do not contain spaces. If you are entering a company name, try entering its ticker symbol instead (e.g.,
+                "MUTHOOTFIN" instead of "MUTHOOT FINANCE").</div>
+            </div>
+            <div class="form-field">
+              <label>Exchange</label>
+              <select name="exchange" id="exchangeInput">
+                <option value="NSE">NSE</option>
+                <option value="BSE">BSE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Name (optional)</label>
+            <input name="name" id="nameInput" placeholder="e.g. NTPC Ltd">
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Buy price <span class="req">*</span></label>
+              <input required type="number" step="any" min="0" name="buyPrice" placeholder="330">
+            </div>
+            <div class="form-field">
+              <label>Quantity <span class="req">*</span></label>
+              <input required type="number" step="any" min="0" name="qty" placeholder="68">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Yahoo symbol (optional override)</label>
+            <input name="yahooOverride" id="yahooOverrideInput" placeholder="Auto: NTPC.NS">
+            <div class="hint">Leave blank to auto-build from symbol + exchange. We try a live price first (Twelve Data,
+              then Yahoo Finance for NSE/BSE — Twelve Data's free tier doesn't cover Indian exchanges); if neither
+              works, recognized symbols fall back to a price captured 13 Jul 2026, and others to a simulated estimate.
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary" id="modalSave">Add holding</button>
+            <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ---------------- storage ---------------- */
+      const USERS_KEY = 'ptracker_users_v1';
+      const SESSION_KEY = 'ptracker_session_v1';
+      let currentUser = null; // { email }
+      function holdingsKey() { return 'ptracker_holdings_v3_' + (currentUser ? currentUser.email : 'guest'); }
+      const memoryStore = {};
+      async function storageGet(key) {
+        try {
+          if (window.storage && typeof window.storage.get === 'function') {
+            const r = await window.storage.get(key, false);
+            return r ? JSON.parse(r.value) : null;
+          }
+        } catch (e) { /* fall through to next storage strategy */ }
+        try {
+          if (window.localStorage) {
+            const v = window.localStorage.getItem('ptracker__' + key);
+            return v !== null ? JSON.parse(v) : null;
+          }
+        } catch (e) { /* fall through to next storage strategy */ }
+        return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
+      }
+      async function storageSet(key, value) {
+        try {
+          if (window.storage && typeof window.storage.set === 'function') {
+            await window.storage.set(key, JSON.stringify(value), false);
+            return;
+          }
+        } catch (e) { /* fall through to next storage strategy */ }
+        try {
+          if (window.localStorage) {
+            window.localStorage.setItem('ptracker__' + key, JSON.stringify(value));
+            return;
+          }
+        } catch (e) { /* fall through to next storage strategy */ }
+        memoryStore[key] = value;
+      }
+
+      /* ---------------- deterministic pseudo-random ---------------- */
+      function hashSeed(str) {
+        let h = 2166136261;
+        for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+        return h >>> 0;
+      }
+      function mulberry32(seed) {
+        return function () {
+          seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+          let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function uid(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 7).toUpperCase(); }
+      function fmtINR(n) { return n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }); }
+      function fmtINR2(n) { return n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+      function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+
+      /* ---------------- ticker knowledge base (for price guessing) ---------------- */
+      // Reference prices captured from live market data on 13 Jul 2026.
+      // These are real closing/near-live prices at the time they were checked,
+      // not a continuously-updating feed — see the disclaimer in the UI.
+      const KNOWN = [
+        { ticker: 'RELIANCE', name: 'Reliance Industries Ltd', assetClass: 'Equity', price: 1297.70 },
+        { ticker: 'TCS', name: 'Tata Consultancy Services', assetClass: 'Equity', price: 2068.00 },
+        { ticker: 'INFY', name: 'Infosys Ltd', assetClass: 'Equity', price: 1068.70 },
+        { ticker: 'HDFCBANK', name: 'HDFC Bank Ltd', assetClass: 'Equity', price: 824.50 },
+        { ticker: 'ICICIBANK', name: 'ICICI Bank Ltd', assetClass: 'Equity', price: 1391.70 },
+        { ticker: 'SBIN', name: 'State Bank of India', assetClass: 'Equity', price: 1038.80 },
+        { ticker: 'ITC', name: 'ITC Ltd', assetClass: 'Equity', price: 290.10 },
+        { ticker: 'WIPRO', name: 'Wipro Ltd', assetClass: 'Equity', price: 175.84 },
+        { ticker: 'TATAMOTORS', name: 'Tata Motors Ltd', assetClass: 'Equity', price: 431.05 },
+        { ticker: 'BHARTIARTL', name: 'Bharti Airtel Ltd', assetClass: 'Equity', price: 1920.40 },
+        { ticker: 'HINDUNILVR', name: 'Hindustan Unilever Ltd', assetClass: 'Equity', price: 2151.00 },
+        { ticker: 'LT', name: 'Larsen & Toubro Ltd', assetClass: 'Equity', price: 3987.00 },
+        { ticker: 'NTPC', name: 'NTPC Ltd', assetClass: 'Equity', price: 349.70 },
+        { ticker: 'DIXON', name: 'Dixon Technologies Ltd', assetClass: 'Equity', price: 13421.00 },
+        { ticker: 'NIFTYBEES', name: 'Nippon India ETF Nifty BeES', assetClass: 'ETF', price: 273.98 },
+        { ticker: 'GOLDBEES', name: 'Nippon India ETF Gold BeES', assetClass: 'ETF', price: 118.14 },
+        { ticker: 'BTC', name: 'Bitcoin', assetClass: 'Crypto', price: 6110000 },
+        { ticker: 'ETH', name: 'Ethereum', assetClass: 'Crypto', price: 170000 }
+      ];
+      function findKnown(symbol) {
+        const s = (symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+        return KNOWN.find(c => c.ticker === s);
+      }
+      function guessAssetClass(symbol) {
+        const known = findKnown(symbol);
+        if (known) return known.assetClass;
+        const s = (symbol || '').toUpperCase();
+        if (s.includes('BTC') || s.includes('ETH') || s.includes('COIN')) return 'Crypto';
+        if (s.includes('BEES') || s.includes('ETF')) return 'ETF';
+        return 'Equity';
+      }
+      function buildYahooSymbol(symbol, exchange) {
+        const s = (symbol || '').toUpperCase().trim().replace(/\.(NS|BO)$/, '');
+        return s + (exchange === 'BSE' ? '.BO' : '.NS');
+      }
+      /* ---------------- live prices ----------------
+         Crypto: CoinGecko public API — no key, reliable CORS support for browsers.
+         Equities/ETFs: Twelve Data API — a real market-data provider designed for
+         direct browser use (proper CORS support), supports batching many symbols
+         in one call. Free-tier API keys have a limited requests-per-minute quota,
+         so both are best-effort: on any failure (offline, invalid/exhausted key,
+         unrecognized symbol) we silently fall back to the dated reference price /
+         simulated estimate below, so the app always still works either way.
+      ------------------------------------------------ */
+      const TWELVE_DATA_API_KEY = '78eb4294f5a54aeca51eda268715f649';
+      const livePriceCache = {}; // { BTC: 6110000, RELIANCE: 1302.4, ... }
+      let lastFetchErrors = [];
+
+      async function fetchLiveCryptoPrices() {
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(
+            'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=inr',
+            { signal: controller.signal }
+          );
+          clearTimeout(timer);
+          if (!res.ok) throw new Error('CoinGecko responded with ' + res.status);
+          const data = await res.json();
+          if (data.bitcoin && data.bitcoin.inr) livePriceCache.BTC = data.bitcoin.inr;
+          if (data.ethereum && data.ethereum.inr) livePriceCache.ETH = data.ethereum.inr;
+        } catch (e) {
+          console.warn('Live crypto price fetch failed, using reference prices instead:', e.message);
+        }
+      }
+
+      // Fetches prices for many symbols on the same exchange in a single Twelve Data call.
+      async function fetchLiveEquityPricesBatch(symbols, exchange) {
+        if (!symbols.length) return;
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 7000);
+          const url = 'https://api.twelvedata.com/price?symbol=' + encodeURIComponent(symbols.join(','))
+            + '&exchange=' + encodeURIComponent(exchange)
+            + '&apikey=' + encodeURIComponent(TWELVE_DATA_API_KEY);
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(timer);
+          if (!res.ok) throw new Error('Twelve Data responded with ' + res.status);
+          const data = await res.json();
+
+          if (symbols.length === 1) {
+            // single-symbol shape: { price: "1234.56" } or { code, message, status:"error" }
+            const p = parseFloat(data && data.price);
+            if (!isNaN(p) && p > 0) livePriceCache[symbols[0]] = p;
+            return;
+          }
+          // multi-symbol shape: { SYMBOL: { price: "1234.56" }, ... } — skip any entry
+          // that came back as an error object instead of a price.
+          Object.keys(data || {}).forEach(sym => {
+            const entry = data[sym];
+            const p = entry && parseFloat(entry.price);
+            if (!isNaN(p) && p > 0) livePriceCache[sym.toUpperCase()] = p;
+          });
+        } catch (e) {
+          console.warn('Live equity price fetch failed for ' + exchange + ' batch, using reference prices instead:', e.message);
+        }
+      }
+
+      // Attempts a live fetch for every symbol currently held.
+      // Populates livePriceCache for whichever ones succeed; the rest keep using
+      // the dated reference price or simulated estimate.
+      // Fallback for NSE/BSE symbols: Twelve Data's free plan doesn't include
+      // Indian exchange data (it's gated behind their paid Grow plan), so for
+      // any symbol Twelve Data couldn't resolve, try Yahoo Finance's chart
+      // endpoint instead. It's undocumented/unofficial for browser use, but it
+      // does carry NSE/BSE tickers (e.g. RELIANCE.NS) and needs no API key.
+      async function fetchLiveEquityPriceYahoo(yahooSymbol) {
+        const targetUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(yahooSymbol)
+          + '?range=1d&interval=1m&corsDomain=finance.yahoo.com';
+        const proxies = [
+          url => url,
+          url => '/proxy/' + url,
+          url => 'http://127.0.0.1:8080/' + url,
+          url => 'https://api.cors.lol/?url=' + encodeURIComponent(url),
+          url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+          url => 'https://corsproxy.io/?url=' + encodeURIComponent(url)
+        ];
+
+        for (const getProxyUrl of proxies) {
+          const url = getProxyUrl(targetUrl);
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 15000);
+            const res = await fetch(url, { signal: controller.signal });
+            clearTimeout(timer);
+            if (!res.ok) throw new Error('Proxy responded with ' + res.status);
+            const data = await res.json();
+            const result = data && data.chart && data.chart.result && data.chart.result[0];
+            const price = result && result.meta && result.meta.regularMarketPrice;
+            if (typeof price === 'number' && price > 0) return price;
+            throw new Error('no usable price in response');
+          } catch (e) {
+            let msg = e.message;
+            if (msg.includes('no usable price')) {
+              msg = 'Symbol not recognized by Yahoo Finance. Check if the ticker matches Yahoo Finance format (e.g. use "MUTHOOTFIN" instead of "MUTHOOT FINANCE")';
+            }
+            lastFetchErrors.push(`${yahooSymbol} via ${url.split('?')[0]}: ${msg}`);
+            console.warn('Proxy fetch failed:', e.message);
+          }
+        }
+        return null;
+      }
+
+      async function refreshLivePricesForHoldings() {
+        lastFetchErrors = [];
+        await fetchLiveCryptoPrices();
+
+        const byExchange = { NSE: new Set(), BSE: new Set() };
+        state.holdings.forEach(h => {
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          if (livePriceCache[base]) return; // already resolved (e.g. crypto)
+          const exch = h.exchange === 'BSE' ? 'BSE' : 'NSE';
+          if (base) byExchange[exch].add(base);
+        });
+
+        // Tier 1: Twelve Data (works for US/forex/crypto on a free key; will
+        // simply return nothing usable for NSE/BSE on a free key, and that's OK).
+        await Promise.allSettled([
+          fetchLiveEquityPricesBatch([...byExchange.NSE], 'NSE'),
+          fetchLiveEquityPricesBatch([...byExchange.BSE], 'BSE'),
+        ]);
+
+        // Tier 2: Yahoo Finance, per symbol, only for whatever Tier 1 left unresolved.
+        const stillMissing = state.holdings.filter(h => {
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          return base && !livePriceCache[base];
+        });
+        await Promise.allSettled(stillMissing.map(async (h) => {
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          const price = await fetchLiveEquityPriceYahoo(h.yahooSymbol);
+          if (price) livePriceCache[base] = price;
+        }));
+      }
+
+      function applyLivePricesToHoldings() {
+        state.holdings.forEach(h => {
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          if (livePriceCache[base]) h.price = +livePriceCache[base].toFixed(2);
+        });
+      }
+
+      function guessCurrentPrice(yahooSymbol, buyPrice) {
+        const baseSymbol = (yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+        if (livePriceCache[baseSymbol]) {
+          return +livePriceCache[baseSymbol].toFixed(2);
+        }
+        const known = findKnown(yahooSymbol);
+        if (known) {
+          const rand = mulberry32(hashSeed(yahooSymbol + '-known'));
+          const jitter = 1 + (rand() - 0.5) * 0.01;
+          return +(known.price * jitter).toFixed(2);
+        }
+        return buyPrice;
+      }
+
+      function buildHolding(opts, id) {
+        const symbol = (opts.symbol || '').toUpperCase().trim();
+        const exchange = opts.exchange || 'NSE';
+        const buyPrice = Number(opts.buyPrice);
+        const qty = Number(opts.qty);
+        const yahooSymbol = (opts.yahooOverride && opts.yahooOverride.trim()) ? opts.yahooOverride.trim().toUpperCase() : buildYahooSymbol(symbol, exchange);
+        const known = findKnown(yahooSymbol);
+        const name = (opts.name && opts.name.trim()) ? opts.name.trim() : (known ? known.name : symbol);
+        const price = guessCurrentPrice(yahooSymbol, buyPrice);
+        return {
+          id: id || uid('H'), symbol, exchange, name, yahooSymbol,
+          assetClass: guessAssetClass(yahooSymbol), qty, buyPrice, amount: buyPrice * qty, price
+        };
+      }
+
+      function seedHoldings() {
+        return [buildHolding({ symbol: 'DIXON', exchange: 'NSE', buyPrice: 11000, qty: 55 })];
+      }
+
+      const state = { holdings: [], filter: 'all', search: '', sort: 'default', sortDir: 'desc', dayOpen: {}, lastUpdated: new Date() };
+
+      async function loadHoldings() {
+        try {
+          const res = await fetch('/api/holdings');
+          if (res.ok) {
+            let h = await res.json();
+            if (!h || !h.length) {
+              h = seedHoldings();
+              await persistHoldings(h);
+            }
+            state.holdings = h;
+          } else {
+            state.holdings = seedHoldings();
+          }
+        } catch (e) {
+          console.error("Failed to load holdings:", e);
+          state.holdings = seedHoldings();
+        }
+        computeDayOpen();
+      }
+
+      async function persistHoldings(list) {
+        try {
+          await fetch('/api/holdings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(list)
+          });
+        } catch (e) {
+          console.error("Failed to persist holdings:", e);
+        }
+      }
+
+      function persist() {
+        persistHoldings(state.holdings);
+      }
+
+      function computeDayOpen() {
+        state.holdings.forEach(h => {
+          const rand = mulberry32(hashSeed(h.yahooSymbol + '-dayopen'));
+          const drift = 1 + (rand() - 0.5) * 0.025;
+          state.dayOpen[h.id] = h.price / drift;
+        });
+      }
+
+      function enrich(h) {
+        const value = h.qty * h.price;
+        const gain = value - h.amount;
+        const gainPct = h.amount ? (gain / h.amount) * 100 : 0;
+        const openVal = h.qty * (state.dayOpen[h.id] ?? h.price);
+        const dayPnl = value - openVal;
+        const dayPct = openVal ? (dayPnl / openVal) * 100 : 0;
+        return { ...h, value, gain, gainPct, dayPnl, dayPct, isProfit: gain >= 0 };
+      }
+      function allHoldings() { return state.holdings.map(enrich); }
+
+      /* ---------------- toast ---------------- */
+      function toast(msg) {
+        const c = document.getElementById('toastContainer');
+        const el = document.createElement('div');
+        el.className = 'toast'; el.textContent = msg;
+        c.appendChild(el);
+        setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .25s ease'; setTimeout(() => el.remove(), 250); }, 2400);
+      }
+
+      /* ---------------- render: stats ---------------- */
+      function renderStats() {
+        const list = allHoldings();
+        const invested = list.reduce((s, h) => s + h.amount, 0);
+        const value = list.reduce((s, h) => s + h.value, 0);
+        const gain = value - invested;
+        const gainPct = invested ? (gain / invested) * 100 : 0;
+        const dayPnl = list.reduce((s, h) => s + h.dayPnl, 0);
+        const dayOpenTotal = value - dayPnl;
+        const dayPct = dayOpenTotal ? (dayPnl / dayOpenTotal) * 100 : 0;
+
+        document.getElementById('statInvested').textContent = fmtINR(invested);
+        document.getElementById('statValue').textContent = fmtINR(value);
+        document.getElementById('statGain').textContent = (gain >= 0 ? '+' : '-') + fmtINR(Math.abs(gain));
+        document.getElementById('statGain').className = 'value ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : '');
+        document.getElementById('statGainPct').textContent = fmtPct(gainPct) + ' return';
+        document.getElementById('statGainPct').className = 'sub ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : 'neutral');
+        document.getElementById('statDay').textContent = (dayPnl >= 0 ? '+' : '-') + fmtINR(Math.abs(dayPnl));
+        document.getElementById('statDay').className = 'value ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : '');
+        document.getElementById('statDayPct').textContent = fmtPct(dayPct);
+        document.getElementById('statDayPct').className = 'sub ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : 'neutral');
+
+        const liveResolvedCount = list.filter(h => {
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          return !!livePriceCache[base];
+        }).length;
+        const liveEl = document.getElementById('liveCount');
+        liveEl.textContent = `${liveResolvedCount}/${list.length} live prices`;
+        let titleStr = "";
+        if (liveResolvedCount) {
+          titleStr += `${liveResolvedCount} holding(s) resolved a live price just now (crypto via CoinGecko; equities try Twelve Data, then Yahoo Finance for NSE/BSE symbols). The rest use a real price captured 13 Jul 2026, or a simulated estimate if unrecognized.`;
+        } else {
+          titleStr += `Live fetch didn't resolve any holdings right now (no internet, or the data source blocked the request) — using the 13 Jul 2026 reference prices / simulated estimates instead.`;
+        }
+        if (lastFetchErrors && lastFetchErrors.length > 0) {
+          titleStr += `\n\nErrors encountered:\n` + lastFetchErrors.join('\n');
+        }
+        liveEl.title = titleStr;
+
+        // top gainer / top loser
+        const row = document.getElementById('miniStatsRow');
+        if (!list.length) { row.innerHTML = ''; return; }
+        const sorted = [...list].sort((a, b) => b.gainPct - a.gainPct);
+        const topGainer = sorted[0];
+        const topLoser = sorted[sorted.length - 1];
+        row.innerHTML = `
+      <div class="mini-stat">Top gainer &nbsp;<b>${topGainer.symbol}</b>&nbsp;<span class="pct ${topGainer.gainPct >= 0 ? 'pos' : 'neg'}">${fmtPct(topGainer.gainPct)}</span></div>
+      <div class="mini-stat">Top loser &nbsp;<b>${topLoser.symbol}</b>&nbsp;<span class="pct ${topLoser.gainPct >= 0 ? 'pos' : 'neg'}">${fmtPct(topLoser.gainPct)}</span></div>
+    `;
+      }
+
+      function updatedLabelText() {
+        const secs = Math.round((Date.now() - state.lastUpdated.getTime()) / 1000);
+        if (secs < 5) return 'Updated just now';
+        if (secs < 60) return `Updated ${secs}s ago`;
+        return `Updated ${Math.floor(secs / 60)}m ago`;
+      }
+      function tickUpdatedLabel() { document.getElementById('updatedLabel').textContent = updatedLabelText(); }
+
+      /* ---------------- render: table ---------------- */
+      function filteredSorted() {
+        let list = allHoldings();
+        if (state.filter === 'profit') list = list.filter(h => h.isProfit);
+        if (state.filter === 'loss') list = list.filter(h => !h.isProfit);
+        if (state.search) list = list.filter(h => (h.symbol + h.name).toLowerCase().includes(state.search));
+        if (state.sort !== 'default') {
+          const dir = state.sortDir === 'asc' ? 1 : -1;
+          const keyMap = { gainPct: 'gainPct', gain: 'gain', value: 'value', symbol: 'symbol' };
+          const key = keyMap[state.sort];
+          list.sort((a, b) => {
+            if (key === 'symbol') return a.symbol.localeCompare(b.symbol) * dir;
+            return (a[key] - b[key]) * dir;
+          });
+        } else if (state.sortDir === 'asc') {
+          list.reverse();
+        }
+        return list;
+      }
+
+      function renderTable() {
+        const list = filteredSorted();
+        const wrap = document.getElementById('tableWrap');
+        const footerBar = document.getElementById('footerBar');
+        document.getElementById('holdingsCount').textContent = state.holdings.length + ' holdings';
+
+        if (!state.holdings.length) {
+          wrap.innerHTML = `<div class="empty-state">No holdings yet. Tap <b>+ Add holding</b> to get started.</div>`;
+          footerBar.style.display = 'none';
+          return;
+        }
+        if (!list.length) {
+          wrap.innerHTML = `<div class="empty-state">No holdings match this filter or search.</div>`;
+          footerBar.style.display = 'none';
+          return;
+        }
+        const totalValue = list.reduce((s, h) => s + h.value, 0);
+
+        wrap.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Stock</th><th>Buy Price</th><th>Qty</th><th>Buy Value</th><th>CMP</th><th>Current Value</th><th>% Gain</th><th>Gain ₹</th><th style="text-align:right;">Actions</th>
+        </tr></thead>
+        <tbody>
+          ${list.map(h => `
+            <tr>
+              <td data-label="Stock" class="cell-primary">${h.symbol}<div class="cell-sub">${h.yahooSymbol}</div></td>
+              <td data-label="Buy Price">${fmtINR2(h.buyPrice)}</td>
+              <td data-label="Qty">${h.qty}</td>
+              <td data-label="Buy Value">${fmtINR(h.amount)}</td>
+              <td data-label="CMP">${fmtINR2(h.price)}<div class="cell-under ${h.dayPct >= 0 ? 'pos' : 'neg'}">${fmtPct(h.dayPct)} today</div></td>
+              <td data-label="Current Value">${fmtINR(h.value)}<div class="cell-under muted">${(totalValue ? h.value / totalValue * 100 : 0).toFixed(1)}% of book</div></td>
+              <td data-label="% Gain"><span class="gain-text ${h.isProfit ? 'pos' : 'neg'}">${fmtPct(h.gainPct)}</span></td>
+              <td data-label="Gain ₹"><span class="gain-text ${h.isProfit ? 'pos' : 'neg'}">${h.gain >= 0 ? '+' : '-'}${fmtINR(Math.abs(h.gain))}</span></td>
+              <td data-label="Actions">
+                <div class="row-actions">
+                  <button class="link-btn" data-sell="${h.id}">Sell</button>
+                  <button class="link-btn" data-edit="${h.id}">Edit</button>
+                  <button class="link-btn danger" data-del="${h.id}">Delete</button>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+
+        const totalBuy = list.reduce((s, h) => s + h.amount, 0);
+        const totalCurrent = list.reduce((s, h) => s + h.value, 0);
+        const totalGain = totalCurrent - totalBuy;
+        const totalGainPct = totalBuy ? (totalGain / totalBuy) * 100 : 0;
+        footerBar.style.display = 'flex';
+        footerBar.innerHTML = `
+      <span>Total Buy: <b>${fmtINR(totalBuy)}</b></span>
+      <span>Total Current: <b>${fmtINR(totalCurrent)}</b></span>
+      <span>Unrealised: <span class="gain-text ${totalGain >= 0 ? 'pos' : 'neg'}">${totalGain >= 0 ? '+' : '-'}${fmtINR(Math.abs(totalGain))} (${fmtPct(totalGainPct)})</span></span>
+    `;
+      }
+
+      function updateDebugPanel() {
+        const holdingsEl = document.getElementById('debugHoldings');
+        const cacheEl = document.getElementById('debugPriceCache');
+        const errorsEl = document.getElementById('debugErrors');
+        if (holdingsEl) {
+          holdingsEl.textContent = JSON.stringify(state.holdings, null, 2);
+        }
+        if (cacheEl) {
+          cacheEl.textContent = JSON.stringify(livePriceCache, null, 2);
+        }
+        if (errorsEl) {
+          errorsEl.textContent = lastFetchErrors && lastFetchErrors.length > 0
+            ? lastFetchErrors.join('\n')
+            : "No errors logged.";
+        }
+      }
+
+      function renderAll() {
+        renderStats();
+        renderTable();
+        updateDebugPanel();
+      }
+
+      /* ---------------- refresh (attempt live prices, else re-guess with small simulated drift) ---------------- */
+      async function refreshPrices() {
+        await refreshLivePricesForHoldings();
+        state.holdings.forEach(h => {
+          const baseSymbol = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          if (livePriceCache[baseSymbol]) {
+            h.price = +livePriceCache[baseSymbol].toFixed(2);
+            return;
+          }
+          const rand = mulberry32(hashSeed(h.yahooSymbol + Date.now() + Math.random()));
+          const jitter = 1 + (rand() - 0.5) * 0.012;
+          h.price = +(h.price * jitter).toFixed(2);
+        });
+        state.lastUpdated = new Date();
+        persist(); renderAll(); tickUpdatedLabel();
+      }
+
+      /* ---------------- modal / CRUD ---------------- */
+      const overlay = document.getElementById('modalOverlay');
+      const modalForm = document.getElementById('modalForm');
+      let modalMode = null, modalId = null;
+
+      function updateYahooPlaceholder() {
+        const symbol = (modalForm.symbol.value || 'SYMBOL').toUpperCase();
+        const exchange = modalForm.exchange.value;
+        document.getElementById('yahooOverrideInput').placeholder = 'Auto: ' + buildYahooSymbol(symbol, exchange);
+        if (!modalForm.name.dataset.touched) {
+          const known = findKnown(buildYahooSymbol(symbol, exchange));
+          modalForm.name.value = known ? known.name : '';
+        }
+      }
+
+      function openModal(mode, id) {
+        modalMode = mode; modalId = id;
+        modalForm.reset();
+        delete modalForm.name.dataset.touched;
+        document.getElementById('modalTitle').textContent = mode === 'add' ? 'Add holding' : 'Edit holding';
+        document.getElementById('modalSave').textContent = mode === 'add' ? 'Add holding' : 'Save changes';
+        if (mode === 'edit') {
+          const r = state.holdings.find(h => h.id === id);
+          modalForm.symbol.value = r.symbol;
+          modalForm.exchange.value = r.exchange;
+          modalForm.name.value = r.name;
+          modalForm.name.dataset.touched = '1';
+          modalForm.buyPrice.value = r.buyPrice;
+          modalForm.qty.value = r.qty;
+          modalForm.yahooOverride.value = (r.yahooSymbol === buildYahooSymbol(r.symbol, r.exchange)) ? '' : r.yahooSymbol;
+        }
+        updateYahooPlaceholder();
+        overlay.classList.add('open');
+        setTimeout(() => document.getElementById('symbolInput').focus(), 50);
+      }
+      function closeModal() { overlay.classList.remove('open'); modalMode = null; modalId = null; }
+
+      function saveModal(e) {
+        if (e) e.preventDefault();
+        if (!modalForm.reportValidity()) return;
+        const opts = {
+          symbol: modalForm.symbol.value,
+          exchange: modalForm.exchange.value,
+          name: modalForm.name.value,
+          buyPrice: modalForm.buyPrice.value,
+          qty: modalForm.qty.value,
+          yahooOverride: modalForm.yahooOverride.value
+        };
+        if (modalMode === 'add') {
+          state.holdings.push(buildHolding(opts));
+          toast('Holding added');
+        } else {
+          const idx = state.holdings.findIndex(h => h.id === modalId);
+          state.holdings[idx] = buildHolding(opts, modalId);
+          toast('Holding updated');
+        }
+        computeDayOpen();
+        persist(); closeModal(); renderAll();
+
+        // best-effort: try to resolve a live price for this holding in the background
+        refreshLivePricesForHoldings().then(() => {
+          applyLivePricesToHoldings();
+          computeDayOpen();
+          persist(); renderAll();
+        });
+      }
+
+      function deleteHolding(id) {
+        const h = state.holdings.find(x => x.id === id);
+        if (!confirm(`Remove ${h.symbol} from your portfolio?`)) return;
+        state.holdings = state.holdings.filter(x => x.id !== id);
+        persist(); toast('Holding removed'); renderAll();
+      }
+
+      function sellHolding(id) {
+        const h = state.holdings.find(x => x.id === id);
+        const input = prompt(`Sell how many units of ${h.symbol}? (You hold ${h.qty})`, h.qty);
+        if (input === null) return;
+        const qtyToSell = Number(input);
+        if (isNaN(qtyToSell) || qtyToSell <= 0 || qtyToSell > h.qty) { toast('Enter a valid quantity to sell'); return; }
+        if (qtyToSell === h.qty) {
+          state.holdings = state.holdings.filter(x => x.id !== id);
+          toast(`Sold all ${h.qty} units of ${h.symbol}`);
+        } else {
+          h.qty = +(h.qty - qtyToSell).toFixed(6);
+          h.amount = h.buyPrice * h.qty;
+          toast(`Sold ${qtyToSell} units of ${h.symbol}`);
+        }
+        computeDayOpen();
+        persist(); renderAll();
+      }
+
+      /* ---------------- wiring ---------------- */
+      function wire() {
+        document.getElementById('addHoldingBtn').addEventListener('click', () => openModal('add'));
+        document.getElementById('modalCancel').addEventListener('click', closeModal);
+        modalForm.addEventListener('submit', saveModal);
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+        document.getElementById('symbolInput').addEventListener('input', (e) => {
+          const val = e.target.value;
+          const warning = document.getElementById('symbolWarning');
+          if (warning) {
+            warning.style.display = val.includes(' ') ? 'block' : 'none';
+          }
+          updateYahooPlaceholder();
+        });
+        document.getElementById('exchangeInput').addEventListener('change', updateYahooPlaceholder);
+        document.getElementById('nameInput').addEventListener('input', () => { modalForm.name.dataset.touched = '1'; });
+
+        document.getElementById('assetFilters').addEventListener('click', e => {
+          const btn = e.target.closest('.filter-pill'); if (!btn) return;
+          document.querySelectorAll('#assetFilters .filter-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active'); state.filter = btn.dataset.class; renderTable();
+        });
+        document.getElementById('searchInput').addEventListener('input', e => {
+          state.search = e.target.value.trim().toLowerCase(); renderTable();
+        });
+        document.getElementById('sortSelect').addEventListener('change', e => {
+          state.sort = e.target.value; renderTable();
+        });
+        document.getElementById('sortDirBtn').addEventListener('click', () => {
+          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+          document.getElementById('sortDirIcon').style.transform = state.sortDir === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)';
+          renderTable();
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', refreshPrices);
+
+        document.getElementById('tableWrap').addEventListener('click', e => {
+          const editBtn = e.target.closest('[data-edit]');
+          if (editBtn) { openModal('edit', editBtn.dataset.edit); return; }
+          const delBtn = e.target.closest('[data-del]');
+          if (delBtn) { deleteHolding(delBtn.dataset.del); return; }
+          const sellBtn = e.target.closest('[data-sell]');
+          if (sellBtn) { sellHolding(sellBtn.dataset.sell); return; }
+        });
+
+        document.getElementById('reportsLink').addEventListener('click', () => toast('Reports is a demo placeholder — not built out yet'));
+        document.getElementById('accountLink').addEventListener('click', () => toast('Account is a demo placeholder — not built out yet'));
+      }
+
+      /* ---------------- auth ---------------- */
+      function simpleHash(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) { h = (Math.imul(31, h) + str.charCodeAt(i)) | 0; }
+        return 'h' + Math.abs(h).toString(36);
+      }
+      async function getUsers() { return (await storageGet(USERS_KEY)) || []; }
+      async function saveUsers(list) { await storageSet(USERS_KEY, list); }
+
+      let authMode = 'login';
+      function setAuthMode(mode) {
+        authMode = mode;
+        document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+        document.getElementById('tabSignup').classList.toggle('active', mode === 'signup');
+        document.getElementById('confirmField').style.display = mode === 'signup' ? 'flex' : 'none';
+        document.getElementById('authSubmit').textContent = mode === 'signup' ? 'Create account' : 'Log in';
+        document.getElementById('authSwitch').innerHTML = mode === 'signup'
+          ? `Already have an account? <button id="switchToLogin">Log in</button>`
+          : `Don't have an account? <button id="switchToSignup">Sign up</button>`;
+        document.getElementById('authError').classList.remove('show');
+        wireAuthSwitch();
+      }
+      function wireAuthSwitch() {
+        const s = document.getElementById('switchToSignup');
+        const l = document.getElementById('switchToLogin');
+        if (s) s.addEventListener('click', () => setAuthMode('signup'));
+        if (l) l.addEventListener('click', () => setAuthMode('login'));
+      }
+      function showAuthError(msg) {
+        const el = document.getElementById('authError');
+        el.textContent = msg; el.classList.add('show');
+      }
+
+      async function handleAuthSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('authEmail').value.trim().toLowerCase();
+        const password = document.getElementById('authPassword').value;
+        const confirmPw = document.getElementById('authConfirm').value;
+        document.getElementById('authError').classList.remove('show');
+
+        if (authMode === 'signup') {
+          if (password.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
+          if (password !== confirmPw) { showAuthError('Passwords do not match.'); return; }
+          
+          try {
+            const res = await fetch('/api/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) { showAuthError(data.error || 'Signup failed'); return; }
+            await enterDashboard(email);
+          } catch (err) {
+            showAuthError('Server connection error. Make sure app.py is running.');
+          }
+        } else {
+          try {
+            const res = await fetch('/api/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) { showAuthError(data.error || 'Login failed'); return; }
+            await enterDashboard(email);
+          } catch (err) {
+            showAuthError('Server connection error. Make sure app.py is running.');
+          }
+        }
+      }
+
+      async function enterDashboard(email) {
+        currentUser = { email };
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('dashboardScreen').style.display = 'block';
+        document.getElementById('userEmailLabel').textContent = email;
+
+        // Render from database immediately so the user can see their data
+        await loadHoldings();
+        renderAll();
+
+        // Fetch live prices in the background asynchronously
+        document.getElementById('updatedLabel').textContent = "Fetching live prices...";
+        refreshLivePricesForHoldings().then(() => {
+          applyLivePricesToHoldings();
+          computeDayOpen();
+          renderAll();
+          tickUpdatedLabel();
+        }).catch(err => {
+          console.error("Live fetch failed:", err);
+          tickUpdatedLabel();
+        });
+      }
+
+      async function signOut() {
+        try {
+          await fetch('/api/logout', { method: 'POST' });
+        } catch (e) {
+          console.error("Logout request failed:", e);
+        }
+        currentUser = null;
+        document.getElementById('dashboardScreen').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('authForm').reset();
+        setAuthMode('login');
+      }
+
+      function wireAuth() {
+        document.getElementById('tabLogin').addEventListener('click', () => setAuthMode('login'));
+        document.getElementById('tabSignup').addEventListener('click', () => setAuthMode('signup'));
+        document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
+        document.getElementById('signOutBtn').addEventListener('click', signOut);
+        wireAuthSwitch();
+      }
+
+      /* ---------------- dock (vanilla-JS rebuild of the React Bits Dock — no React/motion needed) ---------------- */
+      function initDock() {
+        const panel = document.getElementById('dockPanel');
+        if (!panel) return;
+        const items = Array.from(panel.querySelectorAll('.dock-item'));
+        if (!items.length) return;
+
+        const BASE = 56, MAGNIFY = 80, DISTANCE = 140;
+        const SPRING = { stiffness: 150, damping: 12, mass: 0.1 };
+
+        const dockState = items.map(el => ({ el, size: BASE, target: BASE, velocity: 0 }));
+        let mouseX = null;
+        let raf = null;
+
+        function setTargets() {
+          dockState.forEach(s => {
+            if (mouseX === null) { s.target = BASE; return; }
+            const rect = s.el.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const dist = Math.abs(mouseX - centerX);
+            const t = Math.max(0, 1 - dist / DISTANCE);
+            s.target = BASE + (MAGNIFY - BASE) * t;
+          });
+        }
+
+        function tick() {
+          let stillMoving = false;
+          dockState.forEach(s => {
+            const force = (s.target - s.size) * SPRING.stiffness;
+            const damping = s.velocity * SPRING.damping;
+            const accel = (force - damping) / (SPRING.mass * 1000);
+            s.velocity += accel;
+            s.size += s.velocity * (1 / 60);
+            if (Math.abs(s.target - s.size) > 0.1 || Math.abs(s.velocity) > 0.1) stillMoving = true;
+            else { s.size = s.target; s.velocity = 0; }
+            s.el.style.width = s.size + 'px';
+            s.el.style.height = s.size + 'px';
+          });
+          if (stillMoving) raf = requestAnimationFrame(tick);
+          else raf = null;
+        }
+        function ensureLoop() { if (!raf) raf = requestAnimationFrame(tick); }
+
+        panel.addEventListener('mousemove', (e) => { mouseX = e.clientX; setTargets(); ensureLoop(); });
+        panel.addEventListener('mouseleave', () => { mouseX = null; setTargets(); ensureLoop(); });
+
+        // click actions
+        panel.addEventListener('click', (e) => {
+          const btn = e.target.closest('.dock-item');
+          if (!btn) return;
+          const action = btn.dataset.dockAction;
+          if (action === 'add') openModal('add');
+          else if (action === 'search') {
+            const input = document.getElementById('searchInput');
+            if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
+          }
+          else if (action === 'sort') {
+            const select = document.getElementById('sortSelect');
+            if (select) {
+              const opts = Array.from(select.options).map(o => o.value);
+              const next = opts[(opts.indexOf(select.value) + 1) % opts.length];
+              select.value = next;
+              select.dispatchEvent(new Event('change'));
+              toast('Sort: ' + select.options[select.selectedIndex].text.replace('Sort: ', ''));
+            }
+          }
+          else if (action === 'refresh') refreshPrices();
+          else if (action === 'account') { const el = document.getElementById('accountLink'); if (el) el.click(); }
+          else if (action === 'signout') signOut();
+        });
+
+        // keyboard accessibility: Enter/Space already work via native <button>
+      }
+
+      async function init() {
+        try {
+          wireAuth();
+          wire();
+          initDock();
+          setInterval(tickUpdatedLabel, 5000);
+          setInterval(refreshPrices, 60000);
+
+          const res = await fetch('/api/session');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.email) {
+              await enterDashboard(data.email);
+              return;
+            }
+          }
+        } catch (e) {
+          console.error('Portfolio Tracker failed to restore session, showing login screen instead:', e);
+        }
+        document.getElementById('authScreen').style.display = 'flex';
+      }
+      init();
+    })();
+  </script>
+</body>
+
+</html>
