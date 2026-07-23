@@ -4216,11 +4216,18 @@
           botMsg.innerHTML = renderMarkdown(data.response);
           chatBox.appendChild(botMsg);
 
-          if (data.warning && !state.hasSeenWarning) {
-            state.hasSeenWarning = true;
+          if (data.warning) {
             const systemNote = document.createElement('div');
             systemNote.className = 'ai-message system';
-            systemNote.innerHTML = '💡 <strong>Server Info:</strong> Running in Local Mode. To unlock full AI investment intelligence, configure a Gemini API key in your server\'s .env file.';
+            let errMsg = '💡 <strong>Server Info:</strong> Running in Local Mode. To unlock full AI investment intelligence, configure a Gemini API key in your server\'s .env file.';
+            if (data.gemini_error) {
+              errMsg = `⚠️ <strong>Gemini Connection Failed:</strong> ${data.gemini_error}.<br><br>Local mode active as fallback. Double check that your API key is correct and not restricted.`;
+            }
+            // Remove previous system note
+            const existingNote = chatBox.querySelector('.ai-message.system');
+            if (existingNote) existingNote.remove();
+
+            systemNote.innerHTML = errMsg;
             chatBox.appendChild(systemNote);
           }
 
