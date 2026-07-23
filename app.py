@@ -543,7 +543,7 @@ User Question: "{message}"
 Provide a detailed response in clean Markdown. Keep paragraphs short. Do not provide speculative certified financial advice. Add a standard disclaimer at the very end."""
 
             # Call Gemini API
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
             req_data = json.dumps({
                 "contents": [{
                     "parts": [{
