@@ -571,7 +571,8 @@ Provide a detailed response in clean Markdown. Keep paragraphs short. Do not pro
                 })
         except Exception as e:
             # On error, fall back to rules-based analyzer with warning
-            gemini_err = str(e)
+            masked_key = api_key[:6] + "..." if api_key else "None"
+            gemini_err = f"{str(e)} (Model: gemini-1.5-flash, Key: {masked_key})"
             print(f"Gemini API Error: {gemini_err}")
 
     # Rules-based local analyzer
