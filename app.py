@@ -547,7 +547,7 @@ User Question: "{message}"
 Provide a detailed response in clean Markdown. Keep paragraphs short. Do not provide speculative certified financial advice. Add a standard disclaimer at the very end."""
 
             # Call Gemini API
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
             req_data = json.dumps({
                 "contents": [{
                     "parts": [{
@@ -572,7 +572,7 @@ Provide a detailed response in clean Markdown. Keep paragraphs short. Do not pro
         except Exception as e:
             # On error, fall back to rules-based analyzer with warning
             masked_key = api_key[:6] + "..." if api_key else "None"
-            gemini_err = f"{str(e)} (Model: gemini-1.5-flash, Key: {masked_key})"
+            gemini_err = f"{str(e)} (Model: gemini-2.5-flash, Key: {masked_key})"
             print(f"Gemini API Error: {gemini_err}")
 
     # Rules-based local analyzer
