@@ -7,21 +7,23 @@
   <title>Portfolio Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg: #111417;
-      --card: #181C21;
-      --card-border: #282D34;
-      --card-border-soft: #20242A;
-      --text: #E9EBEE;
-      --text-dim: #98A0AC;
-      --text-faint: #5A6270;
-      --accent: #2DD4BF;
-      --accent-hover: #22B7A4;
-      --accent-text: #04211D;
-      --green: #3DD68C;
-      --red: #F0645C;
-      --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+      --bg: #0A0814;
+      --card: rgba(25, 20, 50, 0.45);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-soft: rgba(255, 255, 255, 0.04);
+      --text: #F3F4F6;
+      --text-dim: #9CA3AF;
+      --text-faint: #4B5563;
+      --accent: #8B5CF6;
+      /* Glowing violet */
+      --accent-hover: #7C3AED;
+      --accent-text: #FFFFFF;
+      --green: #10B981;
+      --red: #EF4444;
+      --shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
     }
 
     *,
@@ -37,7 +39,12 @@
 
     body {
       margin: 0;
-      background: var(--bg);
+      background: #04040a;
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 0% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+      background-attachment: fixed;
       color: var(--text);
       font-family: 'Inter', sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -823,12 +830,18 @@
       pointer-events: auto;
       display: flex;
       align-items: flex-end;
-      gap: 14px;
-      background: var(--card);
-      border: 1px solid var(--card-border);
+      gap: 12px;
+      background: rgba(18, 14, 36, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
-      padding: 12px 16px 14px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+      padding: 10px 14px 12px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 20px rgba(139, 92, 246, 0.1);
+      transition: all 0.3s ease;
     }
 
     .dock-item {
@@ -838,28 +851,32 @@
       justify-content: center;
       width: 56px;
       height: 56px;
-      border-radius: 14px;
-      background: var(--bg);
-      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      background: rgba(25, 22, 45, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       color: var(--text-dim);
       cursor: pointer;
-      transition: background .15s ease, color .15s ease, border-color .15s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       flex-shrink: 0;
-      will-change: width, height;
+      will-change: width, height, transform;
     }
 
     .dock-item:hover,
     .dock-item:focus-visible {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: var(--accent-text);
+      background: rgba(139, 92, 246, 0.18);
+      border-color: rgba(139, 92, 246, 0.45);
+      color: #FFFFFF;
+      transform: translateY(-6px) scale(1.05);
+      box-shadow:
+        0 12px 24px rgba(139, 92, 246, 0.25),
+        0 0 12px rgba(139, 92, 246, 0.15);
       outline: none;
     }
 
     .dock-item[data-active="true"] {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: var(--accent-text);
+      background: rgba(139, 92, 246, 0.25);
+      border-color: rgba(139, 92, 246, 0.5);
+      color: #FFFFFF;
     }
 
     .dock-icon {
@@ -984,203 +1001,2111 @@
         padding-top: 6px;
       }
     }
+
+    /* ---------------- Sidebar + Grid Layout Overhaul ---------------- */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+
+    /* Sidebar styling */
+    .sidebar {
+      width: 260px;
+      background: rgba(16, 12, 32, 0.45);
+      border-right: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 32px 24px;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-brand .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .sidebar-brand .brand-name {
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #FFFFFF 0%, #C4B5FD 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      background: transparent;
+      border: 1px solid transparent;
+      border-left: 3px solid transparent;
+      color: var(--text-dim);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px 12px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-item .nav-icon {
+      color: var(--text-dim);
+      transition: all 0.25s ease;
+    }
+
+    .nav-item:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.01);
+      border-left-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .nav-item:hover .nav-icon {
+      color: #FFFFFF;
+      transform: scale(1.08);
+    }
+
+    .nav-item.active {
+      color: #FFFFFF;
+      background: rgba(139, 92, 246, 0.12);
+      border-color: rgba(139, 92, 246, 0.2);
+      border-left-color: #8B5CF6;
+      box-shadow: inset 0 0 10px rgba(139, 92, 246, 0.08), 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-item.active .nav-icon {
+      color: #A78BFA;
+      filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.45));
+    }
+
+    .sidebar-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-top: 1px solid var(--card-border-soft);
+      padding-top: 20px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #8B5CF6;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .user-email {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #A78BFA;
+      font-weight: 500;
+    }
+
+    .sidebar-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .action-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-link:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .signOutBtn {
+      justify-content: flex-start;
+      width: 100%;
+      border-color: rgba(239, 68, 68, 0.2);
+      color: #EF4444;
+      padding: 10px 14px;
+      font-size: 13px;
+      border-radius: 8px;
+      background: transparent;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .signOutBtn:hover {
+      background: rgba(239, 68, 68, 0.08) !important;
+      border-color: rgba(239, 68, 68, 0.4) !important;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      padding: 40px 48px 120px;
+      width: calc(100% - 260px);
+      transition: margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Mobile Header Layout */
+    .mobile-header {
+      display: none;
+      height: 64px;
+      background: rgba(10, 8, 20, 0.8);
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .mobile-header .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mobile-header .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #FFFFFF;
+    }
+
+    .mobile-header .brand-name {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .menu-btn {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    /* Total Net Worth styling */
+    .net-worth-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(99, 102, 241, 0.08) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px rgba(255, 255, 255, 0.1);
+      flex: 1;
+      min-width: 320px;
+    }
+
+    .net-worth-card::after {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .net-worth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .net-worth-header .card-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .indicator-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-dot-live 1.5s infinite;
+    }
+
+    @keyframes pulse-dot-live {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(1.2);
+      }
+    }
+
+    .net-worth-value {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .net-worth-delta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .delta-amount {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .delta-amount.pos {
+      color: var(--green);
+    }
+
+    .delta-amount.neg {
+      color: var(--red);
+    }
+
+    .stat-value.pos {
+      color: var(--green);
+    }
+
+    .stat-value.neg {
+      color: var(--red);
+    }
+
+    .delta-pct {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .delta-pct.pos {
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--green);
+    }
+
+    .delta-pct.neg {
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--red);
+    }
+
+    /* Layout structure for stats block */
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+
+    .stats-grid-side {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      flex: 1.2;
+      min-width: 320px;
+    }
+
+    .stat-card.mini-card {
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stat-card.mini-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-border);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-card.mini-card .card-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+
+    .stat-card.mini-card .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #FFFFFF;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card.mini-card .sub {
+      font-size: 12px;
+      margin-top: 8px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Card Easing entrance animation definitions */
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-card {
+      animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 20px 0 80px rgba(0, 0, 0, 0.7);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 94px 20px 100px;
+        width: 100%;
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+
+      .stats-grid-side {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ---------------- landing page & hero ---------------- */
+    .landing-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    .landing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      margin-bottom: 20px;
+    }
+
+    .landing-header .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .landing-header .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--accent-text);
+    }
+
+    .landing-header .brand-name {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .nav-capsule {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(20, 16, 40, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      padding: 8px 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .nav-capsule a {
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-capsule a:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-ai-spark {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #A78BFA !important;
+    }
+
+    .nav-ai-spark:hover {
+      color: #C4B5FD !important;
+    }
+
+    .landing-header .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .landing-hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+      padding: 40px 0 80px;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-left .badge {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      color: #A78BFA;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 16px;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-purple-text {
+      background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .hero-subtitle {
+      font-size: 15.5px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin: 0 0 24px;
+    }
+
+    .hero-feature-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .hero-feature-badge {
+      background: rgba(25, 20, 50, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 99px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hero-cta .btn {
+      padding: 12px 24px;
+      font-size: 14px;
+      border-radius: 99px;
+    }
+
+    .hero-right {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .auth-screen {
+      min-height: 100vh;
+      background: transparent;
+      padding-bottom: 80px;
+    }
+
+    .landing-features {
+      padding: 60px 0 20px;
+      border-top: 1px solid var(--card-border-soft);
+    }
+
+    .landing-features .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .landing-features .section-title h2 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .landing-features .section-title p {
+      font-size: 14.5px;
+      color: var(--text-dim);
+      margin: 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--card-border);
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ---------------- Steps, Mockup, and Services Overhaul ---------------- */
+    .landing-steps {
+      padding: 80px 0;
+      border-top: 1px solid var(--card-border-soft);
+    }
+
+    .steps-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-top: 48px;
+      position: relative;
+    }
+
+    .steps-container::before {
+      content: "";
+      position: absolute;
+      top: 26px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      border-top: 1px dashed rgba(139, 92, 246, 0.3);
+      z-index: 1;
+    }
+
+    .step-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      padding: 0 16px;
+    }
+
+    .step-number-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid #8B5CF6;
+      background: #08070F;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      margin-bottom: 24px;
+    }
+
+    .step-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #FFFFFF;
+    }
+
+    .step-card p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-dim);
+    }
+
+    .landing-clarity {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin: 96px 0;
+      padding: 48px;
+      background: rgba(25, 20, 50, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .clarity-badge {
+      display: inline-block;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      background: rgba(139, 92, 246, 0.1);
+      color: #A78BFA;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+    }
+
+    .landing-clarity h2 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+    }
+
+    .landing-clarity p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-dim);
+    }
+
+    .clarity-mockup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .mockup-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .landing-clarity:hover .mockup-img {
+      transform: translateY(-8px) rotate(-1deg);
+    }
+
+    .landing-services {
+      padding: 80px 0;
+      border-top: 1px solid var(--card-border-soft);
+    }
+
+    .services-grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .service-card-premium {
+      background: rgba(25, 20, 50, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 36px 28px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .service-card-premium:hover {
+      transform: translateY(-6px);
+      border-color: rgba(139, 92, 246, 0.3);
+      background: rgba(25, 20, 50, 0.4);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .service-icon-bg {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .service-card-premium h3 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #FFFFFF;
+    }
+
+    .service-card-premium p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      flex: 1;
+    }
+
+    .service-card-premium ul {
+      margin: 0;
+      padding-left: 20px;
+      list-style-type: none;
+    }
+
+    .service-card-premium li {
+      font-size: 12.5px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 12px;
+    }
+
+    .service-card-premium li::before {
+      content: "•";
+      color: #8B5CF6;
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+      position: absolute;
+    }
+
+    .section-title.text-center {
+      text-align: center;
+    }
+
+    .section-title.text-center h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title.text-center p {
+      font-size: 15.5px;
+      color: var(--text-dim);
+    }
+
+    /* ---------------- LogoLoop Vanilla Component Styling ---------------- */
+    .logoloop {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      user-select: none;
+      --logoloop-gap: 40px;
+      --logoloop-logoHeight: 32px;
+      padding: 16px 0;
+    }
+
+    .logoloop__track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+    }
+
+    .logoloop__list {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .logoloop__item {
+      flex: 0 0 auto;
+      margin-right: var(--logoloop-gap);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-dim);
+      font-weight: 600;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 8px 18px;
+      border-radius: 99px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .logoloop--scale-hover .logoloop__item:hover {
+      transform: scale(1.05);
+      border-color: rgba(139, 92, 246, 0.3);
+      background: rgba(139, 92, 246, 0.1);
+      color: #FFFFFF;
+    }
+
+    .logoloop__item img,
+    .logoloop__item svg {
+      height: var(--logoloop-logoHeight);
+      width: auto;
+      object-fit: contain;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+
+    .logoloop--fade::before,
+    .logoloop--fade::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: clamp(24px, 12%, 120px);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .logoloop--fade::before {
+      left: 0;
+      background: linear-gradient(to right,
+          var(--logoloop-fadeColor, #04040a) 0%,
+          rgba(0, 0, 0, 0) 100%);
+    }
+
+    .logoloop--fade::after {
+      right: 0;
+      background: linear-gradient(to left,
+          var(--logoloop-fadeColor, #04040a) 0%,
+          rgba(0, 0, 0, 0) 100%);
+    }
+
+    /* ---------------- Dashboard Top Bar & Profile Dropdown ---------------- */
+    .dashboard-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .top-bar-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0 0 2px 0;
+    }
+
+    .top-bar-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin: 0;
+    }
+
+    .profile-dropdown-wrapper {
+      position: relative;
+      z-index: 100;
+    }
+
+    .profile-trigger-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(25, 20, 50, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 99px;
+      cursor: pointer;
+      color: #FFFFFF;
+      transition: all 0.2s ease;
+    }
+
+    .profile-trigger-btn:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .profile-trigger-btn .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8B5CF6 0%, #4F46E5 100%);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .profile-trigger-btn .user-email-label {
+      font-size: 13px;
+      font-weight: 500;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-trigger-btn .dropdown-chevron {
+      font-size: 9px;
+      color: var(--text-dim);
+      transition: transform 0.2s ease;
+    }
+
+    .profile-dropdown-wrapper.active .dropdown-chevron {
+      transform: rotate(180deg);
+    }
+
+    .profile-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 200px;
+      background: rgba(10, 8, 20, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-dropdown-wrapper.active .profile-dropdown-menu {
+      display: flex;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      color: var(--text-dim);
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #FFFFFF;
+    }
+
+    .dropdown-item.signout-btn {
+      color: #EF4444;
+    }
+
+    .dropdown-item.signout-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #F87171;
+    }
+
+    .dropdown-divider {
+      border: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin: 4px 0;
+    }
+
+    /* ---------------- dashboard tabs & views ---------------- */
+    .dashboard-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border-soft);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-text);
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* views switcher styling */
+    .dashboard-view-content {
+      display: none;
+    }
+
+    .dashboard-view-content.active {
+      display: block;
+    }
+
+    /* ---------------- visual analytics ---------------- */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 380px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 20px;
+      align-self: flex-start;
+      color: var(--text);
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ---------------- ask ai assistant ---------------- */
+    .ai-container {
+      background: var(--card);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      height: 560px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .ai-header {
+      background: rgba(255, 255, 255, 0.01);
+      border-bottom: 1px solid var(--card-border-soft);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-header h3 {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-badge-status {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .ai-badge-status.local {
+      background: rgba(240, 100, 92, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(240, 100, 92, 0.2);
+    }
+
+    .ai-badge-status.live {
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(45, 212, 191, 0.2);
+    }
+
+    .ai-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .ai-message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      line-height: 1.5;
+      font-size: 13.5px;
+    }
+
+    .ai-message.assistant {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border-soft);
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+      color: var(--text);
+    }
+
+    .ai-message.user {
+      background: var(--accent);
+      color: var(--accent-text);
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+    }
+
+    .ai-message.system {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(240, 100, 92, 0.2);
+      color: var(--text-dim);
+      align-self: center;
+      max-width: 90%;
+      text-align: center;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* chat markdown rendering styles */
+    .ai-message p {
+      margin: 0 0 8px 0;
+    }
+
+    .ai-message p:last-child {
+      margin-bottom: 0;
+    }
+
+    .ai-message h3 {
+      font-size: 14.5px;
+      font-weight: 700;
+      margin: 14px 0 6px 0;
+      color: var(--text);
+    }
+
+    .ai-message h4 {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 10px 0 4px 0;
+      color: var(--text);
+    }
+
+    .ai-message ul {
+      margin: 0 0 8px 0;
+      padding-left: 20px;
+    }
+
+    .ai-message li {
+      margin-bottom: 4px;
+    }
+
+    .ai-message strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .ai-message.user strong {
+      color: var(--accent-text);
+    }
+
+    .ai-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--card-border-soft);
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .suggestion-chip {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 99px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .suggestion-chip:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border-color: var(--card-border);
+    }
+
+    .ai-input-bar {
+      border-top: 1px solid var(--card-border-soft);
+      padding: 14px 20px;
+      background: var(--card);
+      display: flex;
+      gap: 10px;
+    }
+
+    .ai-input-bar input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--card-border-soft);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      outline: none;
+      font-size: 13.5px;
+    }
+
+    .ai-input-bar input:focus {
+      border-color: var(--accent);
+    }
+
+    .ai-input-bar button {
+      padding: 10px 20px;
+    }
+
+    /* responsiveness for landing */
+    @media (max-width: 900px) {
+      .landing-hero {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding-bottom: 40px;
+      }
+
+      .hero-left {
+        text-align: center;
+        align-items: center;
+      }
+
+      .hero-cta {
+        justify-content: center;
+      }
+
+      .hero-right {
+        justify-content: center;
+      }
+
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div class="auth-screen" id="authScreen">
-    <div class="auth-card">
-      <div class="auth-brand">
-        <div class="mark">P</div>
-        <div class="t">Portfolio Tracker</div>
-      </div>
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tabLogin">Log in</button>
-        <button class="auth-tab" id="tabSignup">Sign up</button>
-      </div>
-      <div class="auth-error" id="authError"></div>
-      <form id="authForm">
-        <div class="auth-field">
-          <label>Email</label>
-          <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
+    <canvas id="darkVeilCanvas"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.15;"></canvas>
+    <div class="landing-container" style="position: relative; z-index: 1;">
+      <header class="landing-header">
+        <div class="brand">
+          <div class="brand-mark">P</div>
+          <span class="brand-name">Portfolio Tracker</span>
         </div>
-        <div class="auth-field">
-          <label>Password</label>
-          <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6"
-            autocomplete="current-password">
+        <div class="nav-capsule">
+          <a href="#get-started-section">Features</a>
+          <a href="#services-section">All Features</a>
+          <a href="#clarity-section" class="nav-ai-spark">✨ Ask AI</a>
+          <a href="#services-section">Compare</a>
+          <a href="#services-section">FAQ</a>
         </div>
-        <div class="auth-field" id="confirmField" style="display:none;">
-          <label>Confirm password</label>
-          <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6"
-            autocomplete="new-password">
+        <div class="nav-links">
+          <button class="btn btn-primary btn-sm"
+            onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free
+            Account</button>
         </div>
-        <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
-      </form>
-      <div class="auth-switch" id="authSwitch">
-        Don't have an account? <button id="switchToSignup">Sign up</button>
-      </div>
-      <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in your browser session,
-        not a real server. Don't reuse a password you use elsewhere.</div>
+      </header>
+
+      <section class="landing-hero">
+        <div class="hero-left">
+          <span class="badge">🛡️ Privacy-first portfolio tracking for Indian investors</span>
+          <h1 class="hero-title">Track Stocks & Mutual Funds <span class="hero-purple-text">in One Place</span></h1>
+          <p class="hero-subtitle">See your mutual funds, stocks, net worth, and performance in one clean dashboard. Add
+            holdings manually without linking your broker.</p>
+
+          <div class="hero-feature-badges">
+            <span class="hero-feature-badge">No broker login</span>
+            <span class="hero-feature-badge">Read-only CAS import</span>
+            <span class="hero-feature-badge">No ads or data selling</span>
+          </div>
+
+          <div class="hero-cta">
+            <button class="btn btn-primary"
+              onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free
+              Account &rarr;</button>
+          </div>
+          <div style="font-size:12px; color:var(--text-dim); margin-top:12px;">Free to get started. No phone number
+            required. &bull; or try a demo</div>
+        </div>
+
+        <div class="hero-right" id="authCardAnchor">
+          <div class="auth-card">
+            <div class="auth-brand">
+              <div class="mark">P</div>
+              <div class="t">Portfolio Tracker</div>
+            </div>
+            <div class="auth-tabs">
+              <button class="auth-tab active" id="tabLogin">Log in</button>
+              <button class="auth-tab" id="tabSignup">Sign up</button>
+            </div>
+            <div class="auth-error" id="authError"></div>
+            <form id="authForm">
+              <div class="auth-field">
+                <label>Email</label>
+                <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
+              </div>
+              <div class="auth-field">
+                <label>Password</label>
+                <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6"
+                  autocomplete="current-password">
+              </div>
+              <div class="auth-field" id="confirmField" style="display:none;">
+                <label>Confirm password</label>
+                <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6"
+                  autocomplete="new-password">
+              </div>
+              <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
+            </form>
+            <div class="auth-switch" id="authSwitch">
+              Don't have an account? <button id="switchToSignup">Sign up</button>
+            </div>
+            <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local SQLite
+              database. Don't reuse a password you use elsewhere.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech Partners Logo Loop Section -->
+      <section class="logo-loop-section" style="padding: 40px 0; border-top: 1px solid var(--card-border-soft);">
+        <div class="logoloop logoloop--scale-hover logoloop--fade" id="financialLogoLoop">
+          <div class="logoloop__track">
+            <ul class="logoloop__list">
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 4px; width: 24px; height: 24px;">
+                  <rect width="100" height="100" fill="#003366" />
+                  <rect x="25" y="25" width="50" height="50" fill="#FFFFFF" />
+                  <rect x="35" y="35" width="30" height="30" fill="#E31E24" />
+                </svg>
+                <span>HDFC Bank</span>
+              </li>
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 24px; height: 24px;">
+                  <circle cx="50" cy="50" r="50" fill="#F37021" />
+                  <text x="50" y="68" font-family="'Inter', sans-serif" font-weight="900" font-size="55" fill="#FFFFFF"
+                    text-anchor="middle">i</text>
+                </svg>
+                <span>ICICI Bank</span>
+              </li>
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
+                  <circle cx="50" cy="45" r="35" fill="#00B1EC" />
+                  <circle cx="50" cy="45" r="12" fill="#04040a" />
+                  <rect x="45" y="45" width="10" height="40" fill="#00B1EC" />
+                </svg>
+                <span>SBI</span>
+              </li>
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
+                  <path d="M50 10 L85 45 L50 80 L15 45 Z" fill="#00B1EC" />
+                  <circle cx="50" cy="45" r="10" fill="#FFFFFF" />
+                </svg>
+                <span>Zerodha</span>
+              </li>
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 24px; height: 24px;">
+                  <circle cx="50" cy="50" r="50" fill="#00D09C" />
+                  <path d="M30 65 L45 50 L55 60 L75 30" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"
+                    stroke-linejoin="round" fill="none" />
+                  <path d="M55 30 H75 V50" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"
+                    stroke-linejoin="round" fill="none" />
+                </svg>
+                <span>Groww</span>
+              </li>
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
+                  <rect width="100" height="100" rx="10" fill="#003366" />
+                  <text x="50" y="65" font-family="'Inter', sans-serif" font-weight="900" font-size="40" fill="#FFFFFF"
+                    text-anchor="middle">NSE</text>
+                </svg>
+                <span>NSE India</span>
+              </li>
+              <li class="logoloop__item">
+                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
+                  <polygon points="50 10, 90 80, 10 80" fill="#003366" />
+                  <polygon points="50 30, 75 75, 25 75" fill="#E31E24" />
+                </svg>
+                <span>BSE India</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Get Started Section -->
+      <section class="landing-steps" id="get-started-section">
+        <div class="section-title text-center">
+          <h2>Get Started in 3 Steps</h2>
+          <p>No complex setup. No bank passwords required.</p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step-card">
+            <div class="step-number-circle">1</div>
+            <h3>Import Your Investments</h3>
+            <p>Export your investment statement from CAMS or KFintech and upload it. We parse it securely to track all
+              your mutual funds.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number-circle">2</div>
+            <h3>Add Your Stocks</h3>
+            <p>Search and add your equity holdings from NSE/BSE. Live price updates keep your portfolio accurate without
+              linking any broker account.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number-circle">3</div>
+            <h3>Get Clear Insights</h3>
+            <p>Once your portfolio is set up, use Ask AI for quick answers on XIRR, overlap, and sector exposure when
+              you need them.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Clarity Split Section -->
+      <section class="landing-clarity" id="clarity-section">
+        <div class="clarity-content">
+          <span class="clarity-badge">TRACK WITH CLARITY</span>
+          <h2>See your mutual fund details without the usual clutter</h2>
+          <p>Portfolio Tracker keeps your holdings, fund details, and portfolio view easy to scan so you can check
+            performance regularly without feeling lost.</p>
+        </div>
+        <div class="clarity-mockup">
+          <img src="portfolio_mobile_mockup.png" alt="Portfolio Dashboard Mockup" class="mockup-img">
+        </div>
+      </section>
+
+      <!-- Services List Section -->
+      <section class="landing-services" id="services-section">
+        <div class="section-title text-center">
+          <h2>Everything You Need to Track Wealth</h2>
+          <p>Built for the serious Indian retail investor who values data over noise.</p>
+        </div>
+
+        <div class="services-grid-three">
+          <div class="service-card-premium">
+            <div class="service-icon-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <h3>Security & Privacy</h3>
+            <p>We follow a privacy-first architecture designed to minimize data exposure. We do not profile users, sell
+              insights, or share portfolio data.</p>
+            <ul>
+              <li>Data encrypted at rest & transmission</li>
+              <li>Secure database user credentials</li>
+              <li>Sensitive values hidden via local storage</li>
+            </ul>
+          </div>
+
+          <div class="service-card-premium">
+            <div class="service-icon-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <h3>Mutual Fund Analytics</h3>
+            <p>Import your investment statements in minutes. View asset composition across multiple asset classes
+              without exposing credentials.</p>
+            <ul>
+              <li>Accurate returns based on local cache</li>
+              <li>Asset class allocation breakdowns</li>
+              <li>Mutual Fund risk assessment</li>
+              <li>Support for custom holding additions</li>
+            </ul>
+          </div>
+
+          <div class="service-card-premium">
+            <div class="service-icon-bg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+            <h3>Stock Portfolio</h3>
+            <p>Manual equity tracking for full control. Add stocks with purchase date, quantity, and price for realistic
+              returns tracking.</p>
+            <ul>
+              <li>Live stock search via trusted sources</li>
+              <li>Auto-background price updates</li>
+              <li>Combined P&amp;L &amp; allocation visibility</li>
+              <li>Edit/Remove holdings anytime</li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 
-  <div class="wrap" id="dashboardScreen" style="display:none;">
+  <div class="app-layout" id="dashboardScreen" style="display:none;">
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-brand">
+          <div class="brand-mark">P</div>
+          <span class="brand-name">Portfolio Tracker</span>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="nav-item active" id="tabBtnPortfolio">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Portfolio</span>
+          </button>
+          <button class="nav-item" id="tabBtnAnalytics">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Analytics</span>
+          </button>
+          <button class="nav-item" id="tabBtnAi">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8V4H8"></path>
+              <rect x="4" y="8" width="16" height="12" rx="2"></rect>
+              <path d="M2 14h2"></path>
+              <path d="M20 14h2"></path>
+              <circle cx="8.5" cy="13.5" r="1.5" fill="currentColor"></circle>
+              <circle cx="15.5" cy="13.5" r="1.5" fill="currentColor"></circle>
+            </svg>
+            <span>Ask AI Analyst</span>
+          </button>
+        </nav>
+      </div>
+    </aside>
 
-    <div class="topbar">
-      <div>
-        <h1>Portfolio Tracker</h1>
-        <div class="subhead-row">
-          <span id="userEmailLabel"></span>
-          <a id="reportsLink">Reports</a>
-          <a id="accountLink">Account</a>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <div class="brand">
+        <div class="brand-mark">P</div>
+        <span class="brand-name">Portfolio Tracker</span>
+      </div>
+      <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Dashboard Top Bar with User Dropdown -->
+      <header class="dashboard-top-bar">
+        <div class="top-bar-left">
+          <h2 class="top-bar-title">Dashboard</h2>
+          <p class="top-bar-subtitle">Overview of your investments & equity performance</p>
+        </div>
+        <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+          <button class="profile-trigger-btn" id="profileTriggerBtn">
+            <div class="avatar" id="userAvatar">U</div>
+            <span class="user-email-label" id="userEmailLabel">user@example.com</span>
+            <span class="dropdown-chevron">▼</span>
+          </button>
+          <div class="profile-dropdown-menu">
+            <a id="reportsLink" class="dropdown-item">📄 Reports</a>
+            <a id="accountLink" class="dropdown-item">⚙️ Account</a>
+            <hr class="dropdown-divider">
+            <button id="sidebarSignOutBtn" class="dropdown-item signout-btn">🚪 Sign Out</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- hidden but still present so existing JS wiring (ids) keeps working -->
+      <button class="btn btn-primary" id="addHoldingBtn" style="display:none;">+ Add holding</button>
+      <button class="btn btn-outline" id="refreshBtn" style="display:none;">Refresh</button>
+      <button class="btn btn-outline" id="signOutBtn" style="display:none;">Sign out</button>
+
+      <!-- View 1: Portfolio (Default) -->
+      <div id="viewPortfolio" class="dashboard-view-content active">
+        <!-- Stripe-like stats block featuring Total Net Worth -->
+        <div class="stats-row">
+          <div class="net-worth-card animate-card">
+            <div class="net-worth-header">
+              <span class="card-label">Total Net Worth</span>
+              <span class="live-indicator"><span class="indicator-dot"></span>Live updates</span>
+            </div>
+            <div class="net-worth-value" id="statValue">₹0</div>
+            <div class="net-worth-delta">
+              <span class="delta-amount" id="statGain">₹0</span>
+              <span class="delta-pct" id="statGainPct">0.00% return</span>
+            </div>
+          </div>
+
+          <div class="stats-grid-side">
+            <div class="stat-card mini-card animate-card" style="animation-delay: 0.1s;">
+              <span class="card-label">Invested capital</span>
+              <div class="stat-value" id="statInvested">₹0</div>
+            </div>
+            <div class="stat-card mini-card animate-card" style="animation-delay: 0.2s;">
+              <span class="card-label">Today's P&amp;L</span>
+              <div class="stat-value" id="statDay">₹0</div>
+              <div class="sub" id="statDayPct">0.00%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini-stats-row" id="miniStatsRow"></div>
+
+        <div class="status-row">
+          <span><span class="pulse-dot"></span><span id="updatedLabel">Updated just now</span> &middot; auto-refresh
+            60s</span>
+          <span class="live" id="liveCount"
+            title="Recognized symbols use real prices captured 13 Jul 2026, not a live tick-by-tick feed. Unrecognized symbols use a simulated estimate.">0/0
+            live prices</span>
+        </div>
+
+        <div class="panel">
+          <div class="panel-toolbar">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" />
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search symbol...">
+              </div>
+              <div class="filter-group" id="assetFilters">
+                <button class="filter-pill active" data-class="all">All</button>
+                <button class="filter-pill" data-class="profit">Gainers</button>
+                <button class="filter-pill" data-class="loss">Losers</button>
+              </div>
+              <select class="sort-select" id="sortSelect">
+                <option value="default">Sort: Default order</option>
+                <option value="gainPct">Sort: % Gain</option>
+                <option value="gain">Sort: Gain ₹</option>
+                <option value="value">Sort: Current Value</option>
+                <option value="symbol">Sort: Symbol A-Z</option>
+              </select>
+              <button class="icon-btn" id="sortDirBtn" title="Toggle sort direction">
+                <svg id="sortDirIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.2">
+                  <path d="M12 5v14M6 13l6 6 6-6" />
+                </svg>
+              </button>
+            </div>
+            <span class="holdings-count" id="holdingsCount">0 holdings</span>
+          </div>
+          <div id="tableWrap"></div>
+          <div class="footer-bar" id="footerBar" style="display:none;"></div>
+        </div>
+
+        <!-- System Debug Panel -->
+        <div class="panel" style="margin-top:20px; border-color:rgba(255,255,255,0.05); margin-bottom: 20px;">
+          <div class="panel-toolbar" style="background:rgba(255,255,255,0.01);">
+            <div class="toolbar-left">
+              <span style="font-weight:700; font-size:12px; color:var(--text-dim);">System Debug Panel</span>
+            </div>
+            <button class="btn btn-outline btn-sm"
+              onclick="const dl = document.getElementById('debugLogs'); dl.style.display = dl.style.display === 'none' ? 'block' : 'none'">Toggle
+              Debug Logs</button>
+          </div>
+          <div id="debugLogs"
+            style="display:none; padding:16px; background:#0B0D0F; font-family:monospace; font-size:11.5px; border-top:1px solid var(--card-border-soft);">
+            <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Active Holdings:</div>
+            <pre id="debugHoldings"
+              style="margin:0 0 16px; color:#A4B3C6; overflow-x:auto; white-space:pre-wrap;"></pre>
+
+            <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Price Cache:</div>
+            <pre id="debugPriceCache"
+              style="margin:0 0 16px; color:#A4B3C6; overflow-x:auto; white-space:pre-wrap;"></pre>
+
+            <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Recent Errors:</div>
+            <pre id="debugErrors" style="margin:0; color:var(--red); overflow-x:auto; white-space:pre-wrap;"></pre>
+          </div>
+        </div>
+
+      </div><!-- end of viewPortfolio -->
+
+      <!-- View 2: Analytics -->
+      <div id="viewAnalytics" class="dashboard-view-content">
+        <!-- Top Diversification Stats Row -->
+        <div class="analytics-overview-row"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <div class="stat-card mini-card animate-card" style="min-height: 100px; padding: 16px;">
+            <span class="card-label">Diversification Score</span>
+            <div class="stat-value" id="analyticDivScore" style="color: #10B981; font-size: 24px; margin-top: 4px;">
+              75/100</div>
+            <div class="sub" id="analyticDivStatus" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">
+              Optimal Diversification</div>
+          </div>
+          <div class="stat-card mini-card animate-card"
+            style="min-height: 100px; padding: 16px; animation-delay: 0.1s;">
+            <span class="card-label">Total Assets Monitored</span>
+            <div class="stat-value" id="analyticHoldingsCount" style="font-size: 24px; margin-top: 4px;">0</div>
+            <div class="sub" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">Active equities & funds
+            </div>
+          </div>
+          <div class="stat-card mini-card animate-card"
+            style="min-height: 100px; padding: 16px; animation-delay: 0.2s;">
+            <span class="card-label">Highest Concentration</span>
+            <div class="stat-value" id="analyticMaxWeight" style="font-size: 24px; margin-top: 4px;">0.00%</div>
+            <div class="sub" id="analyticMaxAsset" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">
+              No holdings</div>
+          </div>
+        </div>
+
+        <!-- Main Analytics Grid -->
+        <div class="analytics-grid">
+          <!-- Card 1: Asset Weights -->
+          <div class="chart-card">
+            <h3>Asset Weights Allocation</h3>
+            <div class="chart-container">
+              <canvas id="allocationChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 2: Asset Class Split -->
+          <div class="chart-card">
+            <h3>Asset Class Distribution</h3>
+            <div class="chart-container">
+              <canvas id="classSplitChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Card 3: Portfolio Weightings List -->
+          <div class="chart-card" style="min-height: 380px; justify-content: flex-start; align-items: stretch;">
+            <h3>Portfolio Concentration List</h3>
+            <div id="weightingsListContainer"
+              style="overflow-y: auto; max-height: 280px; display: flex; flex-direction: column; gap: 12px; padding-right: 4px;">
+              <!-- Filled dynamically in JS -->
+            </div>
+          </div>
+
+          <!-- Card 4: Historical Cost vs Value -->
+          <div class="chart-card">
+            <h3>Holding Performance (Current Value vs Purchase Cost)</h3>
+            <div class="chart-container">
+              <canvas id="performanceChart"></canvas>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- hidden but still present so existing JS wiring (ids) keeps working -->
-    <button class="btn btn-primary" id="addHoldingBtn" style="display:none;">+ Add holding</button>
-    <button class="btn btn-outline" id="refreshBtn" style="display:none;">Refresh</button>
-    <button class="btn btn-outline" id="signOutBtn" style="display:none;">Sign out</button>
-
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="label">Invested</div>
-        <div class="value" id="statInvested">₹0</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Current Value</div>
-        <div class="value" id="statValue">₹0</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Unrealised Gain</div>
-        <div class="value" id="statGain">₹0</div>
-        <div class="sub" id="statGainPct">0.00% return</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Today's P&amp;L</div>
-        <div class="value" id="statDay">₹0</div>
-        <div class="sub" id="statDayPct">0.00%</div>
-      </div>
-    </div>
-
-    <div class="mini-stats-row" id="miniStatsRow"></div>
-
-    <div class="status-row">
-      <span><span class="pulse-dot"></span><span id="updatedLabel">Updated just now</span> &middot; auto-refresh
-        60s</span>
-      <span class="live" id="liveCount"
-        title="Recognized symbols use real prices captured 13 Jul 2026, not a live tick-by-tick feed. Unrecognized symbols use a simulated estimate.">0/0
-        live prices</span>
-    </div>
-
-    <div class="panel">
-      <div class="panel-toolbar">
-        <div class="toolbar-left">
-          <div class="search-box">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="7" />
-              <path d="M21 21l-4.3-4.3" />
-            </svg>
-            <input type="text" id="searchInput" placeholder="Search symbol...">
+      <!-- View 3: Ask AI Assistant -->
+      <div id="viewAi" class="dashboard-view-content">
+        <div class="ai-container">
+          <div class="ai-header">
+            <h3>🤖 Ask AI Investment Analyst</h3>
+            <span class="ai-badge-status local" id="aiStatusBadge">Local Analysis Mode</span>
           </div>
-          <div class="filter-group" id="assetFilters">
-            <button class="filter-pill active" data-class="all">All</button>
-            <button class="filter-pill" data-class="profit">Gainers</button>
-            <button class="filter-pill" data-class="loss">Losers</button>
+          <div class="ai-messages" id="aiMessages">
+            <div class="ai-message assistant">
+              <p>Hello! I am your AI Investment Analyst. Ask me anything about your portfolio's diversification,
+                allocation, or performance.</p>
+            </div>
           </div>
-          <select class="sort-select" id="sortSelect">
-            <option value="default">Sort: Default order</option>
-            <option value="gainPct">Sort: % Gain</option>
-            <option value="gain">Sort: Gain ₹</option>
-            <option value="value">Sort: Current Value</option>
-            <option value="symbol">Sort: Symbol A-Z</option>
-          </select>
-          <button class="icon-btn" id="sortDirBtn" title="Toggle sort direction">
-            <svg id="sortDirIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.2">
-              <path d="M12 5v14M6 13l6 6 6-6" />
-            </svg>
+          <div class="ai-suggestions" id="aiSuggestions">
+            <div class="suggestion-chip" onclick="sendAiSuggestion('Is my portfolio diversified?')">Is my portfolio
+              diversified?</div>
+            <div class="suggestion-chip" onclick="sendAiSuggestion('What is my asset class distribution?')">What is my
+              asset class distribution?</div>
+            <div class="suggestion-chip" onclick="sendAiSuggestion('Which is my best performing stock?')">Which is my
+              best performing stock?</div>
+          </div>
+          <div class="ai-input-bar">
+            <input type="text" id="aiInput" placeholder="Ask a question about your portfolio..."
+              onkeydown="if(event.key === 'Enter') sendAiMessage()">
+            <button class="btn btn-primary btn-sm" onclick="sendAiMessage()" id="aiSendBtn">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dock-outer" id="dockOuter">
+        <div class="dock-panel" id="dockPanel" role="toolbar" aria-label="Quick actions">
+          <button class="dock-item" data-dock-action="add" aria-label="Add holding">
+            <span class="dock-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </span>
+            <span class="dock-label">Add holding</span>
+          </button>
+          <button class="dock-item" data-dock-action="search" aria-label="Search holdings">
+            <span class="dock-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <span class="dock-label">Search</span>
+          </button>
+          <button class="dock-item" data-dock-action="sort" aria-label="Cycle sort order">
+            <span class="dock-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="12" x2="16" y2="12"></line>
+                <line x1="4" y1="18" x2="12" y2="18"></line>
+              </svg>
+            </span>
+            <span class="dock-label">Sort</span>
+          </button>
+          <button class="dock-item" data-dock-action="refresh" aria-label="Refresh prices">
+            <span class="dock-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                <path d="M21 3v5h-5" />
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                <path d="M3 21v-5h5" />
+              </svg>
+            </span>
+            <span class="dock-label">Refresh</span>
+          </button>
+          <button class="dock-item" data-dock-action="account" aria-label="Account">
+            <span class="dock-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </span>
+            <span class="dock-label">Account</span>
+          </button>
+          <button class="dock-item" data-dock-action="signout" aria-label="Sign out">
+            <span class="dock-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </span>
+            <span class="dock-label">Sign out</span>
           </button>
         </div>
-        <span class="holdings-count" id="holdingsCount">0 holdings</span>
       </div>
-      <div id="tableWrap"></div>
-      <div class="footer-bar" id="footerBar" style="display:none;"></div>
-    </div>
 
-    <!-- System Debug Panel -->
-    <div class="panel" style="margin-top:20px; border-color:rgba(255,255,255,0.05); margin-bottom: 20px;">
-      <div class="panel-toolbar" style="background:rgba(255,255,255,0.01);">
-        <div class="toolbar-left">
-          <span style="font-weight:700; font-size:12px; color:var(--text-dim);">System Debug Panel</span>
-        </div>
-        <button class="btn btn-outline btn-sm"
-          onclick="const dl = document.getElementById('debugLogs'); dl.style.display = dl.style.display === 'none' ? 'block' : 'none'">Toggle
-          Debug Logs</button>
-      </div>
-      <div id="debugLogs"
-        style="display:none; padding:16px; background:#0B0D0F; font-family:monospace; font-size:11.5px; border-top:1px solid var(--card-border-soft);">
-        <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Active Holdings:</div>
-        <pre id="debugHoldings" style="margin:0 0 16px; color:#A4B3C6; overflow-x:auto; white-space:pre-wrap;"></pre>
-
-        <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Price Cache:</div>
-        <pre id="debugPriceCache" style="margin:0 0 16px; color:#A4B3C6; overflow-x:auto; white-space:pre-wrap;"></pre>
-
-        <div style="color:var(--accent); font-weight:700; margin-bottom:8px;">Recent Errors:</div>
-        <pre id="debugErrors" style="margin:0; color:var(--red); overflow-x:auto; white-space:pre-wrap;"></pre>
-      </div>
-    </div>
-
-    <div class="dock-outer" id="dockOuter">
-      <div class="dock-panel" id="dockPanel" role="toolbar" aria-label="Quick actions">
-        <button class="dock-item" data-dock-action="add" aria-label="Add holding">
-          <span class="dock-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.3">
-              <path d="M12 5v14M5 12h14" />
-            </svg></span>
-          <span class="dock-label">Add holding</span>
-        </button>
-        <button class="dock-item" data-dock-action="search" aria-label="Search holdings">
-          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.1">
-              <circle cx="11" cy="11" r="7" />
-              <path d="M21 21l-4.3-4.3" />
-            </svg></span>
-          <span class="dock-label">Search</span>
-        </button>
-        <button class="dock-item" data-dock-action="sort" aria-label="Cycle sort order">
-          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.1">
-              <path d="M4 6h16M7 12h10M10 18h4" />
-            </svg></span>
-          <span class="dock-label">Sort</span>
-        </button>
-        <button class="dock-item" data-dock-action="refresh" aria-label="Refresh prices">
-          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.1">
-              <path d="M20 11A8 8 0 105.5 5.5L4 7M4 7V3M4 7h4" />
-            </svg></span>
-          <span class="dock-label">Refresh</span>
-        </button>
-        <button class="dock-item" data-dock-action="account" aria-label="Account">
-          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.1">
-              <circle cx="12" cy="8" r="3.5" />
-              <path d="M4.5 20c0-3.6 3.4-6.5 7.5-6.5s7.5 2.9 7.5 6.5" />
-            </svg></span>
-          <span class="dock-label">Account</span>
-        </button>
-        <button class="dock-item" data-dock-action="signout" aria-label="Sign out">
-          <span class="dock-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2.1">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-              <path d="M16 17l5-5-5-5M21 12H9" />
-            </svg></span>
-          <span class="dock-label">Sign out</span>
-        </button>
-      </div>
-    </div>
-
+    </main>
   </div>
 
   <div class="modal-overlay" id="modalOverlay">
@@ -1517,7 +3442,10 @@
         return [buildHolding({ symbol: 'DIXON', exchange: 'NSE', buyPrice: 11000, qty: 55 })];
       }
 
-      const state = { holdings: [], filter: 'all', search: '', sort: 'default', sortDir: 'desc', dayOpen: {}, lastUpdated: new Date() };
+      const state = { holdings: [], filter: 'all', search: '', sort: 'default', sortDir: 'desc', dayOpen: {}, lastUpdated: new Date(), currentTab: 'portfolio' };
+      let allocationChartInstance = null;
+      let performanceChartInstance = null;
+      let classSplitChartInstance = null;
 
       async function loadHoldings() {
         try {
@@ -1583,6 +3511,56 @@
         setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .25s ease'; setTimeout(() => el.remove(), 250); }, 2400);
       }
 
+      /* ---------------- number: animation ---------------- */
+      function animateNumber(elementId, endValue, isCurrency = true, showSign = false) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        let startValue = 0;
+        const currentText = el.textContent || '';
+        if (currentText) {
+          const cleanText = currentText.replace(/[^0-9.-]/g, '');
+          if (cleanText) startValue = parseFloat(cleanText);
+        }
+
+        if (Math.abs(startValue - endValue) < 0.01) {
+          if (isCurrency) {
+            el.textContent = (showSign && endValue >= 0 ? '+' : '') + fmtINR(endValue);
+          } else {
+            el.textContent = fmtPct(endValue);
+          }
+          return;
+        }
+
+        const duration = 1200; // 1.2s ease animation
+        const startTime = performance.now();
+
+        function update(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+          const val = startValue + (endValue - startValue) * easeProgress;
+
+          if (isCurrency) {
+            el.textContent = (showSign && val >= 0 ? '+' : '') + fmtINR(val);
+          } else {
+            el.textContent = fmtPct(val);
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            if (isCurrency) {
+              el.textContent = (showSign && endValue >= 0 ? '+' : '') + fmtINR(endValue);
+            } else {
+              el.textContent = fmtPct(endValue);
+            }
+          }
+        }
+
+        requestAnimationFrame(update);
+      }
+
       /* ---------------- render: stats ---------------- */
       function renderStats() {
         const list = allHoldings();
@@ -1594,16 +3572,32 @@
         const dayOpenTotal = value - dayPnl;
         const dayPct = dayOpenTotal ? (dayPnl / dayOpenTotal) * 100 : 0;
 
-        document.getElementById('statInvested').textContent = fmtINR(invested);
-        document.getElementById('statValue').textContent = fmtINR(value);
-        document.getElementById('statGain').textContent = (gain >= 0 ? '+' : '-') + fmtINR(Math.abs(gain));
-        document.getElementById('statGain').className = 'value ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : '');
-        document.getElementById('statGainPct').textContent = fmtPct(gainPct) + ' return';
-        document.getElementById('statGainPct').className = 'sub ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : 'neutral');
-        document.getElementById('statDay').textContent = (dayPnl >= 0 ? '+' : '-') + fmtINR(Math.abs(dayPnl));
-        document.getElementById('statDay').className = 'value ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : '');
-        document.getElementById('statDayPct').textContent = fmtPct(dayPct);
-        document.getElementById('statDayPct').className = 'sub ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : 'neutral');
+        animateNumber('statInvested', invested, true, false);
+        animateNumber('statValue', value, true, false);
+
+        animateNumber('statGain', gain, true, true);
+        const gainEl = document.getElementById('statGain');
+        if (gainEl) {
+          gainEl.className = 'delta-amount ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : '');
+        }
+
+        animateNumber('statGainPct', gainPct, false);
+        const gainPctEl = document.getElementById('statGainPct');
+        if (gainPctEl) {
+          gainPctEl.className = 'delta-pct ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : 'neutral');
+        }
+
+        animateNumber('statDay', dayPnl, true, true);
+        const dayEl = document.getElementById('statDay');
+        if (dayEl) {
+          dayEl.className = 'stat-value ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : '');
+        }
+
+        animateNumber('statDayPct', dayPct, false);
+        const dayPctEl = document.getElementById('statDayPct');
+        if (dayPctEl) {
+          dayPctEl.className = 'sub ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : 'neutral');
+        }
 
         const liveResolvedCount = list.filter(h => {
           const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
@@ -1741,6 +3735,9 @@
         renderStats();
         renderTable();
         updateDebugPanel();
+        if (state.currentTab === 'analytics') {
+          renderCharts();
+        }
       }
 
       /* ---------------- refresh (attempt live prices, else re-guess with small simulated drift) ---------------- */
@@ -1852,8 +3849,412 @@
         persist(); renderAll();
       }
 
+      function renderMarkdown(text) {
+        if (!text) return "";
+        let html = text;
+
+        // Escape HTML entities to prevent XSS
+        html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        // Headers: ### Head
+        html = html.replace(/^### (.*?)$/gm, "<h3>$1</h3>");
+        html = html.replace(/^#### (.*?)$/gm, "<h4>$1</h4>");
+
+        // Bold: **text**
+        html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+        // Bullet lists: * item or - item
+        let insideList = false;
+        const lines = html.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].trim();
+          if (line.startsWith('* ') || line.startsWith('- ')) {
+            let itemContent = line.slice(2);
+            if (!insideList) {
+              lines[i] = '<ul><li>' + itemContent + '</li>';
+              insideList = true;
+            } else {
+              lines[i] = '<li>' + itemContent + '</li>';
+            }
+          } else {
+            if (insideList) {
+              lines[i - 1] = lines[i - 1] + '</ul>';
+              insideList = false;
+            }
+          }
+        }
+        if (insideList) {
+          lines[lines.length - 1] = lines[lines.length - 1] + '</ul>';
+        }
+        html = lines.join('\n');
+
+        // Paragraphs: split by double newlines and wrap in <p>, skipping headers and lists
+        html = html.split(/\n\n+/).map(p => {
+          p = p.trim();
+          if (!p) return "";
+          if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<li>')) return p;
+          return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+        }).join('');
+
+        return html;
+      }
+
+      function renderCharts() {
+        const list = allHoldings();
+        if (!list || !list.length) {
+          if (allocationChartInstance) { allocationChartInstance.destroy(); allocationChartInstance = null; }
+          if (performanceChartInstance) { performanceChartInstance.destroy(); performanceChartInstance = null; }
+          if (classSplitChartInstance) { classSplitChartInstance.destroy(); classSplitChartInstance = null; }
+          return;
+        }
+
+        const totalValue = list.reduce((a, b) => a + b.value, 0);
+
+        // Compute Diversification Scores & Summary Info
+        const counts = list.length;
+        document.getElementById('analyticHoldingsCount').textContent = counts;
+
+        // Find largest holding & max concentration
+        let maxWeight = 0;
+        let maxAssetSymbol = 'N/A';
+        list.forEach(h => {
+          const w = (h.value / totalValue) * 100;
+          if (w > maxWeight) {
+            maxWeight = w;
+            maxAssetSymbol = h.symbol;
+          }
+        });
+        document.getElementById('analyticMaxWeight').textContent = maxWeight.toFixed(2) + '%';
+        document.getElementById('analyticMaxAsset').textContent = `In largest asset: ${maxAssetSymbol}`;
+
+        // Calculate a score: base 100, subtract weight concentration, add points for counts
+        let divScore = Math.max(10, Math.round(100 - (maxWeight * 1.2) + Math.min(20, counts * 3.5)));
+        divScore = Math.min(100, divScore);
+
+        const scoreEl = document.getElementById('analyticDivScore');
+        const statusEl = document.getElementById('analyticDivStatus');
+        if (scoreEl && statusEl) {
+          scoreEl.textContent = `${divScore}/100`;
+          if (divScore >= 75) {
+            scoreEl.style.color = '#10B981';
+            statusEl.textContent = 'Optimal Diversification';
+          } else if (divScore >= 50) {
+            scoreEl.style.color = '#F59E0B';
+            statusEl.textContent = 'Moderate Concentration';
+          } else {
+            scoreEl.style.color = '#EF4444';
+            statusEl.textContent = 'High Concentration Risk';
+          }
+        }
+
+        // Fill Portfolio Weightings List
+        const listContainer = document.getElementById('weightingsListContainer');
+        if (listContainer) {
+          listContainer.innerHTML = '';
+          const sortedByWeight = [...list].sort((a, b) => b.value - a.value);
+          sortedByWeight.forEach(h => {
+            const w = (h.value / totalValue) * 100;
+            const item = document.createElement('div');
+            item.className = 'weight-item';
+            item.innerHTML = `
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span style="font-weight: 600; color: #FFF;">${h.symbol} <span style="font-weight: normal; color: var(--text-dim); font-size:11px;">(${h.assetClass})</span></span>
+                <span style="color: var(--text-dim);">${w.toFixed(1)}% &middot; ₹${Math.round(h.value).toLocaleString('en-IN')}</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
+                <div style="width: ${w}%; height: 100%; background: linear-gradient(90deg, #8B5CF6 0%, #2DD4BF 100%); border-radius: 4px;"></div>
+              </div>
+            `;
+            listContainer.appendChild(item);
+          });
+        }
+
+        const colors = [
+          '#2DD4BF', '#3B82F6', '#8B5CF6', '#EC4899',
+          '#F59E0B', '#10B981', '#EF4444', '#6366F1'
+        ];
+
+        // 1. Asset Weights Chart (Doughnut)
+        const allocCtx = document.getElementById('allocationChart');
+        if (allocCtx) {
+          if (allocationChartInstance) allocationChartInstance.destroy();
+          const labels = list.map(h => h.symbol);
+          const data = list.map(h => h.value);
+
+          allocationChartInstance = new Chart(allocCtx, {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+                borderColor: '#181C21',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: { color: '#98A0AC', font: { family: 'Inter', size: 11 } }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const val = context.raw;
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const pct = ((val / total) * 100).toFixed(1);
+                      return ` ₹${val.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${pct}%)`;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        // 2. Asset Class Split Chart (Pie)
+        const classCtx = document.getElementById('classSplitChart');
+        if (classCtx) {
+          if (classSplitChartInstance) classSplitChartInstance.destroy();
+
+          const classGroups = {};
+          list.forEach(h => {
+            const cls = h.assetClass || 'Equity';
+            classGroups[cls] = (classGroups[cls] || 0) + h.value;
+          });
+
+          const classLabels = Object.keys(classGroups);
+          const classData = Object.values(classGroups);
+          const classColors = ['#8B5CF6', '#3B82F6', '#EC4899', '#2DD4BF', '#F59E0B'];
+
+          classSplitChartInstance = new Chart(classCtx, {
+            type: 'pie',
+            data: {
+              labels: classLabels,
+              datasets: [{
+                data: classData,
+                backgroundColor: classColors.slice(0, classLabels.length),
+                borderColor: '#181C21',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: { color: '#98A0AC', font: { family: 'Inter', size: 11 } }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const val = context.raw;
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const pct = ((val / total) * 100).toFixed(1);
+                      return ` ₹${val.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${pct}%)`;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        // 3. Holding Performance Chart (Bar)
+        const perfCtx = document.getElementById('performanceChart');
+        if (perfCtx) {
+          if (performanceChartInstance) performanceChartInstance.destroy();
+          const labels = list.map(h => h.symbol);
+          const costData = list.map(h => h.amount);
+          const valueData = list.map(h => h.value);
+
+          performanceChartInstance = new Chart(perfCtx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Purchase Cost',
+                  data: costData,
+                  backgroundColor: '#282D34',
+                  borderColor: '#3E434F',
+                  borderWidth: 1
+                },
+                {
+                  label: 'Current Value',
+                  data: valueData,
+                  backgroundColor: '#2DD4BF',
+                  borderColor: '#22B7A4',
+                  borderWidth: 1
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                  ticks: { color: '#98A0AC', font: { family: 'Inter', size: 10 } }
+                },
+                y: {
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                  ticks: {
+                    color: '#98A0AC',
+                    font: { family: 'Inter', size: 10 },
+                    callback: function (value) { return '₹' + value.toLocaleString('en-IN'); }
+                  }
+                }
+              },
+              plugins: {
+                legend: {
+                  position: 'top',
+                  labels: { color: '#98A0AC', font: { family: 'Inter', size: 11 } }
+                }
+              }
+            }
+          });
+        }
+      }
+
+      function switchTab(tabId) {
+        state.currentTab = tabId;
+
+        document.getElementById('tabBtnPortfolio').classList.toggle('active', tabId === 'portfolio');
+        document.getElementById('tabBtnAnalytics').classList.toggle('active', tabId === 'analytics');
+        document.getElementById('tabBtnAi').classList.toggle('active', tabId === 'ai');
+
+        document.getElementById('viewPortfolio').classList.toggle('active', tabId === 'portfolio');
+        document.getElementById('viewAnalytics').classList.toggle('active', tabId === 'analytics');
+        document.getElementById('viewAi').classList.toggle('active', tabId === 'ai');
+
+        if (tabId === 'analytics') {
+          setTimeout(renderCharts, 50);
+        } else if (tabId === 'ai') {
+          const chatBox = document.getElementById('aiMessages');
+          if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+          const input = document.getElementById('aiInput');
+          if (input) input.focus();
+        }
+      }
+
+      window.sendAiSuggestion = function (text) {
+        const input = document.getElementById('aiInput');
+        if (input) {
+          input.value = text;
+          sendAiMessage();
+        }
+      };
+
+      window.sendAiMessage = async function () {
+        const input = document.getElementById('aiInput');
+        if (!input) return;
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        input.value = '';
+
+        const chatBox = document.getElementById('aiMessages');
+        const userMsg = document.createElement('div');
+        userMsg.className = 'ai-message user';
+        userMsg.textContent = msg;
+        chatBox.appendChild(userMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        const loadingMsg = document.createElement('div');
+        loadingMsg.className = 'ai-message assistant loading';
+        loadingMsg.innerHTML = '<span style="opacity: 0.6;">Analyzing portfolio data...</span>';
+        chatBox.appendChild(loadingMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+          const res = await fetch('/api/ask-ai', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg, holdings: state.holdings })
+          });
+          const data = await res.json();
+          loadingMsg.remove();
+
+          if (!res.ok) {
+            const errMsg = document.createElement('div');
+            errMsg.className = 'ai-message system';
+            errMsg.textContent = data.error || 'Server returned an error.';
+            chatBox.appendChild(errMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return;
+          }
+
+          const statusBadge = document.getElementById('aiStatusBadge');
+          if (statusBadge) {
+            if (data.mode === 'ai') {
+              statusBadge.textContent = 'Live AI Mode';
+              statusBadge.className = 'ai-badge-status live';
+              statusBadge.title = 'Powered by Gemini API';
+            } else {
+              statusBadge.textContent = 'Local Analysis Mode';
+              statusBadge.className = 'ai-badge-status local';
+              statusBadge.title = 'Running rules-based analyzer. Set GEMINI_API_KEY in .env for live AI.';
+            }
+          }
+
+          const botMsg = document.createElement('div');
+          botMsg.className = 'ai-message assistant';
+          botMsg.innerHTML = renderMarkdown(data.response);
+          chatBox.appendChild(botMsg);
+
+          if (data.warning && !state.hasSeenWarning) {
+            state.hasSeenWarning = true;
+            const systemNote = document.createElement('div');
+            systemNote.className = 'ai-message system';
+            systemNote.innerHTML = '💡 <strong>Server Info:</strong> Running in Local Mode. To unlock full AI investment intelligence, configure a Gemini API key in your server\'s .env file.';
+            chatBox.appendChild(systemNote);
+          }
+
+          chatBox.scrollTop = chatBox.scrollHeight;
+        } catch (e) {
+          loadingMsg.remove();
+          const errMsg = document.createElement('div');
+          errMsg.className = 'ai-message system';
+          errMsg.textContent = 'Failed to connect to backend server. Make sure app.py is running.';
+          chatBox.appendChild(errMsg);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      };
+
       /* ---------------- wiring ---------------- */
       function wire() {
+        document.getElementById('tabBtnPortfolio').addEventListener('click', () => switchTab('portfolio'));
+        document.getElementById('tabBtnAnalytics').addEventListener('click', () => switchTab('analytics'));
+        document.getElementById('tabBtnAi').addEventListener('click', () => switchTab('ai'));
+
+        // Mobile Sidebar toggler
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        if (mobileMenuBtn && sidebar) {
+          mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+          });
+
+          document.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
+              sidebar.classList.remove('open');
+            }
+          });
+        }
+
+        // Auto-close sidebar on mobile tab clicks
+        document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+          item.addEventListener('click', () => {
+            if (sidebar) sidebar.classList.remove('open');
+          });
+        });
+
         document.getElementById('addHoldingBtn').addEventListener('click', () => openModal('add'));
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
@@ -1946,7 +4347,7 @@
         if (authMode === 'signup') {
           if (password.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
           if (password !== confirmPw) { showAuthError('Passwords do not match.'); return; }
-          
+
           try {
             const res = await fetch('/api/register', {
               method: 'POST',
@@ -1978,8 +4379,10 @@
       async function enterDashboard(email) {
         currentUser = { email };
         document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('dashboardScreen').style.display = 'block';
+        document.getElementById('dashboardScreen').style.display = 'flex';
         document.getElementById('userEmailLabel').textContent = email;
+        const avatar = document.getElementById('userAvatar');
+        if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
 
         // Render from database immediately so the user can see their data
         await loadHoldings();
@@ -1990,6 +4393,7 @@
         refreshLivePricesForHoldings().then(() => {
           applyLivePricesToHoldings();
           computeDayOpen();
+          persist();
           renderAll();
           tickUpdatedLabel();
         }).catch(err => {
@@ -2016,6 +4420,8 @@
         document.getElementById('tabSignup').addEventListener('click', () => setAuthMode('signup'));
         document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
         document.getElementById('signOutBtn').addEventListener('click', signOut);
+        const sidebarSignOutBtn = document.getElementById('sidebarSignOutBtn');
+        if (sidebarSignOutBtn) sidebarSignOutBtn.addEventListener('click', signOut);
         wireAuthSwitch();
       }
 
@@ -2093,11 +4499,290 @@
         // keyboard accessibility: Enter/Space already work via native <button>
       }
 
+      /* ---------------- LogoLoop Vanilla Component Initialization ---------------- */
+      function initLogoLoop(containerId, options = {}) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const speed = options.speed || 120;
+        const direction = options.direction || 'left';
+        const logoHeight = options.logoHeight || 32;
+        const gap = options.gap || 40;
+        const fadeOut = options.fadeOut || false;
+        const fadeOutColor = options.fadeOutColor || '#04040a';
+        const pauseOnHover = options.pauseOnHover !== false;
+        const scaleOnHover = options.scaleOnHover || false;
+
+        container.classList.add('logoloop');
+        if (fadeOut) {
+          container.classList.add('logoloop--fade');
+          container.style.setProperty('--logoloop-fadeColor', fadeOutColor);
+        }
+        if (scaleOnHover) {
+          container.classList.add('logoloop--scale-hover');
+        }
+        container.style.setProperty('--logoloop-gap', `${gap}px`);
+        container.style.setProperty('--logoloop-logoHeight', `${logoHeight}px`);
+
+        const track = container.querySelector('.logoloop__track');
+        const sequence = container.querySelector('.logoloop__list');
+        if (!track || !sequence) return;
+
+        // Duplicate sequence to fill track width dynamically
+        const containerWidth = container.clientWidth || window.innerWidth;
+        const seqWidth = sequence.getBoundingClientRect().width || 1200;
+        const copiesNeeded = Math.max(2, Math.ceil(containerWidth / seqWidth) + 2);
+
+        for (let i = 1; i < copiesNeeded; i++) {
+          const clone = sequence.cloneNode(true);
+          clone.setAttribute('aria-hidden', 'true');
+          track.appendChild(clone);
+        }
+
+        let offset = 0;
+        let isHovered = false;
+        let raf = null;
+        let lastTime = null;
+
+        if (pauseOnHover) {
+          container.addEventListener('mouseenter', () => isHovered = true);
+          container.addEventListener('mouseleave', () => isHovered = false);
+        }
+
+        function animate(timestamp) {
+          if (!lastTime) lastTime = timestamp;
+          const dt = Math.max(0, (timestamp - lastTime) / 1000);
+          lastTime = timestamp;
+
+          const targetSpeed = isHovered ? 0 : speed;
+          offset += targetSpeed * dt;
+
+          if (offset >= seqWidth) {
+            offset %= seqWidth;
+          } else if (offset < 0) {
+            offset = seqWidth + (offset % seqWidth);
+          }
+
+          track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+          raf = requestAnimationFrame(animate);
+        }
+
+        raf = requestAnimationFrame(animate);
+      }
+
+      /* ---------------- DarkVeil WebGL CPPN Shader Initialization ---------------- */
+      function initDarkVeil(canvasId, options = {}) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) return;
+
+        const vsSource = `
+          attribute vec2 position;
+          void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+          }
+        `;
+
+        const fsSource = `
+          precision lowp float;
+          uniform vec2 uResolution;
+          uniform float uTime;
+          uniform float uHueShift;
+          uniform float uNoise;
+          uniform float uScan;
+          uniform float uScanFreq;
+          uniform float uWarp;
+
+          vec4 buf[8];
+          float rand(vec2 c) {
+            return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453);
+          }
+
+          mat3 rgb2yiq = mat3(0.299, 0.587, 0.114, 0.596, -0.274, -0.322, 0.211, -0.523, 0.312);
+          mat3 yiq2rgb = mat3(1.0, 0.956, 0.621, 1.0, -0.272, -0.647, 1.0, -1.106, 1.703);
+
+          vec3 hueShiftRGB(vec3 col, float deg) {
+            vec3 yiq = rgb2yiq * col;
+            float rad = radians(deg);
+            float cosh = cos(rad), sinh = sin(rad);
+            vec3 yiqShift = vec3(yiq.x, yiq.y * cosh - yiq.z * sinh, yiq.y * sinh + yiq.z * cosh);
+            return clamp(yiq2rgb * yiqShift, 0.0, 1.0);
+          }
+
+          vec4 sigmoid(vec4 x) {
+            return 1.0 / (1.0 + exp(-x));
+          }
+
+          vec4 cppn_fn(vec2 coordinate, float in0, float in1, float in2) {
+            buf[6] = vec4(coordinate.x, coordinate.y, 0.3948333106474662 + in0, 0.36 + in1);
+            buf[7] = vec4(0.14 + in2, sqrt(coordinate.x * coordinate.x + coordinate.y * coordinate.y), 0.0, 0.0);
+            buf[0] = mat4(vec4(6.5404263, -3.6126034, 0.7590882, -1.13613), vec4(2.4582713, 3.1660357, 1.2219609, 0.06276096), vec4(-5.478085, -6.159632, 1.8701609, -4.7742867), vec4(6.039214, -5.542865, -0.90925294, 3.251348)) * buf[6] + mat4(vec4(0.8473259, -5.722911, 3.975766, 1.6522468), vec4(-0.24321538, 0.5839259, -1.7661959, -5.350116), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0)) * buf[7] + vec4(0.21808943, 1.1243913, -1.7969975, 5.0294676);
+            buf[1] = mat4(vec4(-3.3522482, -6.0612736, 0.55641043, -4.4719114), vec4(0.8631464, 1.7432913, 5.643898, 1.6106541), vec4(2.4941394, -3.5012043, 1.7184316, 6.357333), vec4(3.310376, 8.209261, 1.1355612, -1.165539)) * buf[6] + mat4(vec4(5.24046, -13.034365, 0.009859298, 15.870829), vec4(2.987511, 3.129433, -0.89023495, -1.6822904), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0)) * buf[7] + vec4(-5.9457836, -6.573602, -0.8812491, 1.5436668);
+            buf[0] = sigmoid(buf[0]); buf[1] = sigmoid(buf[1]);
+            buf[2] = mat4(vec4(-15.219568, 8.095543, -2.429353, -1.9381982), vec4(-5.951362, 4.3115187, 2.6393783, 1.274315), vec4(-7.3145227, 6.7297835, 5.2473326, 5.9411426), vec4(5.0796127, 8.979051, -1.7278991, -1.158976)) * buf[6] + mat4(vec4(-11.967154, -11.608155, 6.1486754, 11.237008), vec4(2.124141, -6.263192, -1.7050359, -0.7021966), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0)) * buf[7] + vec4(-4.17164, -3.2281182, -4.576417, -3.6401186);
+            buf[3] = mat4(vec4(3.1832156, -13.738922, 1.879223, 3.233465), vec4(0.64300746, 12.768129, 1.9141049, 0.50990224), vec4(-0.049295485, 4.4807224, 1.4733979, 1.801449), vec4(5.0039253, 13.000481, 3.3991797, -4.5561905)) * buf[6] + mat4(vec4(-0.1285731, 7.720628, -3.1425676, 4.742367), vec4(0.6393625, 3.714393, -0.8108378, -0.39174938), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0)) * buf[7] + vec4(-1.1811101, -21.621881, 0.7851888, 1.2329718);
+            buf[2] = sigmoid(buf[2]); buf[3] = sigmoid(buf[3]);
+            buf[4] = mat4(vec4(5.214916, -7.183024, 2.7228765, 2.6592617), vec4(-5.601878, -25.3591, 4.067988, 0.4602802), vec4(-10.57759, 24.286327, 21.102104, 37.546658), vec4(4.3024497, -1.9625226, 2.3458803, -1.372816)) * buf[0] + mat4(vec4(-17.6526, -10.507558, 2.2587414, 12.462782), vec4(6.265566, -502.75443, -12.642513, 0.9112289), vec4(-10.983244, 20.741234, -9.701768, -0.7635988), vec4(5.383626, 1.4819539, -4.1911616, -4.8444734)) * buf[1] + mat4(vec4(12.785233, -16.345072, -0.39901125, 1.7955981), vec4(-30.48365, -1.8345358, 1.4542528, -1.1118771), vec4(19.872723, -7.337935, -42.941723, -98.52709), vec4(8.337645, -2.7312303, -2.2927687, -36.142323)) * buf[2] + mat4(vec4(-16.298317, 3.5471997, -0.44300047, -9.444417), vec4(57.5077, -35.609753, 16.163465, -4.1534753), vec4(-0.07470326, -3.8656476, -7.0901804, 3.1523974), vec4(-12.559385, -7.077619, 1.490437, -0.8211543)) * buf[3] + vec4(-7.67914, 15.927437, 1.3207729, -1.6686112);
+            buf[5] = mat4(vec4(-1.4109162, -0.372762, -3.770383, -21.367174), vec4(-6.2103205, -9.35908, 0.92529047, 8.82561), vec4(11.460242, -22.348068, 13.625772, -18.693201), vec4(-0.3429052, -3.9905605, -2.4626114, -0.45033523)) * buf[0] + mat4(vec4(7.3481627, -4.3661838, -6.3037653, -3.868115), vec4(1.5462853, 6.5488915, 1.9701879, -0.58291394), vec4(6.5858274, -2.2180402, 3.7127688, -1.3730392), vec4(-5.7973905, 10.134961, -2.3395722, -5.965605)) * buf[1] + mat4(vec4(-2.5132585, -6.6685553, -1.4029363, -0.16285264), vec4(-0.37908727, 0.53738135, 4.389061, -1.3024765), vec4(-0.70647055, 2.0111287, -5.1659346, -3.728635), vec4(-13.562562, 10.487719, -0.9173751, -2.6487076)) * buf[2] + mat4(vec4(-8.645013, 6.5546675, -6.3944063, -5.5933375), vec4(-0.57783127, -1.077275, 36.91025, 5.736769), vec4(14.283112, 3.7146652, 7.1452246, -4.5958776), vec4(2.7192075, 3.6021907, -4.366337, -2.3653464)) * buf[3] + vec4(-5.9000807, -4.329569, 1.2427121, 8.59503);
+            buf[4] = sigmoid(buf[4]); buf[5] = sigmoid(buf[5]);
+            buf[6] = mat4(vec4(-1.61102, 0.7970257, 1.4675229, 0.20917463), vec4(-28.793737, -7.1390953, 1.5025433, 4.656581), vec4(-10.94861, 39.66238, 0.74318546, -10.095605), vec4(-0.7229728, -1.5483948, 0.7301322, 2.1687684)) * buf[0] + mat4(vec4(3.2547753, 21.489103,-1.0194173,-3.3100595), vec4(-3.7316632,-3.3792162,-7.223193,-0.23685838), vec4(13.1804495, 0.7916005, 5.338587, 5.687114), vec4(-4.167605,-17.798311,-6.815736,-1.6451967)) * buf[1] + mat4(vec4(0.604885,-7.800309,-7.213122,-2.741014), vec4(-3.522382,-0.12359311,-0.5258442,0.43852118), vec4(9.6752825,-22.853785,2.062431,0.099892326), vec4(-4.3196306,-17.730087,2.5184598,5.30267)) * buf[2] + mat4(vec4(-6.545563,-15.790176,-6.0438633,-5.415399), vec4(-43.591583,28.551912,-16.00161,18.84728), vec4(4.212382,8.394307,3.0958717,8.657522), vec4(-5.0237565,-4.450633,-4.4768,-5.5010443)) * buf[3] + mat4(vec4(1.6985557,-67.05806,6.897715,1.9004834), vec4(1.8680354,2.3915145,2.5231109,4.081538), vec4(11.158006,1.7294737,2.0738268,7.386411), vec4(-4.256034,-306.24686,8.258898,-17.132736)) * buf[4] + mat4(vec4(1.6889864,-4.5852966,3.8534803,-6.3482175), vec4(1.3543309,-1.2640043,9.932754,2.9079645), vec4(-5.2770967,0.07150358,-0.13962056,3.3269649), vec4(28.34703,-4.918278,6.1044083,4.085355)) * buf[5] + vec4(6.6818056,12.522166,-3.7075126,-4.104386);
+            buf[7] = mat4(vec4(-8.265602,-4.7027016,5.098234,0.7509808), vec4(8.6507845,-17.15949,16.51939,-8.884479), vec4(-4.036479,-2.3946867,-2.6055532,-1.9866527), vec4(-2.2167742,-1.8135649,-5.9759874,4.8846445)) * buf[0] + mat4(vec4(6.7790847,3.5076547,-2.8191125,-2.7028968), vec4(-5.743024,-0.27844876,1.4958696,-5.0517144), vec4(13.122226,15.735168,-2.9397483,-4.101023), vec4(-14.375265,-5.030483,-6.2599335,2.9848232)) * buf[1] + mat4(vec4(4.0950394,-0.94011575,-5.674733,4.755022), vec4(4.3809423,4.8310084,1.7425908,-3.437416), vec4(2.117492,0.16342592,-104.56341,16.949184), vec4(-5.22543,-2.994248,3.8350096,-1.9364246)) * buf[2] + mat4(vec4(-5.900337,1.7946124,-13.604192,-3.8060522), vec4(6.6583457,31.911177,25.164474,91.81147), vec4(11.840538,4.1503043,-0.7314397,6.768467), vec4(-6.3967767,4.034772,6.1714606,-0.32874924)) * buf[3] + mat4(vec4(3.4992442,-196.91893,-8.923708,2.8142626), vec4(3.4806502,-3.1846354,5.1725626,5.1804223), vec4(-2.4009497,15.585794,1.2863957,2.0252278), vec4(-71.25271,-62.441242,-8.138444,0.50670296)) * buf[4] + mat4(vec4(-12.291733,-11.176166,-7.3474145,4.390294), vec4(10.805477,5.6337385,-0.9385842,-4.7348723), vec4(-12.869276,-7.039391,5.3029537,7.5436664), vec4(1.4593618,8.91898,3.5101583,5.840625)) * buf[5] + vec4(2.2415268,-6.705987,-0.98861027,-2.117676);
+            buf[6] = sigmoid(buf[6]); buf[7] = sigmoid(buf[7]);
+            buf[0] = mat4(vec4(1.6794263,1.3817469,2.9625452,0.0), vec4(-1.8834411,-1.4806935,-3.5924516,0.0), vec4(-1.3279216,-1.0918057,-2.3124623,0.0), vec4(0.2662234,0.23235129,0.44178495,0.0)) * buf[0] + mat4(vec4(-0.6299101,-0.5945583,-0.9125601,0.0), vec4(0.17828953,0.18300213,0.18182953,0.0), vec4(-2.96544,-2.5819945,-4.9001055,0.0), vec4(1.4195864,1.1868085,2.5176322,0.0)) * buf[1] + mat4(vec4(-1.2584374,-1.0552157,-2.1688404,0.0), vec4(-0.7200217,-0.52666044,-1.438251,0.0), vec4(0.15345335,0.15196142,0.272854,0.0), vec4(0.945728,0.8861938,1.2766753,0.0)) * buf[2] + mat4(vec4(-2.4218085,-1.968602,-4.35166,0.0), vec4(-22.683098,-18.0544,-41.954372,0.0), vec4(0.63792,0.5470648,1.1078634,0.0), vec4(-1.5489894,-1.3075932,-2.6444845,0.0)) * buf[3] + mat4(vec4(-0.49252132,-0.39877754,-0.91366625,0.0), vec4(0.95609266,0.7923952,1.640221,0.0), vec4(0.30616966,0.15693925,0.8639857,0.0), vec4(1.1825981,0.94504964,2.176963,0.0)) * buf[4] + mat4(vec4(0.35446745,0.3293795,0.59547555,0.0), vec4(-0.58784515,-0.48177817,-1.0614829,0.0), vec4(2.5271258,1.9991658,4.6846647,0.0), vec4(0.13042648,0.08864098,0.30187556,0.0)) * buf[5] + mat4(vec4(-1.7718065,-1.4033192,-3.3355875,0.0), vec4(3.1664357,2.638297,5.378702,0.0), vec4(-3.1724713,-2.6107926,-5.549295,0.0), vec4(-2.851368,-2.249092,-5.3013067,0.0)) * buf[6] + mat4(vec4(1.5203838,1.2212278,2.8404984,0.0), vec4(1.5210563,1.2651345,2.683903,0.0), vec4(2.9789467,2.4364579,5.2347264,0.0), vec4(2.2270417,1.8825914,3.8028636,0.0)) * buf[7] + vec4(-1.5468478,-3.6171484,0.24762098,0.0);
+            buf[0] = sigmoid(buf[0]);
+            return vec4(buf[0].x, buf[0].y, buf[0].z, 1.0);
+          }
+
+          void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+            vec2 uv = fragCoord / uResolution.xy * 2.0 - 1.0;
+            uv.x *= uResolution.x / uResolution.y;
+            uv.y *= -1.0;
+            uv += uWarp * vec2(sin(uv.y * 6.283 + uTime * 0.5), cos(uv.x * 6.283 + uTime * 0.5)) * 0.05;
+            fragColor = cppn_fn(uv, 0.1 * sin(0.3 * uTime), 0.1 * sin(0.69 * uTime), 0.1 * sin(0.44 * uTime));
+          }
+
+          void main() {
+            vec4 col;
+            mainImage(col, gl_FragCoord.xy);
+            col.rgb = hueShiftRGB(col.rgb, uHueShift);
+            float scanline_val = sin(gl_FragCoord.y * uScanFreq) * 0.5 + 0.5;
+            col.rgb *= 1.0 - (scanline_val * scanline_val) * uScan;
+            col.rgb += (rand(gl_FragCoord.xy + uTime) - 0.5) * uNoise;
+            gl_FragColor = vec4(clamp(col.rgb, 0.0, 1.0), 1.0);
+          }
+        `;
+
+        function createShader(gl, type, source) {
+          const shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+          }
+          return shader;
+        }
+
+        const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        if (!vs || !fs) return;
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          console.error('Program linking error:', gl.getProgramInfoLog(program));
+          return;
+        }
+
+        const positionAttributeLocation = gl.getAttribLocation(program, 'position');
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        const positions = new Float32Array([
+          -1.0, -1.0,
+          3.0, -1.0,
+          -1.0, 3.0,
+        ]);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+        const uTimeLoc = gl.getUniformLocation(program, 'uTime');
+        const uResolutionLoc = gl.getUniformLocation(program, 'uResolution');
+        const uHueShiftLoc = gl.getUniformLocation(program, 'uHueShift');
+        const uNoiseLoc = gl.getUniformLocation(program, 'uNoise');
+        const uScanLoc = gl.getUniformLocation(program, 'uScan');
+        const uScanFreqLoc = gl.getUniformLocation(program, 'uScanFreq');
+        const uWarpLoc = gl.getUniformLocation(program, 'uWarp');
+
+        const start = performance.now();
+        let raf = null;
+
+        function resize() {
+          const parent = canvas.parentElement;
+          if (!parent) return;
+          const dpr = Math.min(window.devicePixelRatio, 2);
+          const w = parent.clientWidth;
+          const h = parent.clientHeight;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function render(now) {
+          const time = ((now - start) / 1000) * (options.speed !== undefined ? options.speed : 0.5);
+
+          gl.clearColor(0, 0, 0, 0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+
+          gl.useProgram(program);
+          gl.enableVertexAttribArray(positionAttributeLocation);
+          gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+          gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+          gl.uniform2f(uResolutionLoc, canvas.width, canvas.height);
+          gl.uniform1f(uTimeLoc, time);
+          gl.uniform1f(uHueShiftLoc, options.hueShift || 0.0);
+          gl.uniform1f(uNoiseLoc, options.noiseIntensity || 0.0);
+          gl.uniform1f(uScanLoc, options.scanlineIntensity || 0.0);
+          gl.uniform1f(uScanFreqLoc, options.scanlineFrequency || 0.0);
+          gl.uniform1f(uWarpLoc, options.warpAmount || 0.0);
+
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+          raf = requestAnimationFrame(render);
+        }
+
+        raf = requestAnimationFrame(render);
+      }
+
       async function init() {
         try {
           wireAuth();
           wire();
           initDock();
+
+          // Initialize Logo Loop with deceleration on hover, custom gap, fade, and scale animations
+          initLogoLoop('financialLogoLoop', {
+            speed: 100,
+            direction: 'left',
+            logoHeight: 32,
+            gap: 40,
+            fadeOut: true,
+            fadeOutColor: '#04040a',
+            pauseOnHover: true,
+            scaleOnHover: true
+          });
+
+          // Initialize DarkVeil WebGL shader background loop with custom speed and resolution
+          initDarkVeil('darkVeilCanvas', {
+            hueShift: 240,
+            noiseIntensity: 0.015,
+            scanlineIntensity: 0.1,
+            scanlineFrequency: 2.0,
+            speed: 0.2,
+            warpAmount: 0.3
+          });
+
+          // Setup dashboard profile dropdown trigger
+          const profileTriggerBtn = document.getElementById('profileTriggerBtn');
+          const profileDropdownWrapper = document.getElementById('profileDropdownWrapper');
+          if (profileTriggerBtn && profileDropdownWrapper) {
+            profileTriggerBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              profileDropdownWrapper.classList.toggle('active');
+            });
+            document.addEventListener('click', (e) => {
+              if (!profileDropdownWrapper.contains(e.target)) {
+                profileDropdownWrapper.classList.remove('active');
+              }
+            });
+          }
+
           setInterval(tickUpdatedLabel, 5000);
           setInterval(refreshPrices, 60000);
 
