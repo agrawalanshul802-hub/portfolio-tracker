@@ -382,14 +382,14 @@ def run_local_analysis(message, holdings):
     largest_holding_val = 0
 
     for h in holdings:
-        qty = float(h.get('qty', 0))
-        buy_price = float(h.get('buyPrice', 0))
-        curr_price = float(h.get('price', 0))
+        qty = float(h.get('qty', 0) or 0)
+        buy_price = float(h.get('buyPrice', 0) or 0)
+        curr_price = float(h.get('price', 0) or 0)
         cost = qty * buy_price
         val = qty * curr_price
         gain = val - cost
         gain_pct = (gain / cost * 100) if cost > 0 else 0
-        asset_class = h.get('assetClass', 'Equity')
+        asset_class = h.get('assetClass', 'Equity') or 'Equity'
 
         total_cost += cost
         total_value += val
@@ -398,15 +398,15 @@ def run_local_analysis(message, holdings):
         holdings_by_class[asset_class] = holdings_by_class.get(asset_class, 0) + val
 
         # Gainer/Loser tracking
-        if gain_pct > highest_gainer_pct:
+        if highest_gainer is None or gain_pct > highest_gainer_pct:
             highest_gainer_pct = gain_pct
             highest_gainer = h
-        if gain_pct < highest_loser_pct:
+        if highest_loser is None or gain_pct < highest_loser_pct:
             highest_loser_pct = gain_pct
             highest_loser = h
 
         # Largest holding tracking
-        if val > largest_holding_val:
+        if largest_holding is None or val >= largest_holding_val:
             largest_holding_val = val
             largest_holding = h
 
@@ -504,7 +504,7 @@ def ask_ai():
 
     data = request.get_json() or {}
     message = data.get('message', '').strip()
-    holdings = data.get('holdings', [])
+    holdings = data.get('holdings', []) or []
 
     if not message:
         return jsonify({'error': 'Message is required'}), 400
@@ -517,16 +517,19 @@ def ask_ai():
             # Format holdings context
             holdings_summary = []
             for h in holdings:
+                qty = float(h.get('qty', 0) or 0)
+                buy_price = float(h.get('buyPrice', 0) or 0)
+                price = float(h.get('price', 0) or 0)
                 holdings_summary.append({
                     'symbol': h.get('symbol'),
                     'exchange': h.get('exchange'),
                     'name': h.get('name'),
-                    'assetClass': h.get('assetClass'),
-                    'qty': float(h.get('qty', 0)),
-                    'buyPrice': float(h.get('buyPrice', 0)),
-                    'price': float(h.get('price', 0)),
-                    'value': float(h.get('qty', 0)) * float(h.get('price', 0)),
-                    'gain': (float(h.get('price', 0)) - float(h.get('buyPrice', 0))) * float(h.get('qty', 0))
+                    'assetClass': h.get('assetClass') or 'Equity',
+                    'qty': qty,
+                    'buyPrice': buy_price,
+                    'price': price,
+                    'value': qty * price,
+                    'gain': (price - buy_price) * qty
                 })
             
             prompt = f"""You are an AI investment analyst for the Portfolio Tracker application.
