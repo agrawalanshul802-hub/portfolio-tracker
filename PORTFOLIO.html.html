@@ -4177,7 +4177,16 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: msg, holdings: state.holdings })
           });
-          const data = await res.json();
+
+          let data;
+          const contentType = res.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            data = await res.json();
+          } else {
+            const errText = await res.text();
+            throw new Error(errText.substring(0, 150) || 'Invalid server response.');
+          }
+
           loadingMsg.remove();
 
           if (!res.ok) {
@@ -4220,7 +4229,7 @@
           loadingMsg.remove();
           const errMsg = document.createElement('div');
           errMsg.className = 'ai-message system';
-          errMsg.textContent = 'Failed to connect to backend server. Make sure app.py is running.';
+          errMsg.textContent = `Failed to connect: ${e.message}`;
           chatBox.appendChild(errMsg);
           chatBox.scrollTop = chatBox.scrollHeight;
         }
