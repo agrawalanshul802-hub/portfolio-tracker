@@ -567,14 +567,16 @@ Provide a detailed response in clean Markdown. Keep paragraphs short. Do not pro
                 })
         except Exception as e:
             # On error, fall back to rules-based analyzer with warning
-            print(f"Gemini API Error: {str(e)}")
+            gemini_err = str(e)
+            print(f"Gemini API Error: {gemini_err}")
 
     # Rules-based local analyzer
     res_text = run_local_analysis(message, holdings)
     return jsonify({
         'response': res_text,
         'mode': 'local',
-        'warning': 'Running in Local Analysis mode. Add a valid GEMINI_API_KEY to your .env file to enable full AI capabilities.'
+        'warning': 'Running in Local Analysis mode. Add a valid GEMINI_API_KEY to your .env file to enable full AI capabilities.',
+        'gemini_error': gemini_err if 'gemini_err' in locals() else None
     })
 
 if __name__ == '__main__':
