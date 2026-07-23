@@ -510,7 +510,11 @@ def ask_ai():
         return jsonify({'error': 'Message is required'}), 400
 
     api_key = os.getenv('GEMINI_API_KEY')
-    
+    if api_key:
+        api_key = api_key.strip().replace('"', '').replace("'", "")
+        if api_key.lower() in ('none', 'null', 'false', ''):
+            api_key = None
+            
     # If API key is present, attempt live query to Gemini API
     if api_key:
         try:
