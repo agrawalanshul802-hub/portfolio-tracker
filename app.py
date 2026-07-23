@@ -45,6 +45,8 @@ def init_db():
         ''')
         conn.commit()
 
+init_db()
+
 def hash_password(password):
     salt = os.urandom(16)
     pw_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
