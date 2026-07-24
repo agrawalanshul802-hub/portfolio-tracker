@@ -4201,13 +4201,18 @@
           const statusBadge = document.getElementById('aiStatusBadge');
           if (statusBadge) {
             if (data.mode === 'ai') {
-              statusBadge.textContent = 'Live Grok AI';
+              if (data.provider === 'gemini') {
+                statusBadge.textContent = 'Live Gemini AI';
+                statusBadge.title = 'Powered by Gemini API (Free Tier)';
+              } else {
+                statusBadge.textContent = 'Live Grok AI';
+                statusBadge.title = 'Powered by Grok AI';
+              }
               statusBadge.className = 'ai-badge-status live';
-              statusBadge.title = 'Powered by Grok AI';
             } else {
               statusBadge.textContent = 'Local Analysis Mode';
               statusBadge.className = 'ai-badge-status local';
-              statusBadge.title = 'Running rules-based analyzer. Set XAI_API_KEY in .env for live Grok AI.';
+              statusBadge.title = 'Running rules-based analyzer. Configure GEMINI_API_KEY in env for free live AI.';
             }
           }
 
@@ -4219,9 +4224,9 @@
           if (data.warning) {
             const systemNote = document.createElement('div');
             systemNote.className = 'ai-message system';
-            let errMsg = '💡 <strong>Server Info:</strong> Running in Local Mode. To unlock full AI investment intelligence, configure an XAI API key in your server\'s .env file.';
-            if (data.grok_error) {
-              errMsg = `⚠️ <strong>Grok Connection Failed:</strong> ${data.grok_error}.<br><br>Local mode active as fallback. Double check that your API key is correct and not restricted.`;
+            let errMsg = '💡 <strong>Server Info:</strong> Running in Local Mode. To unlock full AI investment intelligence, configure a free GEMINI_API_KEY in your server\'s env file.';
+            if (data.api_error) {
+              errMsg = `⚠️ <strong>AI Connection Failed:</strong> ${data.api_error}.<br><br>Local mode active as fallback. Ensure your API key is correct and not restricted.`;
             }
             // Remove previous system note
             const existingNote = chatBox.querySelector('.ai-message.system');
