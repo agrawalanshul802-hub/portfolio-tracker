@@ -509,13 +509,13 @@ def ask_ai():
     if not message:
         return jsonify({'error': 'Message is required'}), 400
 
-    api_key = os.getenv('GEMINI_API_KEY')
+    api_key = os.getenv('XAI_API_KEY') or os.getenv('GROK_API_KEY')
     if api_key:
         api_key = api_key.strip().replace('"', '').replace("'", "")
         if api_key.lower() in ('none', 'null', 'false', ''):
             api_key = None
             
-    # If API key is present, attempt live query to Gemini API
+    # If API key is present, attempt live query to Grok API
     if api_key:
         try:
             # Format holdings context
@@ -546,42 +546,77 @@ User Question: "{message}"
 
 Provide a detailed response in clean Markdown. Keep paragraphs short. Do not provide speculative certified financial advice. Add a standard disclaimer at the very end."""
 
-            # Call Gemini API
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-            req_data = json.dumps({
-                "contents": [{
-                    "parts": [{
-                        "text": prompt
-                    }]
-                }]
-            }).encode('utf-8')
-
-            req = urllib.request.Request(
-                url,
-                data=req_data,
-                headers={'Content-Type': 'application/json'}
-            )
+            # Try to query Grok API models in order of capability/availability
+            models_to_try = ["grok-2", "grok-beta"]
+            text_response = None
+            used_model = None
+            last_err = None
             
-            with urllib.request.urlopen(req) as response:
-                res_body = json.loads(response.read().decode('utf-8'))
-                text_response = res_body['candidates'][0]['content']['parts'][0]['text']
+            for model_name in models_to_try:
+                url = "https://api.x.ai/v1/chat/completions"
+                req_payload = {
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                    "model": model_name,
+                    "stream": False,
+                    "temperature": 0.2
+                }
+                req_data = json.dumps(req_payload).encode('utf-8')
+                
+                req = urllib.request.Request(
+                    url,
+                    data=req_data,
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Authorization': f'Bearer {api_key}'
+                    }
+                )
+                try:
+                    with urllib.request.urlopen(req) as response:
+                        res_body = json.loads(response.read().decode('utf-8'))
+                        text_response = res_body['choices'][0]['message']['content']
+                        used_model = model_name
+                        break
+                except urllib.error.HTTPError as e:
+                    last_err = e
+                    # If 404 (Model not found) or 400 (Bad Request / model not found), try next model
+                    if e.code in (404, 400):
+                        continue
+                    else:
+                        raise e
+                except Exception as e:
+                    last_err = e
+                    raise e
+            
+            if text_response:
                 return jsonify({
                     'response': text_response,
-                    'mode': 'ai'
+                    'mode': 'ai',
+                    'model': used_model
                 })
+            else:
+                if last_err:
+                    raise last_err
+                else:
+                    raise Exception("No response received from Grok models.")
+                    
         except Exception as e:
             # On error, fall back to rules-based analyzer with warning
             masked_key = api_key[:6] + "..." if api_key else "None"
-            gemini_err = f"{str(e)} (Model: gemini-2.5-flash, Key: {masked_key})"
-            print(f"Gemini API Error: {gemini_err}")
+            grok_err = f"{str(e)} (Key: {masked_key})"
+            print(f"Grok API Error: {grok_err}")
 
     # Rules-based local analyzer
     res_text = run_local_analysis(message, holdings)
     return jsonify({
         'response': res_text,
         'mode': 'local',
-        'warning': 'Running in Local Analysis mode. Add a valid GEMINI_API_KEY to your .env file to enable full AI capabilities.',
-        'gemini_error': gemini_err if 'gemini_err' in locals() else None
+        'warning': 'Running in Local Analysis mode. Add a valid XAI_API_KEY to your .env file to enable full Grok AI capabilities.',
+        'grok_error': grok_err if 'grok_err' in locals() else None
     })
 
 if __name__ == '__main__':
