@@ -14,16 +14,18 @@ DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(DIRECTORY, 'database.db')
 
 def load_env_file():
-    env_path = os.path.join(DIRECTORY, '.env')
-    if os.path.exists(env_path):
-        with open(env_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    key_val = line.split('=', 1)
-                    if len(key_val) == 2:
-                        k, v = key_val
-                        os.environ[k.strip()] = v.strip().strip('"').strip("'")
+    for name in ['.env', 'env']:
+        env_path = os.path.join(DIRECTORY, name)
+        if os.path.exists(env_path):
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        key_val = line.split('=', 1)
+                        if len(key_val) == 2:
+                            k, v = key_val
+                            os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            break
 
 load_env_file()
 
