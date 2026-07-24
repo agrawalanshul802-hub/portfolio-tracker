@@ -555,7 +555,13 @@ Provide a detailed response in clean Markdown. Keep paragraphs short. Do not pro
     # 1. Try Gemini API first if configured
     if gemini_key:
         try:
-            models_to_try = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-2.5-flash"]
+            models_to_try = [
+                "gemini-3.6-flash",
+                "gemini-3.5-flash",
+                "gemini-3.1-flash-lite",
+                "gemini-2.0-flash-lite",
+                "gemini-2.0-flash"
+            ]
             text_response = None
             used_model = None
             last_err = None
@@ -583,7 +589,8 @@ Provide a detailed response in clean Markdown. Keep paragraphs short. Do not pro
                         break
                 except urllib.error.HTTPError as e:
                     last_err = e
-                    if e.code in (404, 400):
+                    # Fallback to next model for any model-specific availability, auth, or quota issues
+                    if e.code in (404, 400, 401, 403, 429):
                         continue
                     else:
                         raise e
