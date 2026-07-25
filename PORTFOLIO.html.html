@@ -2574,7 +2574,7 @@
               <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
             </form>
             <div class="auth-switch" id="authSwitch">
-              Don't have an account? <button id="switchToSignup">Sign up</button>
+              Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
             </div>
             <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local SQLite
               database. Don't reuse a password you use elsewhere.</div>
@@ -3459,23 +3459,37 @@
             state.holdings = h;
           } else {
             state.holdings = seedHoldings();
+            if (res.status === 401) {
+              toast('Session expired. Please log in again.');
+            } else {
+              toast('Failed to load portfolio from database.');
+            }
           }
         } catch (e) {
           console.error("Failed to load holdings:", e);
           state.holdings = seedHoldings();
+          toast('Server connection error. Make sure app.py is running.');
         }
         computeDayOpen();
       }
 
       async function persistHoldings(list) {
         try {
-          await fetch('/api/holdings', {
+          const res = await fetch('/api/holdings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(list)
           });
+          if (!res.ok) {
+            if (res.status === 401) {
+              toast('Session expired. Please log in again to save.');
+            } else {
+              toast('Failed to save portfolio to database.');
+            }
+          }
         } catch (e) {
           console.error("Failed to persist holdings:", e);
+          toast('Server connection error. Failed to save portfolio.');
         }
       }
 
@@ -4342,8 +4356,8 @@
         document.getElementById('confirmField').style.display = mode === 'signup' ? 'flex' : 'none';
         document.getElementById('authSubmit').textContent = mode === 'signup' ? 'Create account' : 'Log in';
         document.getElementById('authSwitch').innerHTML = mode === 'signup'
-          ? `Already have an account? <button id="switchToLogin">Log in</button>`
-          : `Don't have an account? <button id="switchToSignup">Sign up</button>`;
+          ? `Already have an account? <button type="button" id="switchToLogin">Log in</button>`
+          : `Don't have an account? <button type="button" id="switchToSignup">Sign up</button>`;
         document.getElementById('authError').classList.remove('show');
         wireAuthSwitch();
       }
@@ -4459,12 +4473,19 @@
         const dockState = items.map(el => ({ el, size: BASE, target: BASE, velocity: 0 }));
         let mouseX = null;
         let raf = null;
+        let cachedCenters = [];
+
+        function cacheCenters() {
+          cachedCenters = dockState.map(s => {
+            const rect = s.el.getBoundingClientRect();
+            return rect.left + rect.width / 2;
+          });
+        }
 
         function setTargets() {
-          dockState.forEach(s => {
+          dockState.forEach((s, idx) => {
             if (mouseX === null) { s.target = BASE; return; }
-            const rect = s.el.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
+            const centerX = cachedCenters[idx] || (s.el.getBoundingClientRect().left + s.el.getBoundingClientRect().width / 2);
             const dist = Math.abs(mouseX - centerX);
             const t = Math.max(0, 1 - dist / DISTANCE);
             s.target = BASE + (MAGNIFY - BASE) * t;
@@ -4489,8 +4510,21 @@
         }
         function ensureLoop() { if (!raf) raf = requestAnimationFrame(tick); }
 
-        panel.addEventListener('mousemove', (e) => { mouseX = e.clientX; setTargets(); ensureLoop(); });
-        panel.addEventListener('mouseleave', () => { mouseX = null; setTargets(); ensureLoop(); });
+        panel.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          if (cachedCenters.length === 0) cacheCenters();
+          setTargets();
+          ensureLoop();
+        });
+        panel.addEventListener('mouseleave', () => {
+          mouseX = null;
+          setTargets();
+          ensureLoop();
+          cachedCenters = [];
+        });
+        window.addEventListener('resize', () => {
+          cachedCenters = [];
+        });
 
         // click actions
         panel.addEventListener('click', (e) => {
