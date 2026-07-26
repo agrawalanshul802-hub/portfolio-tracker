@@ -4622,7 +4622,22 @@
           raf = requestAnimationFrame(animate);
         }
 
-        raf = requestAnimationFrame(animate);
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              if (!raf) {
+                lastTime = null;
+                raf = requestAnimationFrame(animate);
+              }
+            } else {
+              if (raf) {
+                cancelAnimationFrame(raf);
+                raf = null;
+              }
+            }
+          });
+        }, { threshold: 0 });
+        observer.observe(container);
       }
 
       /* ---------------- DarkVeil WebGL CPPN Shader Initialization ---------------- */
@@ -4792,7 +4807,21 @@
           raf = requestAnimationFrame(render);
         }
 
-        raf = requestAnimationFrame(render);
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              if (!raf) {
+                raf = requestAnimationFrame(render);
+              }
+            } else {
+              if (raf) {
+                cancelAnimationFrame(raf);
+                raf = null;
+              }
+            }
+          });
+        }, { threshold: 0 });
+        observer.observe(canvas);
       }
 
       async function init() {
