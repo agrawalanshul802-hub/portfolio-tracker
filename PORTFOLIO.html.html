@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     :root {
       --bg: #0A0814;
@@ -678,6 +679,7 @@
     }
 
     .auth-card {
+      position: relative;
       width: 100%;
       max-width: 380px;
       background: var(--card);
@@ -3014,6 +3016,11 @@
 
         <div class="hero-right" id="authCardAnchor">
           <div class="auth-card">
+            <!-- Auth Loader Overlay -->
+            <div id="authLoader" style="display:none; position:absolute; inset:0; background:rgba(10, 8, 20, 0.95); backdrop-filter:blur(8px); border-radius:16px; z-index:10; flex-direction:column; align-items:center; justify-content:center; padding: 24px; text-align:center;">
+              <div id="authLoaderText" style="font-size: 20px; font-weight: 700; color: #FFF; font-family: 'Inter', sans-serif;"></div>
+            </div>
+
             <div class="auth-brand">
               <div class="mark">P</div>
               <div class="t">Portfolio Tracker</div>
@@ -5189,6 +5196,107 @@
         el.textContent = msg; el.classList.add('show');
       }
 
+      function createSplitText(containerElement, options = {}) {
+        const text = options.text || containerElement.textContent;
+        const className = options.className || '';
+        const delay = options.delay !== undefined ? options.delay : 50;
+        const duration = options.duration !== undefined ? options.duration : 1.25;
+        const ease = options.ease || 'power3.out';
+        const splitType = options.splitType || 'chars';
+        const from = options.from !== undefined ? options.from : { opacity: 0, y: 40 };
+        const to = options.to !== undefined ? options.to : { opacity: 1, y: 0 };
+        const textAlign = options.textAlign || 'center';
+        const tag = options.tag || 'p';
+        const onLetterAnimationComplete = options.onLetterAnimationComplete;
+
+        const wrapper = document.createElement(tag);
+        wrapper.className = `split-parent ${className}`;
+        wrapper.style.textAlign = textAlign;
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.display = 'inline-block';
+        wrapper.style.whiteSpace = 'normal';
+        wrapper.style.wordWrap = 'break-word';
+        wrapper.style.willChange = 'transform, opacity';
+
+        containerElement.innerHTML = '';
+        containerElement.appendChild(wrapper);
+
+        let targets = [];
+        if (splitType === 'chars' || splitType === 'words, chars') {
+          const words = text.split(/\s+/);
+          words.forEach((word, wordIdx) => {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'split-word';
+            wordSpan.style.display = 'inline-block';
+            wordSpan.style.whiteSpace = 'nowrap';
+
+            const chars = word.split('');
+            chars.forEach(char => {
+              const charSpan = document.createElement('span');
+              charSpan.className = 'split-char';
+              charSpan.style.display = 'inline-block';
+              charSpan.style.willChange = 'transform, opacity';
+              charSpan.textContent = char;
+              wordSpan.appendChild(charSpan);
+              targets.push(charSpan);
+            });
+
+            wrapper.appendChild(wordSpan);
+
+            if (wordIdx < words.length - 1) {
+              const spaceSpan = document.createElement('span');
+              spaceSpan.className = 'split-space';
+              spaceSpan.style.display = 'inline-block';
+              spaceSpan.innerHTML = '&nbsp;';
+              wrapper.appendChild(spaceSpan);
+            }
+          });
+        } else if (splitType === 'words') {
+          const words = text.split(/\s+/);
+          words.forEach((word, wordIdx) => {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'split-word';
+            wordSpan.style.display = 'inline-block';
+            wordSpan.style.willChange = 'transform, opacity';
+            wordSpan.textContent = word;
+            wrapper.appendChild(wordSpan);
+            targets.push(wordSpan);
+
+            if (wordIdx < words.length - 1) {
+              const spaceSpan = document.createElement('span');
+              spaceSpan.className = 'split-space';
+              spaceSpan.style.display = 'inline-block';
+              spaceSpan.innerHTML = '&nbsp;';
+              wrapper.appendChild(spaceSpan);
+            }
+          });
+        } else {
+          const lineSpan = document.createElement('span');
+          lineSpan.className = 'split-line';
+          lineSpan.style.display = 'inline-block';
+          lineSpan.style.willChange = 'transform, opacity';
+          lineSpan.textContent = text;
+          wrapper.appendChild(lineSpan);
+          targets.push(lineSpan);
+        }
+
+        gsap.fromTo(targets, from, {
+          ...to,
+          duration: duration,
+          ease: ease,
+          stagger: delay / 1000,
+          onComplete: () => {
+            if (onLetterAnimationComplete) onLetterAnimationComplete();
+          }
+        });
+      }
+
+      function hideAuthLoaderWithError(errMessage) {
+        const loader = document.getElementById('authLoader');
+        if (loader) loader.style.display = 'none';
+        showAuthError(errMessage);
+      }
+
       async function handleAuthSubmit(e) {
         e.preventDefault();
         const email = document.getElementById('authEmail').value.trim().toLowerCase();
@@ -5196,34 +5304,89 @@
         const confirmPw = document.getElementById('authConfirm').value;
         document.getElementById('authError').classList.remove('show');
 
+        const loader = document.getElementById('authLoader');
+        const loaderText = document.getElementById('authLoaderText');
+        if (loader && loaderText) {
+          loader.style.display = 'flex';
+          const isSignup = authMode === 'signup';
+          const initialText = isSignup ? 'Creating your account...' : 'Verifying your credentials...';
+          
+          createSplitText(loaderText, {
+            text: initialText,
+            delay: 40,
+            duration: 0.6,
+            ease: 'power3.out',
+            from: { opacity: 0, y: 20 },
+            to: { opacity: 1, y: 0 }
+          });
+        }
+
         if (authMode === 'signup') {
-          if (password.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
-          if (password !== confirmPw) { showAuthError('Passwords do not match.'); return; }
+          if (password.length < 6) { hideAuthLoaderWithError('Password must be at least 6 characters.'); return; }
+          if (password !== confirmPw) { hideAuthLoaderWithError('Passwords do not match.'); return; }
 
           try {
+            await new Promise(r => setTimeout(r, 600));
+
             const res = await fetch('/api/register', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (!res.ok) { showAuthError(data.error || 'Signup failed'); return; }
-            await enterDashboard(email);
+            if (!res.ok) { hideAuthLoaderWithError(data.error || 'Signup failed'); return; }
+
+            if (loaderText) {
+              createSplitText(loaderText, {
+                text: 'Welcome to Portfolio Tracker!',
+                delay: 35,
+                duration: 0.7,
+                ease: 'power3.out',
+                from: { opacity: 0, y: 20 },
+                to: { opacity: 1, y: 0 },
+                onLetterAnimationComplete: async () => {
+                  await new Promise(r => setTimeout(r, 600));
+                  if (loader) loader.style.display = 'none';
+                  await enterDashboard(email);
+                }
+              });
+            } else {
+              await enterDashboard(email);
+            }
           } catch (err) {
-            showAuthError('Server connection error. Make sure app.py is running.');
+            hideAuthLoaderWithError('Server connection error. Make sure app.py is running.');
           }
         } else {
           try {
+            await new Promise(r => setTimeout(r, 600));
+
             const res = await fetch('/api/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (!res.ok) { showAuthError(data.error || 'Login failed'); return; }
-            await enterDashboard(email);
+            if (!res.ok) { hideAuthLoaderWithError(data.error || 'Login failed'); return; }
+
+            if (loaderText) {
+              createSplitText(loaderText, {
+                text: 'Welcome back!',
+                delay: 35,
+                duration: 0.7,
+                ease: 'power3.out',
+                from: { opacity: 0, y: 20 },
+                to: { opacity: 1, y: 0 },
+                onLetterAnimationComplete: async () => {
+                  await new Promise(r => setTimeout(r, 600));
+                  if (loader) loader.style.display = 'none';
+                  await enterDashboard(email);
+                }
+              });
+            } else {
+              await enterDashboard(email);
+            }
           } catch (err) {
-            showAuthError('Server connection error. Make sure app.py is running.');
+            hideAuthLoaderWithError('Server connection error. Make sure app.py is running.');
           }
         }
       }
