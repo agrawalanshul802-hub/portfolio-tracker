@@ -3016,11 +3016,6 @@
 
         <div class="hero-right" id="authCardAnchor">
           <div class="auth-card">
-            <!-- Auth Loader Overlay -->
-            <div id="authLoader" style="display:none; position:absolute; inset:0; background:rgba(10, 8, 20, 0.95); backdrop-filter:blur(8px); border-radius:16px; z-index:10; flex-direction:column; align-items:center; justify-content:center; padding: 24px; text-align:center;">
-              <div id="authLoaderText" style="font-size: 20px; font-weight: 700; color: #FFF; font-family: 'Inter', sans-serif;"></div>
-            </div>
-
             <div class="auth-brand">
               <div class="mark">P</div>
               <div class="t">Portfolio Tracker</div>
@@ -3233,6 +3228,12 @@
           </div>
         </div>
       </section>
+    </div>
+    <!-- Welcome Overlay for login transition -->
+    <div id="welcomeOverlay"
+      style="position:fixed; inset:0; background:#0A0814; z-index:99999; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:opacity 0.4s ease;">
+      <div id="welcomeText" style="font-size: 32px; font-weight: 700; color: #FFF; font-family: 'Inter', sans-serif;">
+      </div>
     </div>
   </div>
 
@@ -5249,12 +5250,6 @@
         });
       }
 
-      function hideAuthLoaderWithError(errMessage) {
-        const loader = document.getElementById('authLoader');
-        if (loader) loader.style.display = 'none';
-        showAuthError(errMessage);
-      }
-
       async function handleAuthSubmit(e) {
         e.preventDefault();
         const email = document.getElementById('authEmail').value.trim().toLowerCase();
@@ -5262,91 +5257,90 @@
         const confirmPw = document.getElementById('authConfirm').value;
         document.getElementById('authError').classList.remove('show');
 
-        const loader = document.getElementById('authLoader');
-        const loaderText = document.getElementById('authLoaderText');
-        if (loader && loaderText) {
-          loader.style.display = 'flex';
-          const isSignup = authMode === 'signup';
-          const initialText = isSignup ? 'Creating your account...' : 'Verifying your credentials...';
-          
-          createSplitText(loaderText, {
-            text: initialText,
-            delay: 40,
-            duration: 0.6,
-            ease: 'power3.out',
-            from: { opacity: 0, y: 20 },
-            to: { opacity: 1, y: 0 }
-          });
+        if (authMode === 'signup') {
+          if (password.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
+          if (password !== confirmPw) { showAuthError('Passwords do not match.'); return; }
         }
 
-        if (authMode === 'signup') {
-          if (password.length < 6) { hideAuthLoaderWithError('Password must be at least 6 characters.'); return; }
-          if (password !== confirmPw) { hideAuthLoaderWithError('Passwords do not match.'); return; }
+        const submitBtn = document.getElementById('authSubmit');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
 
-          try {
-            await new Promise(r => setTimeout(r, 600));
-
+        try {
+          if (authMode === 'signup') {
             const res = await fetch('/api/register', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (!res.ok) { hideAuthLoaderWithError(data.error || 'Signup failed'); return; }
-
-            if (loaderText) {
-              createSplitText(loaderText, {
-                text: 'Welcome to Portfolio Tracker!',
-                delay: 35,
-                duration: 0.7,
-                ease: 'power3.out',
-                from: { opacity: 0, y: 20 },
-                to: { opacity: 1, y: 0 },
-                onLetterAnimationComplete: async () => {
-                  await new Promise(r => setTimeout(r, 600));
-                  if (loader) loader.style.display = 'none';
-                  await enterDashboard(email);
-                }
-              });
-            } else {
-              await enterDashboard(email);
+            if (!res.ok) {
+              showAuthError(data.error || 'Signup failed');
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalBtnText;
+              return;
             }
-          } catch (err) {
-            hideAuthLoaderWithError('Server connection error. Make sure app.py is running.');
-          }
-        } else {
-          try {
-            await new Promise(r => setTimeout(r, 600));
-
+            await showFullscreenWelcomeTransition(email, 'Welcome in');
+          } else {
             const res = await fetch('/api/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (!res.ok) { hideAuthLoaderWithError(data.error || 'Login failed'); return; }
-
-            if (loaderText) {
-              createSplitText(loaderText, {
-                text: 'Welcome back!',
-                delay: 35,
-                duration: 0.7,
-                ease: 'power3.out',
-                from: { opacity: 0, y: 20 },
-                to: { opacity: 1, y: 0 },
-                onLetterAnimationComplete: async () => {
-                  await new Promise(r => setTimeout(r, 600));
-                  if (loader) loader.style.display = 'none';
-                  await enterDashboard(email);
-                }
-              });
-            } else {
-              await enterDashboard(email);
+            if (!res.ok) {
+              showAuthError(data.error || 'Login failed');
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalBtnText;
+              return;
             }
-          } catch (err) {
-            hideAuthLoaderWithError('Server connection error. Make sure app.py is running.');
+            await showFullscreenWelcomeTransition(email, 'Welcome back');
           }
+        } catch (err) {
+          showAuthError('Server connection error. Make sure app.py is running.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
         }
+      }
+
+      async function showFullscreenWelcomeTransition(email, welcomePhrase) {
+        const overlay = document.getElementById('welcomeOverlay');
+        const welcomeText = document.getElementById('welcomeText');
+        const username = email.split('@')[0];
+
+        overlay.style.display = 'flex';
+        overlay.offsetHeight; // trigger reflow
+        overlay.style.opacity = '1';
+
+        const textToAnimate = `${welcomePhrase}, ${username}!`;
+
+        await new Promise(resolve => {
+          createSplitText(welcomeText, {
+            text: textToAnimate,
+            delay: 45,
+            duration: 0.7,
+            ease: 'power3.out',
+            from: { opacity: 0, y: 35 },
+            to: { opacity: 1, y: 0 },
+            onLetterAnimationComplete: resolve
+          });
+        });
+
+        await new Promise(r => setTimeout(r, 800));
+
+        overlay.style.opacity = '0';
+        await new Promise(r => setTimeout(r, 400));
+
+        overlay.style.display = 'none';
+
+        const submitBtn = document.getElementById('authSubmit');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = authMode === 'signup' ? 'Create account' : 'Log in';
+        }
+
+        await enterDashboard(email);
       }
 
       async function enterDashboard(email) {
