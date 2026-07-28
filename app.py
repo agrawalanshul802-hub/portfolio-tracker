@@ -454,7 +454,7 @@ def run_local_analysis(message, holdings):
 * **Summary**: {div_desc}
 
 #### Recommended Action Items:
-1. **Explore Mutual Funds/ETFs**: They provide instant diversification across hundreds of companies.
+1. **Explore Exchange Traded Funds (ETFs)**: They provide instant diversification across hundreds of companies.
 2. **Limit Single Stocks**: Keep single stock allocations under 10-15% of your total net worth.
 3. **Sector check**: Make sure your equities are not all in the same sector (e.g., banking or technology)."""
 
