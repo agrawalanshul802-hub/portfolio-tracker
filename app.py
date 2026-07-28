@@ -587,7 +587,7 @@ def get_portfolio_news():
             'BUZZING': 'https://www.moneycontrol.com/rss/buzzingstocks.xml',
             'RECOS': 'https://www.moneycontrol.com/rss/brokeragerecos.xml',
             'LATEST': 'https://www.moneycontrol.com/rss/latestnews.xml',
-            'OUTLOOK': 'https://www.moneycontrol.com/rss/marketoutlook.xml'
+            'OUTLOOK': 'https://www.moneycontrol.com/rss/business.xml'
         }
         
         def fetch_mc_feed(feed_type, url):
