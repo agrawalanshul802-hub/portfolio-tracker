@@ -671,7 +671,8 @@ tbody tr:hover {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  padding: 1.5px; /* Border thickness */
+  padding: 1.5px;
+  /* Border thickness */
   width: 100%;
   max-width: 380px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
@@ -704,7 +705,8 @@ tbody tr:hover {
 .inner-content {
   position: relative;
   background: var(--card);
-  border-radius: 15px; /* Sub-pixel radius overlap to clean edges */
+  border-radius: 15px;
+  /* Sub-pixel radius overlap to clean edges */
   z-index: 1;
 }
 
@@ -719,6 +721,7 @@ tbody tr:hover {
     transform: translate(0%, 0%);
     opacity: 1;
   }
+
   100% {
     transform: translate(-100%, 0%);
     opacity: 0;
@@ -730,6 +733,7 @@ tbody tr:hover {
     transform: translate(0%, 0%);
     opacity: 1;
   }
+
   100% {
     transform: translate(100%, 0%);
     opacity: 0;
@@ -1061,10 +1065,10 @@ tbody tr:hover {
 /* Sidebar styling */
 .sidebar {
   width: 260px;
-  background: rgba(16, 12, 32, 0.45);
+  background: rgba(10, 8, 20, 0.96);
   border-right: 1px solid var(--card-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1073,8 +1077,15 @@ tbody tr:hover {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 100;
+  z-index: 9999;
+  transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 20px 0 80px rgba(0, 0, 0, 0);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+  box-shadow: 20px 0 80px rgba(0, 0, 0, 0.7);
 }
 
 .sidebar-top {
@@ -3028,9 +3039,12 @@ tbody tr:hover {
     align-items: center;
     text-align: center;
   }
+
   .nav-capsule {
-    display: none !important; /* Hide secondary nav capsule on small screens */
+    display: none !important;
+    /* Hide secondary nav capsule on small screens */
   }
+
   .landing-header .nav-links {
     margin-top: 4px;
   }
@@ -3044,32 +3058,40 @@ tbody tr:hover {
     padding: 20px 0 40px !important;
     text-align: center;
   }
+
   .hero-left {
     align-items: center !important;
   }
+
   .hero-title {
     font-size: 28px !important;
     line-height: 1.25 !important;
   }
+
   .hero-subtitle {
     font-size: 14px !important;
   }
+
   .hero-feature-badges {
     justify-content: center !important;
   }
+
   .hero-cta {
     width: 100%;
     flex-direction: column !important;
     gap: 12px !important;
   }
+
   .hero-cta .btn {
     width: 100% !important;
     justify-content: center !important;
   }
+
   .hero-right {
     width: 100% !important;
     justify-content: center !important;
   }
+
   .auth-card {
     margin: 0 auto !important;
   }
@@ -3083,12 +3105,16 @@ tbody tr:hover {
     gap: 32px !important;
     margin-top: 24px !important;
   }
+
   .steps-container::before {
-    display: none !important; /* Hide dashed connector line */
+    display: none !important;
+    /* Hide dashed connector line */
   }
+
   .step-card {
     padding: 0 !important;
   }
+
   .step-number-circle {
     margin-bottom: 12px !important;
   }
@@ -3103,6 +3129,7 @@ tbody tr:hover {
     margin: 40px 0 !important;
     border-radius: 16px !important;
   }
+
   .landing-clarity h2 {
     font-size: 22px !important;
   }
@@ -3115,12 +3142,14 @@ tbody tr:hover {
     gap: 20px !important;
   }
 }
+
 @media (max-width: 600px) {
   .services-grid-three {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
     margin-top: 24px !important;
   }
+
   .service-card-premium {
     padding: 24px !important;
   }
@@ -3133,14 +3162,17 @@ tbody tr:hover {
     align-items: flex-start !important;
     gap: 12px !important;
   }
+
   .profile-dropdown-wrapper {
     align-self: flex-start !important;
     width: 100% !important;
   }
+
   .profile-trigger-btn {
     width: 100% !important;
     justify-content: space-between !important;
   }
+
   .profile-dropdown-menu {
     width: 100% !important;
   }
@@ -3151,12 +3183,15 @@ tbody tr:hover {
   .net-worth-card {
     padding: 20px 24px !important;
   }
+
   .net-worth-value {
     font-size: 28px !important;
   }
+
   .stat-card.mini-card {
     padding: 16px !important;
   }
+
   .stat-card.mini-card .stat-value {
     font-size: 20px !important;
   }
@@ -3170,19 +3205,23 @@ tbody tr:hover {
     gap: 12px !important;
     padding: 12px 14px !important;
   }
+
   .toolbar-left {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 10px !important;
   }
+
   .filter-group {
     justify-content: flex-start !important;
     gap: 6px !important;
   }
+
   .search-box {
     width: 100% !important;
     min-width: unset !important;
   }
+
   .sort-select {
     width: 100% !important;
   }
@@ -3193,6 +3232,7 @@ tbody tr:hover {
   .analytics-grid {
     grid-template-columns: 1fr !important;
   }
+
   .chart-card {
     padding: 16px !important;
     min-height: 320px !important;
@@ -3215,7 +3255,7 @@ tbody tr:hover {
   background: #11111b;
   border: 8px solid #2d2d3a;
   border-radius: 36px;
-  box-shadow: 
+  box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgba(255, 255, 255, 0.05),
     0 0 20px rgba(139, 92, 246, 0.15);
@@ -3413,7 +3453,8 @@ tbody tr:hover {
   font-weight: 600;
   will-change: offset-distance;
   offset-rotate: 0deg;
-  transform: rotate(8deg); /* Counteract base container tilt */
+  transform: rotate(8deg);
+  /* Counteract base container tilt */
   transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -3432,14 +3473,17 @@ tbody tr:hover {
   .logo-orbit-section {
     padding: 60px 0;
   }
+
   .orbit-showcase-container {
     height: 180px;
   }
+
   .orbit-center-logo {
     width: 44px;
     height: 44px;
     font-size: 19px;
   }
+
   .orbit-node {
     padding: 6px 10px;
     font-size: 11px;
@@ -3682,17 +3726,29 @@ tbody tr:hover {
 }
 
 @media (max-width: 768px) {
-  .sm-prelayers, .staggered-menu-panel {
+
+  .sm-prelayers,
+  .staggered-menu-panel {
     width: 100vw;
   }
+
   .staggered-menu-panel {
     padding: 100px 32px 32px;
   }
+
   .sm-panel-item {
     font-size: 1.8rem;
   }
 }
 
+/* Desktop Brand trigger styles */
+.desktop-brand-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(167, 139, 250, 0.25) !important;
+}
 
-
-
+@media (max-width: 900px) {
+  .desktop-brand-trigger {
+    display: none !important;
+  }
+}
