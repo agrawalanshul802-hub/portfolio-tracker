@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -441,6 +442,28 @@
             </svg>
             <span>Stock News</span>
           </button>
+
+          <div style="font-size: 10px; text-transform: uppercase; color: var(--text-faint); font-weight: 700; margin: 20px 0 8px 12px; letter-spacing: 0.05em;">Quick Actions</div>
+          <button class="nav-item" id="sidebarAddHoldingBtn" style="border-left: 3px solid transparent;">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Holding</span>
+          </button>
+          <button class="nav-item" id="sidebarSearchHoldingsBtn" style="border-left: 3px solid transparent;">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Search Holdings</span>
+          </button>
+          <button class="nav-item" id="sidebarRefreshPricesBtn" style="border-left: 3px solid transparent;">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Refresh Prices</span>
+          </button>
         </nav>
       </div>
     </aside>
@@ -451,7 +474,10 @@
         <div class="brand-mark">P</div>
         <span class="brand-name">Portfolio Tracker</span>
       </div>
-      <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="btn btn-primary btn-sm" id="mobileAddHoldingBtn" style="padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 8px;">+ Add</button>
+        <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+      </div>
     </header>
 
     <!-- Main Content Area -->
@@ -1575,6 +1601,11 @@
           return;
         }
 
+        if (typeof Chart === 'undefined') {
+          console.warn('Chart.js is not loaded. Bypassing chart rendering.');
+          return;
+        }
+
         const totalValue = list.reduce((a, b) => a + b.value, 0);
 
         // Compute Diversification Scores & Summary Info
@@ -2230,6 +2261,33 @@
         });
 
         document.getElementById('addHoldingBtn').addEventListener('click', () => openModal('add'));
+        
+        // Mobile and Sidebar Quick Actions
+        const mobAdd = document.getElementById('mobileAddHoldingBtn');
+        if (mobAdd) mobAdd.addEventListener('click', () => openModal('add'));
+
+        const sideAdd = document.getElementById('sidebarAddHoldingBtn');
+        if (sideAdd) sideAdd.addEventListener('click', () => {
+          openModal('add');
+          if (sidebar) sidebar.classList.remove('open');
+        });
+
+        const sideSearch = document.getElementById('sidebarSearchHoldingsBtn');
+        if (sideSearch) sideSearch.addEventListener('click', () => {
+          const input = document.getElementById('searchInput');
+          if (input) {
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            input.focus();
+          }
+          if (sidebar) sidebar.classList.remove('open');
+        });
+
+        const sideRefresh = document.getElementById('sidebarRefreshPricesBtn');
+        if (sideRefresh) sideRefresh.addEventListener('click', () => {
+          refreshPrices();
+          if (sidebar) sidebar.classList.remove('open');
+        });
+
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
         overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
@@ -2395,6 +2453,16 @@
           targets.push(lineSpan);
         }
 
+        if (typeof gsap === 'undefined') {
+          console.warn('GSAP is not defined. Bypassing animation.');
+          targets.forEach(t => {
+            t.style.opacity = '1';
+            t.style.transform = 'none';
+          });
+          if (onLetterAnimationComplete) onLetterAnimationComplete();
+          return;
+        }
+
         gsap.fromTo(targets, from, {
           ...to,
           duration: duration,
@@ -2404,6 +2472,35 @@
             if (onLetterAnimationComplete) onLetterAnimationComplete();
           }
         });
+      }
+
+      async function fetchWithWakeupNotice(url, options = {}) {
+        let timer = setTimeout(() => {
+          const errEl = document.getElementById('authError');
+          if (errEl) {
+            errEl.innerHTML = `<span style="display:inline-block; animation: pulse 1.5s infinite; color: #A78BFA; font-weight: 500;">⏳ Server is waking up (Render free-tier cold start takes ~50s)... please wait.</span>`;
+            errEl.classList.add('show');
+          }
+        }, 2200);
+
+        try {
+          const res = await fetch(url, options);
+          clearTimeout(timer);
+          const errEl = document.getElementById('authError');
+          if (errEl && errEl.innerHTML.includes('Server is waking up')) {
+            errEl.classList.remove('show');
+            errEl.innerHTML = '';
+          }
+          return res;
+        } catch (e) {
+          clearTimeout(timer);
+          const errEl = document.getElementById('authError');
+          if (errEl && errEl.innerHTML.includes('Server is waking up')) {
+            errEl.classList.remove('show');
+            errEl.innerHTML = '';
+          }
+          throw e;
+        }
       }
 
       async function handleAuthSubmit(e) {
@@ -2425,7 +2522,7 @@
 
         try {
           if (authMode === 'signup') {
-            const res = await fetch('/api/register', {
+            const res = await fetchWithWakeupNotice('/api/register', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password })
@@ -2439,7 +2536,7 @@
             }
             await showFullscreenWelcomeTransition(email, 'Welcome in');
           } else {
-            const res = await fetch('/api/login', {
+            const res = await fetchWithWakeupNotice('/api/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password })
@@ -2640,6 +2737,88 @@
         });
 
         // keyboard accessibility: Enter/Space already work via native <button>
+      }
+
+
+      /* ---------------- ScrollFloat Vanilla Component (React Bits port) ---------------- */
+      function initScrollFloat(elementOrSelector, options = {}) {
+        const elements = typeof elementOrSelector === 'string' 
+          ? document.querySelectorAll(elementOrSelector) 
+          : [elementOrSelector];
+
+        elements.forEach(el => {
+          if (!el) return;
+
+          const text = options.text || el.textContent.trim();
+          const animationDuration = options.animationDuration !== undefined ? options.animationDuration : 1;
+          const ease = options.ease || 'back.inOut(2)';
+          const scrollStart = options.scrollStart || 'center bottom+=50%';
+          const scrollEnd = options.scrollEnd || 'bottom bottom-=40%';
+          const stagger = options.stagger !== undefined ? options.stagger : 0.03;
+          const scroller = options.scroller || window;
+
+          // Split text into characters
+          const chars = text.split('');
+          el.innerHTML = '';
+          const wrapper = document.createElement('span');
+          wrapper.className = 'scroll-float-text';
+          wrapper.style.display = 'inline-block';
+
+          const charElements = [];
+          chars.forEach(char => {
+            const charSpan = document.createElement('span');
+            charSpan.className = 'char';
+            charSpan.style.display = 'inline-block';
+            charSpan.textContent = char === ' ' ? '\u00A0' : char;
+            wrapper.appendChild(charSpan);
+            charElements.push(charSpan);
+          });
+
+          el.appendChild(wrapper);
+          el.classList.add('scroll-float');
+          el.style.overflow = 'hidden';
+
+          // Safe check for GSAP & ScrollTrigger
+          if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+            console.warn('GSAP or ScrollTrigger is not loaded. Bypassing ScrollFloat animation.');
+            charElements.forEach(span => {
+              span.style.opacity = '1';
+              span.style.transform = 'none';
+            });
+            return;
+          }
+
+          // Register ScrollTrigger plugin
+          gsap.registerPlugin(ScrollTrigger);
+
+          gsap.fromTo(
+            charElements,
+            {
+              willChange: 'opacity, transform',
+              opacity: 0,
+              yPercent: 120,
+              scaleY: 2.3,
+              scaleX: 0.7,
+              transformOrigin: '50% 0%'
+            },
+            {
+              duration: animationDuration,
+              ease: ease,
+              opacity: 1,
+              yPercent: 0,
+              scaleY: 1,
+              scaleX: 1,
+              stagger: stagger,
+              scrollTrigger: {
+                trigger: el,
+                scroller: scroller,
+                start: scrollStart,
+                end: scrollEnd,
+                scrub: true
+              }
+            }
+          );
+        });
       }
 
       /* ---------------- LogoLoop Vanilla Component Initialization ---------------- */
@@ -2940,6 +3119,32 @@
             warpAmount: 0.3
           });
 
+
+          // Initialize ScrollFloat animations for section titles
+          initScrollFloat('#get-started-section .section-title h2', {
+            animationDuration: 1.2,
+            ease: 'back.out(1.7)',
+            scrollStart: 'top bottom-=5%',
+            scrollEnd: 'bottom center+=15%',
+            stagger: 0.02
+          });
+
+          initScrollFloat('#services-section .section-title h2', {
+            animationDuration: 1.2,
+            ease: 'back.out(1.7)',
+            scrollStart: 'top bottom-=5%',
+            scrollEnd: 'bottom center+=15%',
+            stagger: 0.02
+          });
+
+          initScrollFloat('#clarity-section .clarity-content h2', {
+            animationDuration: 1.2,
+            ease: 'back.out(1.7)',
+            scrollStart: 'top bottom-=5%',
+            scrollEnd: 'bottom center+=15%',
+            stagger: 0.02
+          });
+
           // Setup dashboard profile dropdown trigger
           const profileTriggerBtn = document.getElementById('profileTriggerBtn');
           const profileDropdownWrapper = document.getElementById('profileDropdownWrapper');
@@ -2958,7 +3163,7 @@
           setInterval(tickUpdatedLabel, 5000);
           setInterval(refreshPrices, 60000);
 
-          const res = await fetch('/api/session');
+          const res = await fetchWithWakeupNotice('/api/session');
           if (res.ok) {
             const data = await res.json();
             if (data.email) {
