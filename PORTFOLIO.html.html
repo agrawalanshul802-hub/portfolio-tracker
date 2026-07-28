@@ -514,34 +514,11 @@
             </div>
           </div>
 
-          <!-- Card 2: Asset Class Split (Interactive Custom Donut) -->
-          <div class="chart-card">
-            <h3>Asset Class Distribution</h3>
-            <div class="pie-chart-outer-container">
-
-              <!-- Custom Donut Chart component wrapper -->
-              <div class="pie-chart-wrapper" id="customPieChart">
-                <svg class="pie-chart-svg" viewBox="0 0 300 300">
-                  <defs>
-                    <filter id="pieGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="5" result="blur" />
-                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
-                  </defs>
-                  <g class="pie-slices-group" transform="translate(150, 150)"></g>
-                </svg>
-
-                <!-- Centered Label display (PieCenter) -->
-                <div class="pie-center-content">
-                  <div class="pie-center-label" id="pieCenterLabel">Total</div>
-                  <div class="pie-center-value" id="pieCenterValue">₹0</div>
-                  <div class="pie-center-pct" id="pieCenterPct"></div>
-                </div>
-              </div>
-
-              <!-- Synced Interactive Legend -->
-              <div class="pie-legend" id="pieLegend"></div>
-
+          <!-- Card 2: Portfolio Health & Risk Profile -->
+          <div class="chart-card" style="justify-content: flex-start; align-items: stretch; min-height: 380px;">
+            <h3>Portfolio Health & Risk Profile</h3>
+            <div id="riskHealthCheckContainer" style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
+              <!-- Filled dynamically in JS -->
             </div>
           </div>
 
@@ -1506,151 +1483,7 @@
         return html;
       }
 
-      function getDonutPath(startAngle, endAngle, innerRadius, outerRadius) {
-        const x1 = outerRadius * Math.cos(startAngle);
-        const y1 = outerRadius * Math.sin(startAngle);
-        const x2 = outerRadius * Math.cos(endAngle);
-        const y2 = outerRadius * Math.sin(endAngle);
 
-        const x3 = innerRadius * Math.cos(endAngle);
-        const y3 = innerRadius * Math.sin(endAngle);
-        const x4 = innerRadius * Math.cos(startAngle);
-        const y4 = innerRadius * Math.sin(startAngle);
-
-        const largeArcFlag = endAngle - startAngle <= Math.PI ? 0 : 1;
-
-        return `
-          M ${x1} ${y1}
-          A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}
-          L ${x3} ${y3}
-          A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x4} ${y4}
-          Z
-        `.trim();
-      }
-
-      function renderInteractivePieChart(data) {
-        const svgGroup = document.querySelector('#customPieChart .pie-slices-group');
-        const legendContainer = document.getElementById('pieLegend');
-        if (!svgGroup || !legendContainer) return;
-
-        svgGroup.innerHTML = '';
-        legendContainer.innerHTML = '';
-
-        const totalValue = data.reduce((sum, item) => sum + item.value, 0);
-        if (totalValue === 0) {
-          document.getElementById('pieCenterValue').textContent = '₹0';
-          document.getElementById('pieCenterLabel').textContent = 'Total';
-          document.getElementById('pieCenterPct').textContent = '';
-          return;
-        }
-
-        document.getElementById('pieCenterValue').textContent = '₹' + Math.round(totalValue).toLocaleString('en-IN');
-        document.getElementById('pieCenterLabel').textContent = 'Total';
-        document.getElementById('pieCenterLabel').style.color = 'var(--text-dim)';
-        document.getElementById('pieCenterPct').textContent = '';
-
-        const innerRadius = 75;
-        const outerRadius = 110;
-        let currentAngle = -Math.PI / 2;
-
-        data.forEach((item, index) => {
-          const sliceAngle = (item.value / totalValue) * 2 * Math.PI;
-          const endAngle = currentAngle + sliceAngle;
-          const midAngle = currentAngle + sliceAngle / 2;
-
-          const pathD = getDonutPath(currentAngle, endAngle, innerRadius, outerRadius);
-
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          path.setAttribute('d', pathD);
-          path.setAttribute('fill', item.color);
-          path.setAttribute('class', 'pie-slice-path');
-          path.setAttribute('data-index', index);
-
-          const offsetDist = 8;
-          const dx = Math.cos(midAngle) * offsetDist;
-          const dy = Math.sin(midAngle) * offsetDist;
-
-          path.dataset.dx = dx;
-          path.dataset.dy = dy;
-          path.dataset.label = item.label;
-          path.dataset.value = Math.round(item.value);
-          path.dataset.pct = ((item.value / totalValue) * 100).toFixed(1) + '%';
-          path.dataset.color = item.color;
-
-          svgGroup.appendChild(path);
-
-          if (typeof gsap !== 'undefined') {
-            gsap.fromTo(path,
-              { scale: 0, transformOrigin: '0px 0px', opacity: 0 },
-              { scale: 1, opacity: 1, duration: 0.75, ease: 'back.out(1.4)', delay: index * 0.07 }
-            );
-          }
-
-          const legendItem = document.createElement('div');
-          legendItem.className = 'pie-legend-item';
-          legendItem.dataset.index = index;
-          legendItem.innerHTML = `
-            <span class="legend-color-dot" style="background-color: ${item.color}"></span>
-            <span class="legend-label">${item.label}</span>
-            <span class="legend-value">₹${Math.round(item.value).toLocaleString('en-IN')}</span>
-          `;
-          legendContainer.appendChild(legendItem);
-
-          currentAngle = endAngle;
-        });
-
-        const paths = svgGroup.querySelectorAll('.pie-slice-path');
-        const legendItems = legendContainer.querySelectorAll('.pie-legend-item');
-
-        function highlightSlice(idx) {
-          if (typeof gsap === 'undefined') return;
-
-          paths.forEach((p, i) => {
-            const isTarget = idx !== null && i === parseInt(idx);
-
-            gsap.to(p, {
-              x: isTarget ? p.dataset.dx : 0,
-              y: isTarget ? p.dataset.dy : 0,
-              opacity: (idx === null || isTarget) ? 1 : 0.45,
-              duration: 0.3,
-              ease: 'power3.out'
-            });
-
-            if (isTarget) {
-              p.setAttribute('filter', 'url(#pieGlow)');
-            } else {
-              p.removeAttribute('filter');
-            }
-          });
-
-          legendItems.forEach((li, i) => {
-            li.classList.toggle('active', idx !== null && i === parseInt(idx));
-          });
-
-          if (idx !== null) {
-            const targetPath = paths[idx];
-            document.getElementById('pieCenterLabel').textContent = targetPath.dataset.label;
-            document.getElementById('pieCenterLabel').style.color = targetPath.dataset.color;
-            document.getElementById('pieCenterValue').textContent = '₹' + parseInt(targetPath.dataset.value).toLocaleString('en-IN');
-            document.getElementById('pieCenterPct').textContent = targetPath.dataset.pct;
-          } else {
-            document.getElementById('pieCenterLabel').textContent = 'Total';
-            document.getElementById('pieCenterLabel').style.color = 'var(--text-dim)';
-            document.getElementById('pieCenterValue').textContent = '₹' + Math.round(totalValue).toLocaleString('en-IN');
-            document.getElementById('pieCenterPct').textContent = '';
-          }
-        }
-
-        paths.forEach(p => {
-          p.addEventListener('mouseenter', () => highlightSlice(p.dataset.index));
-          p.addEventListener('mouseleave', () => highlightSlice(null));
-        });
-
-        legendItems.forEach(li => {
-          li.addEventListener('mouseenter', () => highlightSlice(li.dataset.index));
-          li.addEventListener('mouseleave', () => highlightSlice(null));
-        });
-      }
 
       function renderCharts() {
         const list = allHoldings();
@@ -1773,30 +1606,84 @@
           });
         }
 
-        // 2. Asset Class Split Chart (Interactive Custom Donut)
-        const customPieContainer = document.getElementById('customPieChart');
-        if (customPieContainer) {
-          const classGroups = {};
-          list.forEach(h => {
-            const cls = h.assetClass || 'Equity';
-            classGroups[cls] = (classGroups[cls] || 0) + h.value;
-          });
+        // 2. Portfolio Risk Health Profile Check
+        const healthContainer = document.getElementById('riskHealthCheckContainer');
+        if (healthContainer) {
+          healthContainer.innerHTML = '';
+          const totalVal = list.reduce((sum, h) => sum + h.value, 0);
 
-          const classColors = {
-            'Equity': '#8B5CF6',
-            'ETF': '#3B82F6',
-            'Cash': '#2DD4BF',
-            'Crypto': '#EC4899',
-            'Commodity': '#F59E0B'
-          };
+          if (totalVal === 0) {
+            healthContainer.innerHTML = `<div class="empty-state">No holdings to analyze risk.</div>`;
+          } else {
+            // Find largest holding & max concentration
+            let maxAsset = list[0];
+            list.forEach(h => {
+              if (h.value > maxAsset.value) maxAsset = h;
+            });
+            const maxWeightVal = (maxAsset.value / totalVal) * 100;
 
-          const pieData = Object.entries(classGroups).map(([label, value]) => ({
-            label,
-            value,
-            color: classColors[label] || '#98A0AC'
-          }));
+            // Risk level assessment
+            const cryptoVal = list.filter(h => h.assetClass === 'Crypto').reduce((sum, h) => sum + h.value, 0);
+            const cryptoPct = (cryptoVal / totalVal) * 100;
 
-          renderInteractivePieChart(pieData);
+            let riskRating = 'Low / Conservative';
+            let riskColor = '#10B981'; // Green
+            if (cryptoPct > 15) {
+              riskRating = 'High (Crypto Heavy)';
+              riskColor = '#EC4899'; // Pink
+            } else {
+              const equityVal = list.filter(h => h.assetClass === 'Equity').reduce((sum, h) => sum + h.value, 0);
+              const equityPct = (equityVal / totalVal) * 100;
+              if (equityPct > 70) {
+                riskRating = 'Medium-High (Growth Heavy)';
+                riskColor = '#3B82F6'; // Blue
+              } else if (equityPct > 35) {
+                riskRating = 'Moderate / Balanced';
+                riskColor = '#F59E0B'; // Amber
+              }
+            }
+
+            // Diversification Health level
+            let divStatus = 'Optimal';
+            let divBadgeBg = 'rgba(16, 185, 129, 0.1)';
+            let divTextColor = '#10B981';
+            if (maxWeightVal > 30) {
+              divStatus = 'High Concentration Risk';
+              divBadgeBg = 'rgba(239, 68, 68, 0.1)';
+              divTextColor = '#EF4444';
+            } else if (maxWeightVal > 15) {
+              divStatus = 'Slightly Concentrated';
+              divBadgeBg = 'rgba(245, 158, 11, 0.1)';
+              divTextColor = '#F59E0B';
+            }
+
+            healthContainer.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;">
+                <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Risk Profile Rating</span>
+                <span style="font-size: 13.5px; font-weight: 700; color: ${riskColor};">${riskRating}</span>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;">
+                <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Diversification Status</span>
+                <span class="badge" style="background: ${divBadgeBg}; color: ${divTextColor}; border-color: transparent; font-size: 11px; padding: 2px 8px; font-weight:700;">${divStatus}</span>
+              </div>
+
+              <div style="padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Top Asset Exposure</span>
+                  <span style="font-size: 13px; font-weight: 700; color: #FFF;">${maxAsset.symbol} (${maxWeightVal.toFixed(1)}%)</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
+                  <div style="width: ${maxWeightVal}%; height: 100%; background: ${riskColor}; border-radius: 4px;"></div>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;">
+                <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Total Assets Tracked</span>
+                <span style="font-size: 13.5px; font-weight: 700; color: #FFF;">${list.length} holdings</span>
+              </div>
+            `;
+          }
         }
 
         // 3. Holding Performance Chart (Bar)
