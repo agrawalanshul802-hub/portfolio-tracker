@@ -23,10 +23,7 @@
           <div class="brand-mark">P</div>
           <span class="brand-name">Portfolio Tracker</span>
         </div>
-        <div class="nav-capsule">
-          <a href="#get-started-section">Features</a>
-          <a href="#services-section">All Features</a>
-        </div>
+
         <div class="nav-links">
           <button class="btn btn-primary btn-sm"
             onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free
@@ -37,8 +34,8 @@
       <section class="landing-hero">
         <div class="hero-left">
           <span class="badge">🛡️ Privacy-first portfolio tracking for Indian investors</span>
-          <h1 class="hero-title">Track Stocks & Mutual Funds <span class="hero-purple-text">in One Place</span></h1>
-          <p class="hero-subtitle">See your mutual funds, stocks, net worth, and performance in one clean dashboard. Add
+          <h1 class="hero-title">Track Your Stocks & Assets <span class="hero-purple-text">in One Place</span></h1>
+          <p class="hero-subtitle">See your stocks, assets, net worth, and performance in one clean dashboard. Add
             holdings manually without linking your broker.</p>
 
           <div class="hero-feature-badges">
@@ -57,104 +54,123 @@
         </div>
 
         <div class="hero-right" id="authCardAnchor">
-          <div class="auth-card">
-            <div class="auth-brand">
-              <div class="mark">P</div>
-              <div class="t">Portfolio Tracker</div>
-            </div>
-            <div class="auth-tabs">
-              <button class="auth-tab active" id="tabLogin">Log in</button>
-              <button class="auth-tab" id="tabSignup">Sign up</button>
-            </div>
-            <div class="auth-error" id="authError"></div>
-            <form id="authForm">
-              <div class="auth-field">
-                <label>Email</label>
-                <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
+          <div class="star-border-container">
+            <div class="border-gradient-bottom" style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;"></div>
+            <div class="border-gradient-top" style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;"></div>
+            <div class="inner-content">
+              <div class="auth-card">
+                <div class="auth-brand">
+                  <div class="mark">P</div>
+                  <div class="t">Portfolio Tracker</div>
+                </div>
+                <div class="auth-tabs">
+                  <button class="auth-tab active" id="tabLogin">Log in</button>
+                  <button class="auth-tab" id="tabSignup">Sign up</button>
+                </div>
+                <div class="auth-error" id="authError"></div>
+                <form id="authForm">
+                  <div class="auth-field">
+                    <label>Email</label>
+                    <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
+                  </div>
+                  <div class="auth-field">
+                    <label>Password</label>
+                    <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6"
+                      autocomplete="current-password">
+                  </div>
+                  <div class="auth-field" id="confirmField" style="display:none;">
+                    <label>Confirm password</label>
+                    <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6"
+                      autocomplete="new-password">
+                  </div>
+                  <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
+                </form>
+                <div class="auth-switch" id="authSwitch">
+                  Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
+                </div>
+                <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local SQLite
+                  database. Don't reuse a password you use elsewhere.</div>
               </div>
-              <div class="auth-field">
-                <label>Password</label>
-                <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6"
-                  autocomplete="current-password">
-              </div>
-              <div class="auth-field" id="confirmField" style="display:none;">
-                <label>Confirm password</label>
-                <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6"
-                  autocomplete="new-password">
-              </div>
-              <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
-            </form>
-            <div class="auth-switch" id="authSwitch">
-              Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
             </div>
-            <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local SQLite
-              database. Don't reuse a password you use elsewhere.</div>
           </div>
         </div>
       </section>
 
-      <!-- Tech Partners Logo Loop Section -->
-      <section class="logo-loop-section" style="padding: 40px 0; border-top: 1px solid var(--card-border-soft);">
-        <div class="logoloop logoloop--scale-hover logoloop--fade" id="financialLogoLoop">
-          <div class="logoloop__track">
-            <ul class="logoloop__list">
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 4px; width: 24px; height: 24px;">
-                  <rect width="100" height="100" fill="#003366" />
-                  <rect x="25" y="25" width="50" height="50" fill="#FFFFFF" />
-                  <rect x="35" y="35" width="30" height="30" fill="#E31E24" />
-                </svg>
-                <span>HDFC Bank</span>
-              </li>
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 24px; height: 24px;">
-                  <circle cx="50" cy="50" r="50" fill="#F37021" />
-                  <text x="50" y="68" font-family="'Inter', sans-serif" font-weight="900" font-size="55" fill="#FFFFFF"
-                    text-anchor="middle">i</text>
-                </svg>
-                <span>ICICI Bank</span>
-              </li>
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
-                  <circle cx="50" cy="45" r="35" fill="#00B1EC" />
-                  <circle cx="50" cy="45" r="12" fill="#04040a" />
-                  <rect x="45" y="45" width="10" height="40" fill="#00B1EC" />
-                </svg>
-                <span>SBI</span>
-              </li>
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
-                  <path d="M50 10 L85 45 L50 80 L15 45 Z" fill="#00B1EC" />
-                  <circle cx="50" cy="45" r="10" fill="#FFFFFF" />
-                </svg>
-                <span>Zerodha</span>
-              </li>
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 24px; height: 24px;">
-                  <circle cx="50" cy="50" r="50" fill="#00D09C" />
-                  <path d="M30 65 L45 50 L55 60 L75 30" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"
-                    stroke-linejoin="round" fill="none" />
-                  <path d="M55 30 H75 V50" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"
-                    stroke-linejoin="round" fill="none" />
-                </svg>
-                <span>Groww</span>
-              </li>
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
-                  <rect width="100" height="100" rx="10" fill="#003366" />
-                  <text x="50" y="65" font-family="'Inter', sans-serif" font-weight="900" font-size="40" fill="#FFFFFF"
-                    text-anchor="middle">NSE</text>
-                </svg>
-                <span>NSE India</span>
-              </li>
-              <li class="logoloop__item">
-                <svg viewBox="0 0 100 100" style="display:inline-block; width: 24px; height: 24px;">
-                  <polygon points="50 10, 90 80, 10 80" fill="#003366" />
-                  <polygon points="50 30, 75 75, 25 75" fill="#E31E24" />
-                </svg>
-                <span>BSE India</span>
-              </li>
-            </ul>
+      <!-- Ecosystem Orbit Showcase Section -->
+      <section class="logo-orbit-section">
+        <div class="section-title text-center" style="margin-bottom: 30px;">
+          <span class="badge" style="display:inline-block; margin-bottom: 12px;">ECOSYSTEM</span>
+          <h2>Integrated Financial Ecosystem</h2>
+          <p>Seamlessly tracks stock prices and assets matching top Indian platforms.</p>
+        </div>
+
+        <div class="orbit-showcase-container">
+          <!-- Central Branding -->
+          <div class="orbit-center-wrapper">
+            <div class="orbit-center-logo">P</div>
+            <div class="orbit-center-glow"></div>
+          </div>
+
+          <!-- Orbit Container -->
+          <div class="orbit-view" id="financialOrbit">
+            <!-- Orbit Path SVG -->
+            <svg class="orbit-path-svg" viewBox="0 0 1000 1000">
+              <path id="orbitEllipsePath" d="M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500" fill="none" stroke="rgba(139, 92, 246, 0.12)" stroke-width="2" />
+            </svg>
+
+            <!-- Orbiting Badges -->
+            <div class="orbit-node" data-index="0">
+              <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 4px; width: 20px; height: 20px;">
+                <rect width="100" height="100" fill="#003366" />
+                <rect x="25" y="25" width="50" height="50" fill="#FFFFFF" />
+                <rect x="35" y="35" width="30" height="30" fill="#E31E24" />
+              </svg>
+              <span>HDFC Bank</span>
+            </div>
+            <div class="orbit-node" data-index="1">
+              <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 20px; height: 20px;">
+                <circle cx="50" cy="50" r="50" fill="#F37021" />
+                <text x="50" y="68" font-family="'Inter', sans-serif" font-weight="900" font-size="55" fill="#FFFFFF" text-anchor="middle">i</text>
+              </svg>
+              <span>ICICI Bank</span>
+            </div>
+            <div class="orbit-node" data-index="2">
+              <svg viewBox="0 0 100 100" style="display:inline-block; width: 20px; height: 20px;">
+                <circle cx="50" cy="45" r="35" fill="#00B1EC" />
+                <circle cx="50" cy="45" r="12" fill="#04040a" />
+                <rect x="45" y="45" width="10" height="40" fill="#00B1EC" />
+              </svg>
+              <span>SBI</span>
+            </div>
+            <div class="orbit-node" data-index="3">
+              <svg viewBox="0 0 100 100" style="display:inline-block; width: 20px; height: 20px;">
+                <path d="M50 10 L85 45 L50 80 L15 45 Z" fill="#00B1EC" />
+                <circle cx="50" cy="45" r="10" fill="#FFFFFF" />
+              </svg>
+              <span>Zerodha</span>
+            </div>
+            <div class="orbit-node" data-index="4">
+              <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 20px; height: 20px;">
+                <circle cx="50" cy="50" r="50" fill="#00D09C" />
+                <path d="M30 65 L45 50 L55 60 L75 30" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <path d="M55 30 H75 V50" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              </svg>
+              <span>Groww</span>
+            </div>
+            <div class="orbit-node" data-index="5">
+              <svg viewBox="0 0 100 100" style="display:inline-block; width: 20px; height: 20px;">
+                <rect width="100" height="100" rx="10" fill="#003366" />
+                <text x="50" y="65" font-family="'Inter', sans-serif" font-weight="900" font-size="40" fill="#FFFFFF" text-anchor="middle">NSE</text>
+              </svg>
+              <span>NSE India</span>
+            </div>
+            <div class="orbit-node" data-index="6">
+              <svg viewBox="0 0 100 100" style="display:inline-block; width: 20px; height: 20px;">
+                <polygon points="50 10, 90 80, 10 80" fill="#003366" />
+                <polygon points="50 30, 75 75, 25 75" fill="#E31E24" />
+              </svg>
+              <span>BSE India</span>
+            </div>
           </div>
         </div>
       </section>
@@ -170,8 +186,8 @@
           <div class="step-card">
             <div class="step-number-circle">1</div>
             <h3>Import Your Investments</h3>
-            <p>Export your investment statement from CAMS or KFintech and upload it. We parse it securely to track all
-              your mutual funds.</p>
+            <p>Upload your consolidated account statements or transaction files. We parse them securely to track all
+              your holdings.</p>
           </div>
           <div class="step-card">
             <div class="step-number-circle">2</div>
@@ -188,133 +204,7 @@
         </div>
       </section>
 
-      <!-- Clarity Split Section -->
-      <section class="landing-clarity" id="clarity-section">
-        <div class="clarity-content">
-          <span class="clarity-badge">TRACK WITH CLARITY</span>
-          <h2>See your mutual fund details without the usual clutter</h2>
-          <p>Portfolio Tracker keeps your holdings, fund details, and portfolio view easy to scan so you can check
-            performance regularly without feeling lost.</p>
-        </div>
-        <div class="clarity-mockup">
-          <!-- Premium HTML/CSS Phone Mockup -->
-          <div class="phone-mockup-frame">
-            <div class="phone-notch"></div>
-            <div class="phone-screen">
-              <!-- App Top Bar -->
-              <div class="phone-app-header">
-                <div class="phone-user">
-                  <div class="phone-avatar">A</div>
-                  <div style="text-align: left;">
-                    <div style="font-size: 8px; color: var(--text-dim); font-weight: 500; line-height: 1;">My Portfolio
-                    </div>
-                    <div style="font-size: 10px; color: #FFF; font-weight: 700; margin-top: 1px; line-height: 1;">Active
-                      Tracker</div>
-                  </div>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                  <span style="font-size: 11px; opacity: 0.85;">🔔</span>
-                  <span style="font-size: 11px; opacity: 0.85;">⚙️</span>
-                </div>
-              </div>
 
-              <!-- Portfolio Card -->
-              <div class="phone-val-card" style="text-align: left;">
-                <div
-                  style="font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.6); line-height: 1;">
-                  Total Portfolio Value</div>
-                <div style="font-size: 19px; font-weight: 800; color: #FFF; margin: 4px 0 3px; line-height: 1.1;">
-                  ₹4,87,320.15</div>
-                <div
-                  style="display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; color: var(--green); line-height: 1;">
-                  <span>▲ +₹28,450.00</span>
-                  <span style="background: rgba(16, 185, 129, 0.15); padding: 1px 4px; border-radius: 3px;">+6.2%</span>
-                </div>
-              </div>
-
-              <!-- Mini SVG Trend Line -->
-              <div
-                style="margin: 10px 0; background: rgba(255,255,255,0.02); border-radius: 8px; padding: 6px; border: 1px solid rgba(255,255,255,0.03); text-align: left;">
-                <div style="font-size: 7.5px; color: var(--text-dim); margin-bottom: 4px; font-weight: 600;">7-DAY
-                  PERFORMANCE</div>
-                <svg viewBox="0 0 100 30" style="width: 100%; height: auto; display: block;">
-                  <defs>
-                    <linearGradient id="gradient-phone-chart" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3" />
-                      <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M 0 25 C 20 20, 30 10, 50 15 C 70 20, 80 5, 100 2" fill="none" stroke="var(--accent)"
-                    stroke-width="2.5" stroke-linecap="round" />
-                  <path d="M 0 25 C 20 20, 30 10, 50 15 C 70 20, 80 5, 100 2 L 100 30 L 0 30 Z"
-                    fill="url(#gradient-phone-chart)" />
-                </svg>
-              </div>
-
-              <!-- List of top holdings -->
-              <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                <div
-                  style="font-size: 8.5px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 2px;">
-                  Holdings Analysis</div>
-
-                <div class="phone-holding-row">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <div class="phone-holding-badge" style="background: rgba(139, 92, 246, 0.15); color: #C4B5FD;">TCS
-                    </div>
-                    <div>
-                      <div style="font-size: 9.5px; font-weight: 600; color: #FFF; line-height: 1;">TCS Ltd</div>
-                      <div style="font-size: 7.5px; color: var(--text-dim); margin-top: 1px; line-height: 1;">12 shares
-                      </div>
-                    </div>
-                  </div>
-                  <div style="text-align: right;">
-                    <div style="font-size: 9.5px; font-weight: 700; color: #FFF; line-height: 1;">₹41,280.00</div>
-                    <div
-                      style="font-size: 7.5px; color: var(--green); font-weight: 600; margin-top: 1px; line-height: 1;">
-                      +2.8%</div>
-                  </div>
-                </div>
-
-                <div class="phone-holding-row">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <div class="phone-holding-badge" style="background: rgba(99, 102, 241, 0.15); color: #C7D2FE;">HDFC
-                    </div>
-                    <div>
-                      <div style="font-size: 9.5px; font-weight: 600; color: #FFF; line-height: 1;">HDFC Bank</div>
-                      <div style="font-size: 7.5px; color: var(--text-dim); margin-top: 1px; line-height: 1;">45 shares
-                      </div>
-                    </div>
-                  </div>
-                  <div style="text-align: right;">
-                    <div style="font-size: 9.5px; font-weight: 700; color: #FFF; line-height: 1;">₹72,900.00</div>
-                    <div
-                      style="font-size: 7.5px; color: var(--red); font-weight: 600; margin-top: 1px; line-height: 1;">
-                      -0.5%</div>
-                  </div>
-                </div>
-
-                <div class="phone-holding-row">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <div class="phone-holding-badge" style="background: rgba(16, 185, 129, 0.15); color: #A7F3D0;">NIFTY
-                    </div>
-                    <div>
-                      <div style="font-size: 9.5px; font-weight: 600; color: #FFF; line-height: 1;">Nifty 50 ETF</div>
-                      <div style="font-size: 7.5px; color: var(--text-dim); margin-top: 1px; line-height: 1;">110 shares
-                      </div>
-                    </div>
-                  </div>
-                  <div style="text-align: right;">
-                    <div style="font-size: 9.5px; font-weight: 700; color: #FFF; line-height: 1;">₹27,390.00</div>
-                    <div
-                      style="font-size: 7.5px; color: var(--green); font-weight: 600; margin-top: 1px; line-height: 1;">
-                      +3.7%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <!-- Services List Section -->
       <section class="landing-services" id="services-section">
@@ -353,13 +243,13 @@
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
             </div>
-            <h3>Mutual Fund Analytics</h3>
+            <h3>Advanced Asset Analytics</h3>
             <p>Import your investment statements in minutes. View asset composition across multiple asset classes
               without exposing credentials.</p>
             <ul>
               <li>Accurate returns based on local cache</li>
               <li>Asset class allocation breakdowns</li>
-              <li>Mutual Fund risk assessment</li>
+              <li>Automated portfolio risk assessment</li>
               <li>Support for custom holding additions</li>
             </ul>
           </div>
@@ -441,28 +331,6 @@
               <path d="M7 12h10M7 16h10M7 8h2"></path>
             </svg>
             <span>Stock News</span>
-          </button>
-
-          <div style="font-size: 10px; text-transform: uppercase; color: var(--text-faint); font-weight: 700; margin: 20px 0 8px 12px; letter-spacing: 0.05em;">Quick Actions</div>
-          <button class="nav-item" id="sidebarAddHoldingBtn" style="border-left: 3px solid transparent;">
-            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            <span>Add Holding</span>
-          </button>
-          <button class="nav-item" id="sidebarSearchHoldingsBtn" style="border-left: 3px solid transparent;">
-            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <span>Search Holdings</span>
-          </button>
-          <button class="nav-item" id="sidebarRefreshPricesBtn" style="border-left: 3px solid transparent;">
-            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            <span>Refresh Prices</span>
           </button>
         </nav>
       </div>
@@ -601,7 +469,7 @@
             style="min-height: 100px; padding: 16px; animation-delay: 0.1s;">
             <span class="card-label">Total Assets Monitored</span>
             <div class="stat-value" id="analyticHoldingsCount" style="font-size: 24px; margin-top: 4px;">0</div>
-            <div class="sub" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">Active equities & funds
+            <div class="sub" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">Active equities & ETFs
             </div>
           </div>
           <div class="stat-card mini-card animate-card"
@@ -623,11 +491,34 @@
             </div>
           </div>
 
-          <!-- Card 2: Asset Class Split -->
+          <!-- Card 2: Asset Class Split (Interactive Custom Donut) -->
           <div class="chart-card">
             <h3>Asset Class Distribution</h3>
-            <div class="chart-container">
-              <canvas id="classSplitChart"></canvas>
+            <div class="pie-chart-outer-container">
+              
+              <!-- Custom Donut Chart component wrapper -->
+              <div class="pie-chart-wrapper" id="customPieChart">
+                <svg class="pie-chart-svg" viewBox="0 0 300 300">
+                  <defs>
+                    <filter id="pieGlow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="5" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <g class="pie-slices-group" transform="translate(150, 150)"></g>
+                </svg>
+
+                <!-- Centered Label display (PieCenter) -->
+                <div class="pie-center-content">
+                  <div class="pie-center-label" id="pieCenterLabel">Total</div>
+                  <div class="pie-center-value" id="pieCenterValue">₹0</div>
+                  <div class="pie-center-pct" id="pieCenterPct"></div>
+                </div>
+              </div>
+
+              <!-- Synced Interactive Legend -->
+              <div class="pie-legend" id="pieLegend"></div>
+
             </div>
           </div>
 
@@ -1592,6 +1483,152 @@
         return html;
       }
 
+      function getDonutPath(startAngle, endAngle, innerRadius, outerRadius) {
+        const x1 = outerRadius * Math.cos(startAngle);
+        const y1 = outerRadius * Math.sin(startAngle);
+        const x2 = outerRadius * Math.cos(endAngle);
+        const y2 = outerRadius * Math.sin(endAngle);
+
+        const x3 = innerRadius * Math.cos(endAngle);
+        const y3 = innerRadius * Math.sin(endAngle);
+        const x4 = innerRadius * Math.cos(startAngle);
+        const y4 = innerRadius * Math.sin(startAngle);
+
+        const largeArcFlag = endAngle - startAngle <= Math.PI ? 0 : 1;
+
+        return `
+          M ${x1} ${y1}
+          A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}
+          L ${x3} ${y3}
+          A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x4} ${y4}
+          Z
+        `.trim();
+      }
+
+      function renderInteractivePieChart(data) {
+        const svgGroup = document.querySelector('#customPieChart .pie-slices-group');
+        const legendContainer = document.getElementById('pieLegend');
+        if (!svgGroup || !legendContainer) return;
+
+        svgGroup.innerHTML = '';
+        legendContainer.innerHTML = '';
+
+        const totalValue = data.reduce((sum, item) => sum + item.value, 0);
+        if (totalValue === 0) {
+          document.getElementById('pieCenterValue').textContent = '₹0';
+          document.getElementById('pieCenterLabel').textContent = 'Total';
+          document.getElementById('pieCenterPct').textContent = '';
+          return;
+        }
+
+        document.getElementById('pieCenterValue').textContent = '₹' + Math.round(totalValue).toLocaleString('en-IN');
+        document.getElementById('pieCenterLabel').textContent = 'Total';
+        document.getElementById('pieCenterLabel').style.color = 'var(--text-dim)';
+        document.getElementById('pieCenterPct').textContent = '';
+
+        const innerRadius = 75;
+        const outerRadius = 110;
+        let currentAngle = -Math.PI / 2;
+
+        data.forEach((item, index) => {
+          const sliceAngle = (item.value / totalValue) * 2 * Math.PI;
+          const endAngle = currentAngle + sliceAngle;
+          const midAngle = currentAngle + sliceAngle / 2;
+
+          const pathD = getDonutPath(currentAngle, endAngle, innerRadius, outerRadius);
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', pathD);
+          path.setAttribute('fill', item.color);
+          path.setAttribute('class', 'pie-slice-path');
+          path.setAttribute('data-index', index);
+          
+          const offsetDist = 8;
+          const dx = Math.cos(midAngle) * offsetDist;
+          const dy = Math.sin(midAngle) * offsetDist;
+
+          path.dataset.dx = dx;
+          path.dataset.dy = dy;
+          path.dataset.label = item.label;
+          path.dataset.value = Math.round(item.value);
+          path.dataset.pct = ((item.value / totalValue) * 100).toFixed(1) + '%';
+          path.dataset.color = item.color;
+
+          svgGroup.appendChild(path);
+
+          if (typeof gsap !== 'undefined') {
+            gsap.fromTo(path, 
+              { scale: 0, transformOrigin: '0px 0px', opacity: 0 },
+              { scale: 1, opacity: 1, duration: 0.75, ease: 'back.out(1.4)', delay: index * 0.07 }
+            );
+          }
+
+          const legendItem = document.createElement('div');
+          legendItem.className = 'pie-legend-item';
+          legendItem.dataset.index = index;
+          legendItem.innerHTML = `
+            <span class="legend-color-dot" style="background-color: ${item.color}"></span>
+            <span class="legend-label">${item.label}</span>
+            <span class="legend-value">₹${Math.round(item.value).toLocaleString('en-IN')}</span>
+          `;
+          legendContainer.appendChild(legendItem);
+
+          currentAngle = endAngle;
+        });
+
+        const paths = svgGroup.querySelectorAll('.pie-slice-path');
+        const legendItems = legendContainer.querySelectorAll('.pie-legend-item');
+
+        function highlightSlice(idx) {
+          if (typeof gsap === 'undefined') return;
+
+          paths.forEach((p, i) => {
+            const isTarget = idx !== null && i === parseInt(idx);
+            
+            gsap.to(p, {
+              x: isTarget ? p.dataset.dx : 0,
+              y: isTarget ? p.dataset.dy : 0,
+              opacity: (idx === null || isTarget) ? 1 : 0.45,
+              duration: 0.3,
+              ease: 'power3.out'
+            });
+
+            if (isTarget) {
+              p.setAttribute('filter', 'url(#pieGlow)');
+            } else {
+              p.removeAttribute('filter');
+            }
+          });
+
+          legendItems.forEach((li, i) => {
+            li.classList.toggle('active', idx !== null && i === parseInt(idx));
+          });
+
+          if (idx !== null) {
+            const targetPath = paths[idx];
+            document.getElementById('pieCenterLabel').textContent = targetPath.dataset.label;
+            document.getElementById('pieCenterLabel').style.color = targetPath.dataset.color;
+            document.getElementById('pieCenterValue').textContent = '₹' + parseInt(targetPath.dataset.value).toLocaleString('en-IN');
+            document.getElementById('pieCenterPct').textContent = targetPath.dataset.pct;
+          } else {
+            document.getElementById('pieCenterLabel').textContent = 'Total';
+            document.getElementById('pieCenterLabel').style.color = 'var(--text-dim)';
+            document.getElementById('pieCenterValue').textContent = '₹' + Math.round(totalValue).toLocaleString('en-IN');
+            document.getElementById('pieCenterPct').textContent = '';
+          }
+        }
+
+        paths.forEach(p => {
+          p.addEventListener('mouseenter', () => highlightSlice(p.dataset.index));
+          p.addEventListener('mouseleave', () => highlightSlice(null));
+        });
+
+        legendItems.forEach(li => {
+          li.addEventListener('mouseenter', () => highlightSlice(li.dataset.index));
+          li.addEventListener('mouseleave', () => highlightSlice(null));
+        });
+      }
+
       function renderCharts() {
         const list = allHoldings();
         if (!list || !list.length) {
@@ -1713,53 +1750,30 @@
           });
         }
 
-        // 2. Asset Class Split Chart (Pie)
-        const classCtx = document.getElementById('classSplitChart');
-        if (classCtx) {
-          if (classSplitChartInstance) classSplitChartInstance.destroy();
-
+        // 2. Asset Class Split Chart (Interactive Custom Donut)
+        const customPieContainer = document.getElementById('customPieChart');
+        if (customPieContainer) {
           const classGroups = {};
           list.forEach(h => {
             const cls = h.assetClass || 'Equity';
             classGroups[cls] = (classGroups[cls] || 0) + h.value;
           });
 
-          const classLabels = Object.keys(classGroups);
-          const classData = Object.values(classGroups);
-          const classColors = ['#8B5CF6', '#3B82F6', '#EC4899', '#2DD4BF', '#F59E0B'];
+          const classColors = {
+            'Equity': '#8B5CF6',
+            'ETF': '#3B82F6',
+            'Cash': '#2DD4BF',
+            'Crypto': '#EC4899',
+            'Commodity': '#F59E0B'
+          };
 
-          classSplitChartInstance = new Chart(classCtx, {
-            type: 'pie',
-            data: {
-              labels: classLabels,
-              datasets: [{
-                data: classData,
-                backgroundColor: classColors.slice(0, classLabels.length),
-                borderColor: '#181C21',
-                borderWidth: 2
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: { color: '#98A0AC', font: { family: 'Inter', size: 11 } }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function (context) {
-                      const val = context.raw;
-                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                      const pct = ((val / total) * 100).toFixed(1);
-                      return ` ₹${val.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${pct}%)`;
-                    }
-                  }
-                }
-              }
-            }
-          });
+          const pieData = Object.entries(classGroups).map(([label, value]) => ({
+            label,
+            value,
+            color: classColors[label] || '#98A0AC'
+          }));
+
+          renderInteractivePieChart(pieData);
         }
 
         // 3. Holding Performance Chart (Bar)
@@ -2266,27 +2280,6 @@
         const mobAdd = document.getElementById('mobileAddHoldingBtn');
         if (mobAdd) mobAdd.addEventListener('click', () => openModal('add'));
 
-        const sideAdd = document.getElementById('sidebarAddHoldingBtn');
-        if (sideAdd) sideAdd.addEventListener('click', () => {
-          openModal('add');
-          if (sidebar) sidebar.classList.remove('open');
-        });
-
-        const sideSearch = document.getElementById('sidebarSearchHoldingsBtn');
-        if (sideSearch) sideSearch.addEventListener('click', () => {
-          const input = document.getElementById('searchInput');
-          if (input) {
-            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            input.focus();
-          }
-          if (sidebar) sidebar.classList.remove('open');
-        });
-
-        const sideRefresh = document.getElementById('sidebarRefreshPricesBtn');
-        if (sideRefresh) sideRefresh.addEventListener('click', () => {
-          refreshPrices();
-          if (sidebar) sidebar.classList.remove('open');
-        });
 
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
@@ -2740,6 +2733,8 @@
       }
 
 
+
+
       /* ---------------- ScrollFloat Vanilla Component (React Bits port) ---------------- */
       function initScrollFloat(elementOrSelector, options = {}) {
         const elements = typeof elementOrSelector === 'string' 
@@ -2821,91 +2816,60 @@
         });
       }
 
-      /* ---------------- LogoLoop Vanilla Component Initialization ---------------- */
-      function initLogoLoop(containerId, options = {}) {
-        const container = document.getElementById(containerId);
+      /* ---------------- OrbitImages Vanilla Component (React Bits port) ---------------- */
+      function initOrbitImages() {
+        const view = document.getElementById('financialOrbit');
+        if (!view) return;
+
+        const nodes = view.querySelectorAll('.orbit-node');
+        if (!nodes.length) return;
+
+        const pathStr = 'M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500';
+        
+        // Safe check for GSAP
+        if (typeof gsap === 'undefined') return;
+
+        nodes.forEach((node, idx) => {
+          node.style.offsetPath = `path("${pathStr}")`;
+          node.style.offsetRotate = '0deg';
+          node.style.offsetAnchor = 'center center';
+          
+          const startPercent = (idx / nodes.length) * 100;
+          
+          // Animate offset-distance infinitely
+          gsap.fromTo(node, 
+            { offsetDistance: `${startPercent}%` },
+            {
+              offsetDistance: `${startPercent + 100}%`,
+              duration: 35,
+              ease: 'none',
+              repeat: -1
+            }
+          );
+        });
+
+        // Responsive scaling setup
+        const container = document.querySelector('.orbit-showcase-container');
         if (!container) return;
 
-        const speed = options.speed || 120;
-        const direction = options.direction || 'left';
-        const logoHeight = options.logoHeight || 32;
-        const gap = options.gap || 40;
-        const fadeOut = options.fadeOut || false;
-        const fadeOutColor = options.fadeOutColor || '#04040a';
-        const pauseOnHover = options.pauseOnHover !== false;
-        const scaleOnHover = options.scaleOnHover || false;
-
-        container.classList.add('logoloop');
-        if (fadeOut) {
-          container.classList.add('logoloop--fade');
-          container.style.setProperty('--logoloop-fadeColor', fadeOutColor);
-        }
-        if (scaleOnHover) {
-          container.classList.add('logoloop--scale-hover');
-        }
-        container.style.setProperty('--logoloop-gap', `${gap}px`);
-        container.style.setProperty('--logoloop-logoHeight', `${logoHeight}px`);
-
-        const track = container.querySelector('.logoloop__track');
-        const sequence = container.querySelector('.logoloop__list');
-        if (!track || !sequence) return;
-
-        // Duplicate sequence to fill track width dynamically
-        const containerWidth = container.clientWidth || window.innerWidth;
-        const seqWidth = sequence.getBoundingClientRect().width || 1200;
-        const copiesNeeded = Math.max(2, Math.ceil(containerWidth / seqWidth) + 2);
-
-        for (let i = 1; i < copiesNeeded; i++) {
-          const clone = sequence.cloneNode(true);
-          clone.setAttribute('aria-hidden', 'true');
-          track.appendChild(clone);
+        const baseWidth = 1000;
+        function updateScale() {
+          const w = container.clientWidth;
+          const scale = Math.min(1, w / baseWidth);
+          view.style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
 
-        let offset = 0;
-        let isHovered = false;
-        let raf = null;
-        let lastTime = null;
-
-        if (pauseOnHover) {
-          container.addEventListener('mouseenter', () => isHovered = true);
-          container.addEventListener('mouseleave', () => isHovered = false);
+        updateScale();
+        window.addEventListener('resize', updateScale);
+        
+        // Use ResizeObserver for perfect accuracy
+        if (typeof ResizeObserver !== 'undefined') {
+          const robserver = new ResizeObserver(updateScale);
+          robserver.observe(container);
         }
-
-        function animate(timestamp) {
-          if (!lastTime) lastTime = timestamp;
-          const dt = Math.max(0, (timestamp - lastTime) / 1000);
-          lastTime = timestamp;
-
-          const targetSpeed = isHovered ? 0 : speed;
-          offset += targetSpeed * dt;
-
-          if (offset >= seqWidth) {
-            offset %= seqWidth;
-          } else if (offset < 0) {
-            offset = seqWidth + (offset % seqWidth);
-          }
-
-          track.style.transform = `translate3d(${-offset}px, 0, 0)`;
-          raf = requestAnimationFrame(animate);
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              if (!raf) {
-                lastTime = null;
-                raf = requestAnimationFrame(animate);
-              }
-            } else {
-              if (raf) {
-                cancelAnimationFrame(raf);
-                raf = null;
-              }
-            }
-          });
-        }, { threshold: 0 });
-        observer.observe(container);
       }
+
+
 
       /* ---------------- DarkVeil WebGL CPPN Shader Initialization ---------------- */
       function initDarkVeil(canvasId, options = {}) {
@@ -3097,17 +3061,11 @@
           wire();
           initDock();
 
-          // Initialize Logo Loop with deceleration on hover, custom gap, fade, and scale animations
-          initLogoLoop('financialLogoLoop', {
-            speed: 100,
-            direction: 'left',
-            logoHeight: 32,
-            gap: 40,
-            fadeOut: true,
-            fadeOutColor: '#04040a',
-            pauseOnHover: true,
-            scaleOnHover: true
-          });
+
+          // Initialize responsive financial ecosystem OrbitImages showcase
+          initOrbitImages();
+
+
 
           // Initialize DarkVeil WebGL shader background loop with custom speed and resolution
           initDarkVeil('darkVeilCanvas', {
@@ -3130,14 +3088,6 @@
           });
 
           initScrollFloat('#services-section .section-title h2', {
-            animationDuration: 1.2,
-            ease: 'back.out(1.7)',
-            scrollStart: 'top bottom-=5%',
-            scrollEnd: 'bottom center+=15%',
-            stagger: 0.02
-          });
-
-          initScrollFloat('#clarity-section .clarity-content h2', {
             animationDuration: 1.2,
             ease: 'back.out(1.7)',
             scrollStart: 'top bottom-=5%',
