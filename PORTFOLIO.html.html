@@ -196,7 +196,122 @@
             performance regularly without feeling lost.</p>
         </div>
         <div class="clarity-mockup">
-          <img src="portfolio_mobile_mockup.png" alt="Portfolio Dashboard Mockup" class="mockup-img">
+          <!-- Premium HTML/CSS Phone Mockup -->
+          <div class="phone-mockup-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <!-- App Top Bar -->
+              <div class="phone-app-header">
+                <div class="phone-user">
+                  <div class="phone-avatar">A</div>
+                  <div style="text-align: left;">
+                    <div style="font-size: 8px; color: var(--text-dim); font-weight: 500; line-height: 1;">My Portfolio
+                    </div>
+                    <div style="font-size: 10px; color: #FFF; font-weight: 700; margin-top: 1px; line-height: 1;">Active
+                      Tracker</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span style="font-size: 11px; opacity: 0.85;">🔔</span>
+                  <span style="font-size: 11px; opacity: 0.85;">⚙️</span>
+                </div>
+              </div>
+
+              <!-- Portfolio Card -->
+              <div class="phone-val-card" style="text-align: left;">
+                <div
+                  style="font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.6); line-height: 1;">
+                  Total Portfolio Value</div>
+                <div style="font-size: 19px; font-weight: 800; color: #FFF; margin: 4px 0 3px; line-height: 1.1;">
+                  ₹4,87,320.15</div>
+                <div
+                  style="display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; color: var(--green); line-height: 1;">
+                  <span>▲ +₹28,450.00</span>
+                  <span style="background: rgba(16, 185, 129, 0.15); padding: 1px 4px; border-radius: 3px;">+6.2%</span>
+                </div>
+              </div>
+
+              <!-- Mini SVG Trend Line -->
+              <div
+                style="margin: 10px 0; background: rgba(255,255,255,0.02); border-radius: 8px; padding: 6px; border: 1px solid rgba(255,255,255,0.03); text-align: left;">
+                <div style="font-size: 7.5px; color: var(--text-dim); margin-bottom: 4px; font-weight: 600;">7-DAY
+                  PERFORMANCE</div>
+                <svg viewBox="0 0 100 30" style="width: 100%; height: auto; display: block;">
+                  <defs>
+                    <linearGradient id="gradient-phone-chart" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3" />
+                      <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M 0 25 C 20 20, 30 10, 50 15 C 70 20, 80 5, 100 2" fill="none" stroke="var(--accent)"
+                    stroke-width="2.5" stroke-linecap="round" />
+                  <path d="M 0 25 C 20 20, 30 10, 50 15 C 70 20, 80 5, 100 2 L 100 30 L 0 30 Z"
+                    fill="url(#gradient-phone-chart)" />
+                </svg>
+              </div>
+
+              <!-- List of top holdings -->
+              <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
+                <div
+                  style="font-size: 8.5px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 2px;">
+                  Holdings Analysis</div>
+
+                <div class="phone-holding-row">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="phone-holding-badge" style="background: rgba(139, 92, 246, 0.15); color: #C4B5FD;">TCS
+                    </div>
+                    <div>
+                      <div style="font-size: 9.5px; font-weight: 600; color: #FFF; line-height: 1;">TCS Ltd</div>
+                      <div style="font-size: 7.5px; color: var(--text-dim); margin-top: 1px; line-height: 1;">12 shares
+                      </div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #FFF; line-height: 1;">₹41,280.00</div>
+                    <div
+                      style="font-size: 7.5px; color: var(--green); font-weight: 600; margin-top: 1px; line-height: 1;">
+                      +2.8%</div>
+                  </div>
+                </div>
+
+                <div class="phone-holding-row">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="phone-holding-badge" style="background: rgba(99, 102, 241, 0.15); color: #C7D2FE;">HDFC
+                    </div>
+                    <div>
+                      <div style="font-size: 9.5px; font-weight: 600; color: #FFF; line-height: 1;">HDFC Bank</div>
+                      <div style="font-size: 7.5px; color: var(--text-dim); margin-top: 1px; line-height: 1;">45 shares
+                      </div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #FFF; line-height: 1;">₹72,900.00</div>
+                    <div
+                      style="font-size: 7.5px; color: var(--red); font-weight: 600; margin-top: 1px; line-height: 1;">
+                      -0.5%</div>
+                  </div>
+                </div>
+
+                <div class="phone-holding-row">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="phone-holding-badge" style="background: rgba(16, 185, 129, 0.15); color: #A7F3D0;">NIFTY
+                    </div>
+                    <div>
+                      <div style="font-size: 9.5px; font-weight: 600; color: #FFF; line-height: 1;">Nifty 50 ETF</div>
+                      <div style="font-size: 7.5px; color: var(--text-dim); margin-top: 1px; line-height: 1;">110 shares
+                      </div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #FFF; line-height: 1;">₹27,390.00</div>
+                    <div
+                      style="font-size: 7.5px; color: var(--green); font-weight: 600; margin-top: 1px; line-height: 1;">
+                      +3.7%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
