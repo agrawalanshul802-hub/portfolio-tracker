@@ -2956,3 +2956,194 @@ tbody tr:hover {
     transform: translateX(100%);
   }
 }
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVENESS OVERRIDES
+   ========================================================================== */
+
+/* 1. Landing Header & Navigation Capsule */
+@media (max-width: 768px) {
+  .landing-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+    align-items: center;
+    text-align: center;
+  }
+  .nav-capsule {
+    display: none !important; /* Hide secondary nav capsule on small screens */
+  }
+  .landing-header .nav-links {
+    margin-top: 4px;
+  }
+}
+
+/* 2. Landing Hero Layout */
+@media (max-width: 768px) {
+  .landing-hero {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding: 20px 0 40px !important;
+    text-align: center;
+  }
+  .hero-left {
+    align-items: center !important;
+  }
+  .hero-title {
+    font-size: 28px !important;
+    line-height: 1.25 !important;
+  }
+  .hero-subtitle {
+    font-size: 14px !important;
+  }
+  .hero-feature-badges {
+    justify-content: center !important;
+  }
+  .hero-cta {
+    width: 100%;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  .hero-cta .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .hero-right {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .auth-card {
+    margin: 0 auto !important;
+  }
+}
+
+/* 3. Steps Progress Section */
+@media (max-width: 768px) {
+  .steps-container {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 32px !important;
+    margin-top: 24px !important;
+  }
+  .steps-container::before {
+    display: none !important; /* Hide dashed connector line */
+  }
+  .step-card {
+    padding: 0 !important;
+  }
+  .step-number-circle {
+    margin-bottom: 12px !important;
+  }
+}
+
+/* 4. Clarity & Mockup Layout */
+@media (max-width: 768px) {
+  .landing-clarity {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 24px !important;
+    margin: 40px 0 !important;
+    border-radius: 16px !important;
+  }
+  .landing-clarity h2 {
+    font-size: 22px !important;
+  }
+}
+
+/* 5. Services Grid */
+@media (max-width: 992px) {
+  .services-grid-three {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+}
+@media (max-width: 600px) {
+  .services-grid-three {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-top: 24px !important;
+  }
+  .service-card-premium {
+    padding: 24px !important;
+  }
+}
+
+/* 6. Dashboard Top Bar & Profile Dropdown */
+@media (max-width: 480px) {
+  .dashboard-top-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  .profile-dropdown-wrapper {
+    align-self: flex-start !important;
+    width: 100% !important;
+  }
+  .profile-trigger-btn {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  .profile-dropdown-menu {
+    width: 100% !important;
+  }
+}
+
+/* 7. Stats Values & Cards */
+@media (max-width: 480px) {
+  .net-worth-card {
+    padding: 20px 24px !important;
+  }
+  .net-worth-value {
+    font-size: 28px !important;
+  }
+  .stat-card.mini-card {
+    padding: 16px !important;
+  }
+  .stat-card.mini-card .stat-value {
+    font-size: 20px !important;
+  }
+}
+
+/* 8. Table Toolbar Filters & Search Bar */
+@media (max-width: 768px) {
+  .panel-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 12px 14px !important;
+  }
+  .toolbar-left {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .filter-group {
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
+  .search-box {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  .sort-select {
+    width: 100% !important;
+  }
+}
+
+/* 9. Analytics Chart Grid */
+@media (max-width: 480px) {
+  .analytics-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .chart-card {
+    padding: 16px !important;
+    min-height: 320px !important;
+  }
+}
+
+/* 10. Moneycontrol Hero News Aspect Ratio */
+@media (max-width: 768px) {
+  .mc-hero-img-wrapper {
+    height: 200px !important;
+  }
+}
