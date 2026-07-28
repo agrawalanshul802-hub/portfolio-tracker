@@ -55,8 +55,12 @@
 
         <div class="hero-right" id="authCardAnchor">
           <div class="star-border-container">
-            <div class="border-gradient-bottom" style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;"></div>
-            <div class="border-gradient-top" style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;"></div>
+            <div class="border-gradient-bottom"
+              style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;">
+            </div>
+            <div class="border-gradient-top"
+              style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;">
+            </div>
             <div class="inner-content">
               <div class="auth-card">
                 <div class="auth-brand">
@@ -88,7 +92,8 @@
                 <div class="auth-switch" id="authSwitch">
                   Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
                 </div>
-                <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local SQLite
+                <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local
+                  SQLite
                   database. Don't reuse a password you use elsewhere.</div>
               </div>
             </div>
@@ -115,7 +120,8 @@
           <div class="orbit-view" id="financialOrbit">
             <!-- Orbit Path SVG -->
             <svg class="orbit-path-svg" viewBox="0 0 1000 1000">
-              <path id="orbitEllipsePath" d="M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500" fill="none" stroke="rgba(139, 92, 246, 0.12)" stroke-width="2" />
+              <path id="orbitEllipsePath" d="M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500" fill="none"
+                stroke="rgba(139, 92, 246, 0.12)" stroke-width="2" />
             </svg>
 
             <!-- Orbiting Badges -->
@@ -130,7 +136,8 @@
             <div class="orbit-node" data-index="1">
               <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 20px; height: 20px;">
                 <circle cx="50" cy="50" r="50" fill="#F37021" />
-                <text x="50" y="68" font-family="'Inter', sans-serif" font-weight="900" font-size="55" fill="#FFFFFF" text-anchor="middle">i</text>
+                <text x="50" y="68" font-family="'Inter', sans-serif" font-weight="900" font-size="55" fill="#FFFFFF"
+                  text-anchor="middle">i</text>
               </svg>
               <span>ICICI Bank</span>
             </div>
@@ -152,15 +159,18 @@
             <div class="orbit-node" data-index="4">
               <svg viewBox="0 0 100 100" style="display:inline-block; border-radius: 50%; width: 20px; height: 20px;">
                 <circle cx="50" cy="50" r="50" fill="#00D09C" />
-                <path d="M30 65 L45 50 L55 60 L75 30" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                <path d="M55 30 H75 V50" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <path d="M30 65 L45 50 L55 60 L75 30" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
+                <path d="M55 30 H75 V50" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" />
               </svg>
               <span>Groww</span>
             </div>
             <div class="orbit-node" data-index="5">
               <svg viewBox="0 0 100 100" style="display:inline-block; width: 20px; height: 20px;">
                 <rect width="100" height="100" rx="10" fill="#003366" />
-                <text x="50" y="65" font-family="'Inter', sans-serif" font-weight="900" font-size="40" fill="#FFFFFF" text-anchor="middle">NSE</text>
+                <text x="50" y="65" font-family="'Inter', sans-serif" font-weight="900" font-size="40" fill="#FFFFFF"
+                  text-anchor="middle">NSE</text>
               </svg>
               <span>NSE India</span>
             </div>
@@ -343,7 +353,8 @@
         <span class="brand-name">Portfolio Tracker</span>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
-        <button class="btn btn-primary btn-sm" id="mobileAddHoldingBtn" style="padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 8px;">+ Add</button>
+        <button class="btn btn-primary btn-sm" id="mobileAddHoldingBtn"
+          style="padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 8px;">+ Add</button>
         <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
       </div>
     </header>
@@ -352,9 +363,21 @@
     <main class="main-content">
       <!-- Dashboard Top Bar with User Dropdown -->
       <header class="dashboard-top-bar">
-        <div class="top-bar-left">
-          <h2 class="top-bar-title">Dashboard</h2>
-          <p class="top-bar-subtitle">Overview of your investments & equity performance</p>
+        <div class="top-bar-left" style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px;">
+          <!-- Desktop brand toggle -->
+          <div class="brand desktop-brand-trigger" id="desktopBrandTrigger"
+            style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); transition: background-color 0.2s ease, border-color 0.2s ease;">
+            <div class="brand-mark"
+              style="background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%); color: #FFF; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 800; font-size: 16px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);">
+              P</div>
+            <span class="brand-name"
+              style="font-weight: 700; color: #FFF; font-size: 14.5px; letter-spacing: -0.01em;">Portfolio
+              Tracker</span>
+          </div>
+          <div>
+            <h2 class="top-bar-title" style="margin: 0; line-height: 1.2;">Dashboard</h2>
+            <p class="top-bar-subtitle" style="margin-top: 4px;">Overview of your investments & equity performance</p>
+          </div>
         </div>
         <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
           <button class="profile-trigger-btn" id="profileTriggerBtn">
@@ -495,7 +518,7 @@
           <div class="chart-card">
             <h3>Asset Class Distribution</h3>
             <div class="pie-chart-outer-container">
-              
+
               <!-- Custom Donut Chart component wrapper -->
               <div class="pie-chart-wrapper" id="customPieChart">
                 <svg class="pie-chart-svg" viewBox="0 0 300 300">
@@ -1542,7 +1565,7 @@
           path.setAttribute('fill', item.color);
           path.setAttribute('class', 'pie-slice-path');
           path.setAttribute('data-index', index);
-          
+
           const offsetDist = 8;
           const dx = Math.cos(midAngle) * offsetDist;
           const dy = Math.sin(midAngle) * offsetDist;
@@ -1557,7 +1580,7 @@
           svgGroup.appendChild(path);
 
           if (typeof gsap !== 'undefined') {
-            gsap.fromTo(path, 
+            gsap.fromTo(path,
               { scale: 0, transformOrigin: '0px 0px', opacity: 0 },
               { scale: 1, opacity: 1, duration: 0.75, ease: 'back.out(1.4)', delay: index * 0.07 }
             );
@@ -1584,7 +1607,7 @@
 
           paths.forEach((p, i) => {
             const isTarget = idx !== null && i === parseInt(idx);
-            
+
             gsap.to(p, {
               x: isTarget ? p.dataset.dx : 0,
               y: isTarget ? p.dataset.dy : 0,
@@ -1978,17 +2001,42 @@
           articles = articles.filter(art => art.type === selectedNewsCategory);
         }
 
-        // 2. Filter by symbol
+        // 2. Filter by symbol with intelligent fallback
+        let showFallbackBanner = false;
         if (selectedFilterSymbol !== 'ALL') {
-          articles = articles.filter(art => {
+          const symbolArticles = articles.filter(art => {
             const tickers = (art.relatedTickers || []).map(t => t.toUpperCase());
             return tickers.includes(selectedFilterSymbol) || (art.symbol && art.symbol.toUpperCase() === selectedFilterSymbol);
           });
+
+          if (symbolArticles.length > 0) {
+            articles = symbolArticles;
+          } else {
+            // Keep general articles and flag fallback notice
+            showFallbackBanner = true;
+          }
         }
 
         if (articles.length === 0) {
           feedContent.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">No news articles found matching your filters.</div>`;
           return;
+        }
+
+        let bannerHtml = '';
+        if (showFallbackBanner) {
+          const categoryName = selectedNewsCategory === 'ALL' ? 'General' :
+            selectedNewsCategory === 'BUZZING' ? 'Buzzing Stocks' :
+              selectedNewsCategory === 'RECOS' ? 'Brokerage Recos' :
+                selectedNewsCategory === 'LATEST' ? 'Latest News' : 'Market Outlook';
+
+          bannerHtml = `
+            <div class="empty-state" style="grid-column: 1 / -1; padding: 18px; background: rgba(167, 139, 250, 0.03); border: 1px dashed rgba(167, 139, 250, 0.15); border-radius: 8px; margin-bottom: 24px; text-align: left; width: 100%; display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 13.5px; font-weight: 700; color: #FFF; display: flex; align-items: center; gap: 8px;">
+                💡 No articles specifically mentioning <span style="color: var(--accent); font-weight: 800;">${selectedFilterSymbol}</span> in ${categoryName} feed right now.
+              </div>
+              <div style="font-size: 12px; color: var(--text-dim);">Showing general updates for the <strong>${categoryName}</strong> feed instead:</div>
+            </div>
+          `;
         }
 
         // Split articles
@@ -2116,7 +2164,7 @@
         }
 
         // Assemble the full Moneycontrol layout grid dynamically!
-        feedContent.innerHTML = `
+        feedContent.innerHTML = bannerHtml + `
           <div class="mc-left-column">
             ${heroHtml}
             <div class="mc-sub-grid">
@@ -2251,17 +2299,30 @@
         document.getElementById('tabBtnAi').addEventListener('click', () => switchTab('ai'));
         document.getElementById('tabBtnNews').addEventListener('click', () => switchTab('news'));
 
-        // Mobile Sidebar toggler
+        // Mobile & Desktop Sidebar toggler
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileBrand = document.querySelector('.mobile-header .brand');
+        const desktopBrand = document.getElementById('desktopBrandTrigger');
         const sidebar = document.getElementById('sidebar');
-        if (mobileMenuBtn && sidebar) {
-          mobileMenuBtn.addEventListener('click', (e) => {
+        if (sidebar) {
+          const toggleSidebar = (e) => {
             e.stopPropagation();
             sidebar.classList.toggle('open');
-          });
+          };
+
+          if (mobileBrand) mobileBrand.addEventListener('click', toggleSidebar);
+          if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
+          if (desktopBrand) desktopBrand.addEventListener('click', toggleSidebar);
 
           document.addEventListener('click', (e) => {
-            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
+            const isClickInsideBrand = mobileBrand && mobileBrand.contains(e.target);
+            const isClickInsideMenuBtn = mobileMenuBtn && mobileMenuBtn.contains(e.target);
+            const isClickInsideDesktopBrand = desktopBrand && desktopBrand.contains(e.target);
+            if (sidebar.classList.contains('open') &&
+              !sidebar.contains(e.target) &&
+              !isClickInsideBrand &&
+              !isClickInsideMenuBtn &&
+              !isClickInsideDesktopBrand) {
               sidebar.classList.remove('open');
             }
           });
@@ -2275,7 +2336,7 @@
         });
 
         document.getElementById('addHoldingBtn').addEventListener('click', () => openModal('add'));
-        
+
         // Mobile and Sidebar Quick Actions
         const mobAdd = document.getElementById('mobileAddHoldingBtn');
         if (mobAdd) mobAdd.addEventListener('click', () => openModal('add'));
@@ -2737,8 +2798,8 @@
 
       /* ---------------- ScrollFloat Vanilla Component (React Bits port) ---------------- */
       function initScrollFloat(elementOrSelector, options = {}) {
-        const elements = typeof elementOrSelector === 'string' 
-          ? document.querySelectorAll(elementOrSelector) 
+        const elements = typeof elementOrSelector === 'string'
+          ? document.querySelectorAll(elementOrSelector)
           : [elementOrSelector];
 
         elements.forEach(el => {
@@ -2825,7 +2886,7 @@
         if (!nodes.length) return;
 
         const pathStr = 'M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500';
-        
+
         // Safe check for GSAP
         if (typeof gsap === 'undefined') return;
 
@@ -2833,11 +2894,11 @@
           node.style.offsetPath = `path("${pathStr}")`;
           node.style.offsetRotate = '0deg';
           node.style.offsetAnchor = 'center center';
-          
+
           const startPercent = (idx / nodes.length) * 100;
-          
+
           // Animate offset-distance infinitely
-          gsap.fromTo(node, 
+          gsap.fromTo(node,
             { offsetDistance: `${startPercent}%` },
             {
               offsetDistance: `${startPercent + 100}%`,
@@ -2861,7 +2922,7 @@
 
         updateScale();
         window.addEventListener('resize', updateScale);
-        
+
         // Use ResizeObserver for perfect accuracy
         if (typeof ResizeObserver !== 'undefined') {
           const robserver = new ResizeObserver(updateScale);
