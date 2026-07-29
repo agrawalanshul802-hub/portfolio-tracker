@@ -517,7 +517,8 @@
           <!-- Card 2: Portfolio Health & Risk Profile -->
           <div class="chart-card" style="justify-content: flex-start; align-items: stretch; min-height: 380px;">
             <h3>Portfolio Health & Risk Profile</h3>
-            <div id="riskHealthCheckContainer" style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
+            <div id="riskHealthCheckContainer"
+              style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
               <!-- Filled dynamically in JS -->
             </div>
           </div>
@@ -914,13 +915,13 @@
       async function fetchLiveEquityPriceYahoo(yahooSymbol) {
         const targetUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(yahooSymbol)
           + '?range=1d&interval=1m&corsDomain=finance.yahoo.com';
+        const baseProxy = window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:8080';
         const proxies = [
           url => url,
-          url => '/proxy/' + url,
-          url => 'http://127.0.0.1:8080/' + url,
-          url => 'https://api.cors.lol/?url=' + encodeURIComponent(url),
+          url => baseProxy + '/proxy/' + url,
+          url => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
           url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-          url => 'https://corsproxy.io/?url=' + encodeURIComponent(url)
+          url => 'https://api.cors.lol/?url=' + encodeURIComponent(url)
         ];
 
         for (const getProxyUrl of proxies) {
@@ -955,29 +956,49 @@
         lastFetchErrors = [];
         await fetchLiveCryptoPrices();
 
-        const byExchange = { NSE: new Set(), BSE: new Set() };
+        const byExchange = { NSE: [], BSE: [], GLOBAL: [] };
         state.holdings.forEach(h => {
           const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
           if (getCachedPrice(base)) return; // already resolved (e.g. crypto)
-          const exch = h.exchange === 'BSE' ? 'BSE' : 'NSE';
-          if (base) byExchange[exch].add(base);
+          if (h.exchange === 'BSE') {
+            byExchange.BSE.push(h);
+          } else if (h.exchange === 'NSE') {
+            byExchange.NSE.push(h);
+          } else {
+            byExchange.GLOBAL.push(h);
+          }
         });
 
-        // Tier 1: Twelve Data
-        await Promise.allSettled([
-          fetchLiveEquityPricesBatch([...byExchange.NSE], 'NSE'),
-          fetchLiveEquityPricesBatch([...byExchange.BSE], 'BSE'),
-        ]);
+        // Tier 1: Real-time Yahoo Finance for Indian Stocks (NSE/BSE)
+        const indianStocks = [...byExchange.NSE, ...byExchange.BSE];
+        await Promise.allSettled(indianStocks.map(async (h) => {
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol);
+          if (priceObj) livePriceCache[base] = priceObj;
+        }));
 
-        // Tier 2: Yahoo Finance, per symbol, only for whatever Tier 1 left unresolved.
+        // Tier 1: Twelve Data for GLOBAL / US stocks
+        const globalSymbols = byExchange.GLOBAL.map(h => (h.yahooSymbol || h.symbol).toUpperCase().replace(/\.(NS|BO)$/, ''));
+        if (globalSymbols.length) {
+          await fetchLiveEquityPricesBatch(globalSymbols, 'US');
+        }
+
+        // Fallback checks for anything still missing
         const stillMissing = state.holdings.filter(h => {
           const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
           return base && !getCachedPrice(base);
         });
+
         await Promise.allSettled(stillMissing.map(async (h) => {
           const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol);
-          if (priceObj) livePriceCache[base] = priceObj;
+          if (h.exchange === 'NSE' || h.exchange === 'BSE') {
+            // Try Twelve Data as fallback for Indian stocks
+            await fetchLiveEquityPricesBatch([base], h.exchange);
+          } else {
+            // Try Yahoo Finance as fallback for Global stocks
+            const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol);
+            if (priceObj) livePriceCache[base] = priceObj;
+          }
         }));
       }
 
@@ -1814,7 +1835,8 @@
       function getProxiedImgUrl(url) {
         if (!url) return '';
         if (url.startsWith('http')) {
-          return `/proxy/${url}`;
+          const baseProxy = window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:8080';
+          return `${baseProxy}/proxy/${url}`;
         }
         return url;
       }
