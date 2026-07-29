@@ -367,6 +367,11 @@ def proxy(target):
     if query_string:
         full_url += '?' + query_string
 
+    if full_url.startswith('https:/') and not full_url.startswith('https://'):
+        full_url = 'https://' + full_url[7:]
+    elif full_url.startswith('http:/') and not full_url.startswith('http://'):
+        full_url = 'http://' + full_url[6:]
+
     if not full_url.startswith('http'):
         return jsonify({'error': 'Invalid Target URL'}), 400
     
