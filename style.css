@@ -914,7 +914,19 @@ tbody tr:hover {
   will-change: width, height, transform;
 }
 
-.dock-item:hover,
+@media (hover: hover) {
+  .dock-item:hover {
+    background: rgba(139, 92, 246, 0.18);
+    border-color: rgba(139, 92, 246, 0.45);
+    color: #FFFFFF;
+    transform: translateY(-6px) scale(1.05);
+    box-shadow:
+      0 12px 24px rgba(139, 92, 246, 0.25),
+      0 0 12px rgba(139, 92, 246, 0.15);
+    outline: none;
+  }
+}
+
 .dock-item:focus-visible {
   background: rgba(139, 92, 246, 0.18);
   border-color: rgba(139, 92, 246, 0.45);
@@ -924,6 +936,14 @@ tbody tr:hover {
     0 12px 24px rgba(139, 92, 246, 0.25),
     0 0 12px rgba(139, 92, 246, 0.15);
   outline: none;
+}
+
+.dock-item:active {
+  background: rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.5);
+  color: #FFFFFF;
+  transform: scale(0.92);
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
 }
 
 .dock-item[data-active="true"] {
@@ -962,17 +982,22 @@ tbody tr:hover {
   transition: opacity .15s ease, transform .15s ease;
 }
 
-.dock-item:hover .dock-label,
+@media (hover: hover) {
+  .dock-item:hover .dock-label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
+  }
+}
+
 .dock-item:focus-visible .dock-label {
   opacity: 1;
   transform: translateX(-50%) translateY(-2px);
 }
 
 @media (hover:none) {
-
-  /* touch devices: no magnification, just a normal tap target row */
+  /* touch devices: no magnification, but allow smooth scale transitions on tap active press */
   .dock-item {
-    transition: none;
+    transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
