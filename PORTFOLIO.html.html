@@ -2615,6 +2615,36 @@
         const items = Array.from(panel.querySelectorAll('.dock-item'));
         if (!items.length) return;
 
+        // click actions
+        panel.addEventListener('click', (e) => {
+          const btn = e.target.closest('.dock-item');
+          if (!btn) return;
+          const action = btn.dataset.dockAction;
+          if (action === 'add') openModal('add');
+          else if (action === 'search') {
+            const input = document.getElementById('searchInput');
+            if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
+          }
+          else if (action === 'sort') {
+            const select = document.getElementById('sortSelect');
+            if (select) {
+              const opts = Array.from(select.options).map(o => o.value);
+              const next = opts[(opts.indexOf(select.value) + 1) % opts.length];
+              select.value = next;
+              select.dispatchEvent(new Event('change'));
+              toast('Sort: ' + select.options[select.selectedIndex].text.replace('Sort: ', ''));
+            }
+          }
+          else if (action === 'refresh') refreshPrices();
+          else if (action === 'account') { const el = document.getElementById('accountLink'); if (el) el.click(); }
+          else if (action === 'signout') signOut();
+        });
+
+        // Skip spring-based magnification animations on touchscreens to prevent lagging/reflow issues
+        if (!window.matchMedia('(hover: hover)').matches) {
+          return;
+        }
+
         const BASE = 56, MAGNIFY = 80, DISTANCE = 140;
         const SPRING = { stiffness: 150, damping: 12, mass: 0.1 };
 
@@ -2673,33 +2703,6 @@
         window.addEventListener('resize', () => {
           cachedCenters = [];
         });
-
-        // click actions
-        panel.addEventListener('click', (e) => {
-          const btn = e.target.closest('.dock-item');
-          if (!btn) return;
-          const action = btn.dataset.dockAction;
-          if (action === 'add') openModal('add');
-          else if (action === 'search') {
-            const input = document.getElementById('searchInput');
-            if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
-          }
-          else if (action === 'sort') {
-            const select = document.getElementById('sortSelect');
-            if (select) {
-              const opts = Array.from(select.options).map(o => o.value);
-              const next = opts[(opts.indexOf(select.value) + 1) % opts.length];
-              select.value = next;
-              select.dispatchEvent(new Event('change'));
-              toast('Sort: ' + select.options[select.selectedIndex].text.replace('Sort: ', ''));
-            }
-          }
-          else if (action === 'refresh') refreshPrices();
-          else if (action === 'account') { const el = document.getElementById('accountLink'); if (el) el.click(); }
-          else if (action === 'signout') signOut();
-        });
-
-        // keyboard accessibility: Enter/Space already work via native <button>
       }
 
 
