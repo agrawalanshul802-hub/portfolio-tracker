@@ -976,7 +976,7 @@ tbody tr:hover {
   }
 }
 
-@media (max-width:700px) {
+@media (max-width: 768px) {
   .dock-outer {
     bottom: 12px;
   }
@@ -989,6 +989,18 @@ tbody tr:hover {
   .dock-item {
     width: 48px;
     height: 48px;
+  }
+}
+
+@media (max-width: 400px) {
+  .dock-panel {
+    gap: 8px;
+    padding: 8px 10px 10px;
+  }
+
+  .dock-item {
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -3340,10 +3352,10 @@ tbody tr:hover {
   letter-spacing: 0.02em;
 }
 
-/* Hide floating action dock on mobile touchscreens */
+/* Keep floating action dock visible on mobile touchscreens */
 @media (max-width: 768px) {
   .dock-outer {
-    display: none !important;
+    display: flex !important;
   }
 }
 
