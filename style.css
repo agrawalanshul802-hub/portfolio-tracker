@@ -995,6 +995,7 @@ tbody tr:hover {
 }
 
 @media (hover:none) {
+
   /* touch devices: no magnification, but allow smooth scale transitions on tap active press */
   .dock-item {
     transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
@@ -3494,6 +3495,21 @@ tbody tr:hover {
   /* Counteract base container tilt */
   transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
+
+@keyframes orbit-loop {
+  0% {
+    offset-distance: 0%;
+  }
+
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.orbit-node-animated {
+  animation: orbit-loop 35s linear infinite;
+}
+
 
 .orbit-node:hover {
   background: rgba(255, 255, 255, 0.06);
