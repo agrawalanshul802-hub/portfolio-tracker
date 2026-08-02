@@ -185,6 +185,96 @@
         </div>
       </section>
 
+      <!-- Inside Look / Feature Overview Section -->
+      <section class="landing-clarity" id="live-showcase-section"
+        style="grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: stretch; margin: 80px 0;">
+        <div class="clarity-left" style="display: flex; flex-direction: column; justify-content: center;">
+          <span class="clarity-badge" style="margin-bottom: 16px;">🔥 Inside Look</span>
+          <h2 style="margin-bottom: 12px;">Explore the Active Platform Features</h2>
+          <p style="margin-bottom: 24px; font-size: 14.5px;">Click on any feature below to preview the actual interface
+            you will get after logging in:</p>
+
+          <div class="feature-tabs" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Tab 1 -->
+            <div class="feature-tab-btn active" data-target="holdings"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'holdings')">
+              <h3
+                style="font-size: 15.5px; font-weight: 700; color: #FFF; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
+                Holdings Dashboard
+              </h3>
+              <p style="font-size: 13px; color: var(--text-dim); margin: 0; line-height: 1.4;">Track stocks (NSE/BSE)
+                and custom assets with live price updates and automatic profit/loss computations.</p>
+            </div>
+            <!-- Tab 2 -->
+            <div class="feature-tab-btn" data-target="analytics"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'analytics')">
+              <h3
+                style="font-size: 15.5px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
+                Interactive Chart Analytics
+              </h3>
+              <p
+                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
+                Visual asset allocation breakdowns and holding distributions powered by customizable Chart.js donut and
+                bar charts.</p>
+            </div>
+            <!-- Tab 3 -->
+            <div class="feature-tab-btn" data-target="ai"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'ai')">
+              <h3
+                style="font-size: 15.5px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
+                Ask AI Investment Analyst
+              </h3>
+              <p
+                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
+                Chat directly with a personalized AI assistant (Gemini/Grok) to audit your risk, concentration, and
+                diversification.</p>
+            </div>
+            <!-- Tab 4 -->
+            <div class="feature-tab-btn" data-target="news"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'news')">
+              <h3
+                style="font-size: 15.5px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
+                Aggregated Ticker News
+              </h3>
+              <p
+                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
+                A consolidated news feed matching your holdings from Moneycontrol recommendations and Yahoo Finance
+                feeds.</p>
+            </div>
+          </div>
+        </div>
+        <div class="clarity-mockup" style="display: flex; align-items: center; justify-content: center;">
+          <div
+            style="position: relative; width: 100%; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); background: #08070e; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);">
+            <img id="showcaseImage" src="holdings_preview.png" alt="Portfolio Tracker Live Preview"
+              style="width: 100%; height: auto; display: block; will-change: opacity, transform; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" />
+            <div
+              style="position: absolute; top: 0; left: 0; right: 0; height: 28px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; padding: 0 12px; pointer-events: none;">
+              <span
+                style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
+              <span
+                style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span>
+              <span
+                style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+              <span
+                style="margin-left: 8px; font-size: 10px; color: var(--text-faint); font-weight: 500; font-family: monospace;">portfolio_tracker_secure_session</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Get Started Section -->
       <section class="landing-steps" id="get-started-section">
         <div class="section-title text-center">
@@ -2789,6 +2879,62 @@
         });
       }
 
+      function switchShowcaseTab(element, tabName) {
+        // Find all tab buttons
+        const tabs = document.querySelectorAll('.feature-tab-btn');
+        tabs.forEach(tab => {
+          // Reset styling
+          tab.style.background = 'transparent';
+          tab.style.borderColor = 'transparent';
+
+          const h3 = tab.querySelector('h3');
+          if (h3) h3.style.color = 'var(--text-dim)';
+
+          const dot = tab.querySelector('.tab-dot');
+          if (dot) dot.style.backgroundColor = 'transparent';
+
+          const p = tab.querySelector('p');
+          if (p) p.style.color = 'var(--text-faint)';
+        });
+
+        // Activate current tab
+        element.style.background = 'rgba(139, 92, 246, 0.08)';
+        element.style.borderColor = 'rgba(139, 92, 246, 0.25)';
+
+        const h3 = element.querySelector('h3');
+        if (h3) h3.style.color = '#FFF';
+
+        const dot = element.querySelector('.tab-dot');
+        if (dot) dot.style.backgroundColor = 'var(--accent)';
+
+        const p = element.querySelector('p');
+        if (p) p.style.color = 'var(--text-dim)';
+
+        // Update image with smooth GSAP transition
+        const img = document.getElementById('showcaseImage');
+        if (img) {
+          if (typeof gsap !== 'undefined') {
+            gsap.to(img, {
+              opacity: 0,
+              y: 10,
+              duration: 0.15,
+              onComplete: () => {
+                img.src = `${tabName}_preview.png`;
+                gsap.to(img, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.25,
+                  ease: 'power2.out'
+                });
+              }
+            });
+          } else {
+            img.src = `${tabName}_preview.png`;
+          }
+        }
+      }
+      window.switchShowcaseTab = switchShowcaseTab;
+
       /* ---------------- OrbitImages Vanilla Component (React Bits port) ---------------- */
       function initOrbitImages() {
         const view = document.getElementById('financialOrbit');
@@ -2799,9 +2945,6 @@
 
         const pathStr = 'M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500';
 
-        // Safe check for GSAP
-        if (typeof gsap === 'undefined') return;
-
         nodes.forEach((node, idx) => {
           node.style.offsetPath = `path("${pathStr}")`;
           node.style.offsetRotate = '0deg';
@@ -2809,16 +2952,12 @@
 
           const startPercent = (idx / nodes.length) * 100;
 
-          // Animate offset-distance infinitely
-          gsap.fromTo(node,
-            { offsetDistance: `${startPercent}%` },
-            {
-              offsetDistance: `${startPercent + 100}%`,
-              duration: 35,
-              ease: 'none',
-              repeat: -1
-            }
-          );
+          // Instead of GSAP (which can get stuck due to style property mapping limitations), 
+          // we use native CSS keyframes with negative animation-delay for perfect performance and stability.
+          const duration = 35; // matching the original 35s animation
+          const delay = -(startPercent / 100) * duration;
+          node.style.animationDelay = `${delay}s`;
+          node.classList.add('orbit-node-animated');
         });
 
         // Responsive scaling setup
@@ -2829,7 +2968,7 @@
         function updateScale() {
           const w = container.clientWidth;
           const scale = Math.min(1, w / baseWidth);
-          view.style.transform = `translate(-50%, -50%) scale(${scale})`;
+          view.style.transform = `translate(-50%, -50%) rotate(-8deg) scale(${scale})`;
         }
 
         updateScale();
