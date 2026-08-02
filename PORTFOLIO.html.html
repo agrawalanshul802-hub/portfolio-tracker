@@ -3116,11 +3116,12 @@
         function resize() {
           const parent = canvas.parentElement;
           if (!parent) return;
-          const dpr = Math.min(window.devicePixelRatio, 2);
+          // Downsample canvas resolution (e.g., 25%) and cap max resolution to prevent GPU bottleneck on tall pages
+          const scaleFactor = 0.25;
           const w = parent.clientWidth;
           const h = parent.clientHeight;
-          canvas.width = w * dpr;
-          canvas.height = h * dpr;
+          canvas.width = Math.min(w * scaleFactor, 800);
+          canvas.height = Math.min(h * scaleFactor, 600);
           gl.viewport(0, 0, canvas.width, canvas.height);
         }
 
