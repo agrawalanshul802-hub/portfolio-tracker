@@ -7,7 +7,7 @@ import socket
 import sqlite3
 import hashlib
 import json
-from flask import Flask, jsonify, request, session, send_from_directory
+from flask import Flask, jsonify, request, session, send_from_directory, redirect
 
 PORT = 8080
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -292,6 +292,107 @@ def login():
 def logout():
     session.pop('email', None)
     return jsonify({'success': True})
+
+# REST API: Google OAuth 2.0 Login Redirect
+@app.route('/api/login/google')
+def google_login():
+    client_id = os.getenv('GOOGLE_CLIENT_ID')
+    if not client_id:
+        return "GOOGLE_CLIENT_ID is not configured in your environment.", 400
+    
+    state = hashlib.sha256(os.urandom(1024)).hexdigest()
+    session['oauth_state'] = state
+    
+    scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
+    redirect_uri = f"{scheme}://{request.host}/api/login/google/callback"
+    
+    params = {
+        'client_id': client_id,
+        'redirect_uri': redirect_uri,
+        'response_type': 'code',
+        'scope': 'openid email profile',
+        'state': state,
+        'prompt': 'select_account'
+    }
+    
+    auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+    return redirect(auth_url)
+
+# REST API: Google OAuth 2.0 Callback
+@app.route('/api/login/google/callback')
+def google_callback():
+    state = request.args.get('state')
+    code = request.args.get('code')
+    
+    if not state or state != session.get('oauth_state'):
+        return "Invalid state parameter. CSRF validation failed.", 400
+    
+    client_id = os.getenv('GOOGLE_CLIENT_ID')
+    client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
+    if not client_id or not client_secret:
+        return "Google credentials not fully configured in your environment.", 400
+        
+    scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
+    redirect_uri = f"{scheme}://{request.host}/api/login/google/callback"
+    
+    # Exchange authorization code for token
+    token_url = "https://oauth2.googleapis.com/token"
+    token_data = urllib.parse.urlencode({
+        'code': code,
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'redirect_uri': redirect_uri,
+        'grant_type': 'authorization_code'
+    }).encode('utf-8')
+    
+    req = urllib.request.Request(
+        token_url,
+        data=token_data,
+        headers={'Content-Type': 'application/x-www-form-urlencoded'}
+    )
+    
+    try:
+        with urllib.request.urlopen(req) as res:
+            res_body = json.loads(res.read().decode('utf-8'))
+            access_token = res_body.get('access_token')
+    except Exception as e:
+        return f"Token exchange failed: {str(e)}", 500
+        
+    # Get user info
+    userinfo_url = f"https://www.googleapis.com/oauth2/v3/userinfo?access_token={access_token}"
+    req_info = urllib.request.Request(userinfo_url)
+    try:
+        with urllib.request.urlopen(req_info) as res_info:
+            info_body = json.loads(res_info.read().decode('utf-8'))
+            email = info_body.get('email', '').strip().lower()
+    except Exception as e:
+        return f"Fetching user info failed: {str(e)}", 500
+        
+    if not email:
+        return "Failed to retrieve email address from Google.", 400
+        
+    # Check if user exists, otherwise create
+    try:
+        with sqlite3.connect(DATABASE) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute('SELECT email FROM users WHERE email = ?', (email,))
+            row = cursor.fetchone()
+            
+            if not row:
+                # Sign up: create user with a secure random hash placeholder
+                import uuid
+                placeholder_hash = "oauth-google:" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+                conn.execute(
+                    'INSERT INTO users (email, password_hash) VALUES (?, ?)',
+                    (email, placeholder_hash)
+                )
+                conn.commit()
+    except Exception as e:
+        return f"Database error: {str(e)}", 500
+        
+    session['email'] = email
+    return redirect('/')
 
 # REST API: Get Holdings
 @app.route('/api/holdings', methods=['GET'])
