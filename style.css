@@ -1,5 +1,5 @@
 :root {
-  --bg: #0A0814;
+  --bg: #000000;
   --card: rgba(25, 20, 50, 0.45);
   --card-border: rgba(255, 255, 255, 0.08);
   --card-border-soft: rgba(255, 255, 255, 0.04);
@@ -10,9 +10,10 @@
   /* Glowing violet */
   --accent-hover: #7C3AED;
   --accent-text: #FFFFFF;
-  --green: #10B981;
+  --green: #8B5CF6;
   --red: #EF4444;
-  --shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+  --shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
+  --logoloop-fadeColor: #000000;
 }
 
 *,
@@ -28,11 +29,7 @@ body {
 
 body {
   margin: 0;
-  background: #04040a;
-  background-image:
-    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 0% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+  background: #000000;
   background-attachment: fixed;
   color: var(--text);
   font-family: 'Inter', sans-serif;
@@ -1103,7 +1100,7 @@ tbody tr:hover {
 /* Sidebar styling */
 .sidebar {
   width: 260px;
-  background: rgba(10, 8, 20, 0.96);
+  background: rgba(8, 8, 10, 0.96);
   border-right: 1px solid var(--card-border);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -1156,7 +1153,7 @@ tbody tr:hover {
   font-weight: 800;
   font-size: 19px;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #FFFFFF 0%, #C4B5FD 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #A78BFA 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1212,7 +1209,7 @@ tbody tr:hover {
 
 .nav-item.active .nav-icon {
   color: #A78BFA;
-  filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.45));
+  filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.45));
 }
 
 .sidebar-bottom {
@@ -1324,7 +1321,7 @@ tbody tr:hover {
 .mobile-header {
   display: none;
   height: 64px;
-  background: rgba(10, 8, 20, 0.8);
+  background: rgba(8, 8, 10, 0.8);
   border-bottom: 1px solid var(--card-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1681,7 +1678,7 @@ tbody tr:hover {
 }
 
 .nav-ai-spark:hover {
-  color: #C4B5FD !important;
+  color: #A78BFA !important;
 }
 
 .landing-header .nav-links {
@@ -2145,14 +2142,14 @@ tbody tr:hover {
 .logoloop--fade::before {
   left: 0;
   background: linear-gradient(to right,
-      var(--logoloop-fadeColor, #04040a) 0%,
+      var(--logoloop-fadeColor, #000000) 0%,
       rgba(0, 0, 0, 0) 100%);
 }
 
 .logoloop--fade::after {
   right: 0;
   background: linear-gradient(to left,
-      var(--logoloop-fadeColor, #04040a) 0%,
+      var(--logoloop-fadeColor, #000000) 0%,
       rgba(0, 0, 0, 0) 100%);
 }
 
@@ -2244,7 +2241,7 @@ tbody tr:hover {
   top: calc(100% + 8px);
   right: 0;
   width: 200px;
-  background: rgba(10, 8, 20, 0.95);
+  background: rgba(8, 8, 10, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 8px;
@@ -2631,7 +2628,7 @@ tbody tr:hover {
 }
 
 .mc-tab.active {
-  color: #C4B5FD;
+  color: #A78BFA;
   border-bottom-color: var(--accent);
   text-shadow: 0 0 10px rgba(139, 92, 246, 0.35);
 }
@@ -2864,7 +2861,7 @@ tbody tr:hover {
 .mc-sidebar-header {
   font-size: 14px;
   font-weight: 800;
-  color: #C4B5FD;
+  color: #A78BFA;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 2px solid rgba(139, 92, 246, 0.25);
@@ -2929,13 +2926,13 @@ tbody tr:hover {
   top: 12px;
   right: 12px;
   z-index: 10;
-  background: rgba(16, 185, 129, 0.9);
+  background: rgba(139, 92, 246, 0.9);
   color: #FFFFFF;
   font-weight: 800;
   font-size: 11px;
   padding: 4px 10px;
   border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
@@ -2974,9 +2971,9 @@ tbody tr:hover {
 }
 
 .badge-latest {
-  background: rgba(167, 139, 250, 0.2);
-  color: #C4B5FD;
-  border: 1px solid rgba(167, 139, 250, 0.3);
+  background: rgba(139, 92, 246, 0.2);
+  color: #A78BFA;
+  border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
 .badge-yahoo {
@@ -2989,7 +2986,7 @@ tbody tr:hover {
 .news-card-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0.04) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3513,7 +3510,7 @@ tbody tr:hover {
 
 .orbit-node:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(167, 139, 250, 0.4);
+  border-color: rgba(139, 92, 246, 0.4);
   color: #FFF;
 }
 
@@ -3585,7 +3582,7 @@ tbody tr:hover {
   right: 0;
   width: clamp(320px, 32vw, 460px);
   height: 100%;
-  background: rgba(10, 8, 20, 0.95);
+  background: rgba(8, 8, 10, 0.95);
   border-left: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -3729,7 +3726,7 @@ tbody tr:hover {
 
 .sm-toggle:hover {
   color: #FFF;
-  border-color: rgba(167, 139, 250, 0.3);
+  border-color: rgba(139, 92, 246, 0.3);
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -3797,7 +3794,7 @@ tbody tr:hover {
 /* Desktop Brand trigger styles */
 .desktop-brand-trigger:hover {
   background-color: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(167, 139, 250, 0.25) !important;
+  border-color: rgba(139, 92, 246, 0.25) !important;
 }
 
 @media (max-width: 900px) {
