@@ -10,7 +10,7 @@
   /* Glowing violet */
   --accent-hover: #7C3AED;
   --accent-text: #FFFFFF;
-  --green: #8B5CF6;
+  --green: #10B981;
   --red: #EF4444;
   --shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
   --logoloop-fadeColor: #000000;
@@ -34,6 +34,13 @@ body {
   color: var(--text);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Sit above the fixed logo background watermark */
+#authScreen,
+#dashboardScreen {
+  position: relative;
+  z-index: 1;
 }
 
 h1,
@@ -3447,18 +3454,13 @@ tbody tr:hover {
   pointer-events: none;
 }
 
-.orbit-center-logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
-  color: #FFF;
-  font-weight: 800;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+.orbit-center-logo-img {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  display: block;
+  filter: invert(1);
+  mix-blend-mode: screen;
 }
 
 .orbit-center-glow {
@@ -3528,10 +3530,9 @@ tbody tr:hover {
     height: 180px;
   }
 
-  .orbit-center-logo {
-    width: 44px;
-    height: 44px;
-    font-size: 19px;
+  .orbit-center-logo-img {
+    width: 56px;
+    height: 56px;
   }
 
   .orbit-node {
@@ -3801,4 +3802,97 @@ tbody tr:hover {
   .desktop-brand-trigger {
     display: none !important;
   }
+}
+
+/* Custom Mountain Logo Blending */
+.brand-logo-icon {
+  position: relative;
+  overflow: hidden;
+  color: transparent !important; /* Hide the text 'P' */
+  font-size: 0 !important;
+}
+
+.brand-logo-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('logo_icon.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: invert(1);
+  mix-blend-mode: screen;
+}
+
+/* Demo Tour Styles */
+.demo-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #8B5CF6 0%, #10B981 100%);
+  color: #FFFFFF;
+  text-align: center;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  z-index: 10000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 0.02em;
+}
+
+.demo-banner button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.demo-banner button:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.demo-highlight {
+  outline: 3px solid var(--green) !important;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5) !important;
+  transform: scale(1.02);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================
+   Motion One Animation Support
+   ======================== */
+
+/* Tab view transition base */
+.dashboard-view-content {
+  will-change: transform, opacity;
+  transform-origin: center top;
+}
+
+/* Smooth will-change hints for animated elements */
+.net-worth-card,
+.stat-card,
+.nav-item,
+.btn-primary,
+.filter-pill {
+  will-change: transform, opacity;
+}
+
+/* Prevent layout reflow flash during Motion One entrance animations */
+.auth-card {
+  will-change: transform, opacity;
+}
+
+/* Smooth overflow for tab slide transitions */
+.app-layout {
+  overflow-x: hidden;
 }
