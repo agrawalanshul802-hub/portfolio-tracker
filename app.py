@@ -296,6 +296,12 @@ def logout():
 # REST API: Google OAuth 2.0 Login Redirect
 @app.route('/api/login/google')
 def google_login():
+    host = request.host
+    if 'localhost' in host:
+        new_host = host.replace('localhost', '127.0.0.1')
+        scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
+        return redirect(f"{scheme}://{new_host}/api/login/google")
+
     client_id = os.getenv('GOOGLE_CLIENT_ID')
     if not client_id:
         return "GOOGLE_CLIENT_ID is not configured in your environment.", 400
@@ -304,7 +310,10 @@ def google_login():
     session['oauth_state'] = state
     
     scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
-    redirect_uri = f"{scheme}://{request.host}/api/login/google/callback"
+    host = request.host
+    if 'localhost' in host:
+        host = host.replace('localhost', '127.0.0.1')
+    redirect_uri = f"{scheme}://{host}/api/login/google/callback"
     
     params = {
         'client_id': client_id,
@@ -333,7 +342,10 @@ def google_callback():
         return "Google credentials not fully configured in your environment.", 400
         
     scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
-    redirect_uri = f"{scheme}://{request.host}/api/login/google/callback"
+    host = request.host
+    if 'localhost' in host:
+        host = host.replace('localhost', '127.0.0.1')
+    redirect_uri = f"{scheme}://{host}/api/login/google/callback"
     
     # Exchange authorization code for token
     token_url = "https://oauth2.googleapis.com/token"
