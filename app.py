@@ -1071,11 +1071,14 @@ Provide a detailed response in clean Markdown. Keep paragraphs short. Do not pro
 if __name__ == '__main__':
     init_db()
     local_ip = get_local_ip()
+    google_client_id = os.getenv('GOOGLE_CLIENT_ID')
+    google_status = f"LOADED ({google_client_id[:10]}...)" if google_client_id else "NOT CONFIGURED ❌"
     print("==================================================================")
     print("                FULL STACK FLASK & SQLITE DATABASE SERVER        ")
     print("==================================================================")
     print(f"-> Access on your PC:           http://127.0.0.1:{PORT}/")
     print(f"-> Access on your mobile phone: http://{local_ip}:{PORT}/")
+    print(f"-> Google Client ID:            {google_status}")
     print("==================================================================")
     print("(Make sure your phone and PC are connected to the same Wi-Fi network)")
     print("Press Ctrl+C to stop.")
