@@ -117,10 +117,7 @@ def index():
             return send_from_directory(DIRECTORY, filename)
     return "HTML file not found in directory. Make sure PORTFOLIO TRACKER.html is in the same folder as app.py", 404
 
-# Support serving any static files (images, icons, etc.)
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory(DIRECTORY, path)
+# Static files fallback moved to bottom of file
 
 # Serve the PDF-ready Project Report
 @app.route('/project-report')
@@ -511,6 +508,71 @@ def save_holdings():
         return jsonify({'error': f'Database error: {str(e)}'}), 500
 
 # REST API: Proxy Yahoo Finance requests to bypass CORS
+# REST API: High-performance concurrent live stock and crypto price fetcher
+@app.route('/api/live-prices', methods=['GET', 'POST'])
+def get_live_prices():
+    symbols = []
+    if request.method == 'POST':
+        data = request.get_json(silent=True) or {}
+        symbols = data.get('symbols', [])
+    else:
+        symbols_str = request.args.get('symbols', '')
+        if symbols_str:
+            symbols = [s.strip() for s in symbols_str.split(',') if s.strip()]
+    
+    if not symbols:
+        return jsonify({'success': True, 'prices': {}, 'count': 0})
+    
+    def fetch_single_quote(sym):
+        sym_clean = sym.strip().upper()
+        candidates = []
+        if sym_clean in ['BTC', 'BTC-INR', 'BTCINR']:
+            candidates.append('BTC-INR')
+        elif sym_clean in ['ETH', 'ETH-INR', 'ETHINR']:
+            candidates.append('ETH-INR')
+        elif sym_clean.endswith('.NS') or sym_clean.endswith('.BO'):
+            candidates.append(sym_clean)
+            alt = sym_clean[:-3] + ('.BO' if sym_clean.endswith('.NS') else '.NS')
+            candidates.append(alt)
+        else:
+            candidates.append(f'{sym_clean}.NS')
+            candidates.append(f'{sym_clean}.BO')
+            candidates.append(sym_clean)
+        
+        for target in candidates:
+            url = f'https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(target)}?range=1d&interval=1m'
+            req = urllib.request.Request(
+                url,
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=4) as res:
+                    data = json.loads(res.read().decode('utf-8'))
+                    meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
+                    price = meta.get('regularMarketPrice')
+                    prev = meta.get('chartPreviousClose') or price
+                    base = sym_clean.replace('.NS', '').replace('.BO', '').replace('-INR', '')
+                    if price is not None and float(price) > 0:
+                        return base, {
+                            'price': round(float(price), 2),
+                            'prevClose': round(float(prev), 2),
+                            'symbol': target,
+                            'live': True
+                        }
+            except Exception:
+                continue
+        return sym_clean, None
+
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=min(16, max(len(symbols), 1))) as executor:
+        results = dict(filter(lambda x: x[1] is not None, executor.map(fetch_single_quote, symbols)))
+
+    return jsonify({
+        'success': True,
+        'prices': results,
+        'count': len(results)
+    })
+
 @app.route('/proxy/<path:target>')
 def proxy(target):
     # Retrieve query parameters string
@@ -1636,6 +1698,13 @@ def get_ipo_detail():
 
     return jsonify({'error': 'Detailed info not available for this IPO'}), 404
 
+
+# Support serving static files (images, CSS, JS, etc.) as catch-all
+@app.route('/<path:path>')
+def static_files(path):
+    if os.path.exists(os.path.join(DIRECTORY, path)):
+        return send_from_directory(DIRECTORY, path)
+    return jsonify({'error': f'Resource {path} not found'}), 404
 
 if __name__ == '__main__':
     init_db()

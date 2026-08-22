@@ -1218,12 +1218,41 @@
 
       async function refreshLivePricesForHoldings() {
         lastFetchErrors = [];
+        if (!state.holdings || !state.holdings.length) return;
+
+        // 1. Primary: Direct high-speed backend live price API
+        try {
+          const symbols = state.holdings.map(h => h.yahooSymbol || h.symbol).filter(Boolean);
+          if (symbols.length > 0) {
+            const url = '/api/live-prices?symbols=' + encodeURIComponent(symbols.join(','));
+            const res = await fetch(url);
+            if (res.ok) {
+              const json = await res.json();
+              if (json.success && json.prices) {
+                Object.keys(json.prices).forEach(key => {
+                  const item = json.prices[key];
+                  if (item && item.price) {
+                    livePriceCache[key.toUpperCase()] = {
+                      price: item.price,
+                      prevClose: item.prevClose || item.price
+                    };
+                  }
+                });
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Backend live price fetch failed, trying client fallbacks:', e);
+        }
+
+        // 2. Crypto fallback via CoinGecko
         await fetchLiveCryptoPrices();
 
+        // 3. Client-side fallback for any symbols still not resolved
         const byExchange = { NSE: [], BSE: [], GLOBAL: [] };
         state.holdings.forEach(h => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          if (getCachedPrice(base)) return; // already resolved (e.g. crypto)
+          const base = (h.yahooSymbol || h.symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          if (getCachedPrice(base)) return;
           if (h.exchange === 'BSE') {
             byExchange.BSE.push(h);
           } else if (h.exchange === 'NSE') {
@@ -1233,37 +1262,19 @@
           }
         });
 
-        // Tier 1: Real-time Yahoo Finance for Indian Stocks (NSE/BSE)
-        const indianStocks = [...byExchange.NSE, ...byExchange.BSE];
-        await Promise.allSettled(indianStocks.map(async (h) => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol);
-          if (priceObj) livePriceCache[base] = priceObj;
-        }));
-
-        // Tier 1: Twelve Data for GLOBAL / US stocks
-        const globalSymbols = byExchange.GLOBAL.map(h => (h.yahooSymbol || h.symbol).toUpperCase().replace(/\.(NS|BO)$/, ''));
-        if (globalSymbols.length) {
-          await fetchLiveEquityPricesBatch(globalSymbols, 'US');
+        const unresIndian = [...byExchange.NSE, ...byExchange.BSE];
+        if (unresIndian.length > 0) {
+          await Promise.allSettled(unresIndian.map(async (h) => {
+            const base = (h.yahooSymbol || h.symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+            const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol || h.symbol);
+            if (priceObj) livePriceCache[base] = priceObj;
+          }));
         }
 
-        // Fallback checks for anything still missing
-        const stillMissing = state.holdings.filter(h => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          return base && !getCachedPrice(base);
-        });
-
-        await Promise.allSettled(stillMissing.map(async (h) => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          if (h.exchange === 'NSE' || h.exchange === 'BSE') {
-            // Try Twelve Data as fallback for Indian stocks
-            await fetchLiveEquityPricesBatch([base], h.exchange);
-          } else {
-            // Try Yahoo Finance as fallback for Global stocks
-            const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol);
-            if (priceObj) livePriceCache[base] = priceObj;
-          }
-        }));
+        const unresGlobal = byExchange.GLOBAL.map(h => (h.yahooSymbol || h.symbol).toUpperCase().replace(/\.(NS|BO)$/, ''));
+        if (unresGlobal.length > 0) {
+          await fetchLiveEquityPricesBatch(unresGlobal, 'US');
+        }
       }
 
       function applyLivePricesToHoldings() {
