@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Tracker — Project Report</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #4F46E5;
+    --primary-light: #818CF8;
+    --accent: #10B981;
+    --bg: #FFFFFF;
+    --text: #1E293B;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
+    --card-bg: #F8FAFC;
+    --code-bg: #F1F5F9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.7;
+    font-size: 13px;
+  }
+
+  .cover-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #312E81 100%);
+    color: #FFF;
+    page-break-after: always;
+  }
+  .cover-page .cover-badge {
+    display: inline-block;
+    padding: 6px 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #A5B4FC;
+    margin-bottom: 30px;
+  }
+  .cover-page h1 {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #FFF 0%, #A5B4FC 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cover-page .subtitle {
+    font-size: 16px;
+    color: #94A3B8;
+    max-width: 520px;
+    margin-bottom: 50px;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 40px;
+    text-align: left;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 30px;
+    margin-top: 20px;
+  }
+  .cover-meta dt { color: #64748B; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .cover-meta dd { color: #E2E8F0; font-weight: 500; margin-bottom: 12px; }
+
+  .toc-page { padding: 60px; page-break-after: always; }
+  .toc-page h2 { font-size: 28px; font-weight: 800; margin-bottom: 30px; color: var(--primary); }
+  .toc-list { list-style: none; counter-reset: toc; }
+  .toc-list > li { counter-increment: toc; padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .toc-list > li::before { content: counter(toc) "."; font-weight: 700; color: var(--primary); min-width: 28px; }
+  .toc-list > li > span { flex: 1; font-weight: 500; }
+  .toc-sub { padding-left: 40px; list-style: none; width: 100%; }
+  .toc-sub li { font-size: 12px; border-bottom: 1px dashed var(--border); padding: 6px 0; }
+
+  .section { padding: 50px 60px; page-break-before: always; }
+  .section:first-of-type { page-break-before: auto; }
+
+  .section-number {
+    display: inline-block;
+    background: var(--primary);
+    color: #FFF;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  h2.section-title { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -0.02em; }
+  .section-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; max-width: 700px; }
+
+  h3 { font-size: 17px; font-weight: 700; color: var(--text); margin: 28px 0 12px 0; padding-bottom: 6px; border-bottom: 2px solid var(--primary); display: inline-block; }
+  h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin: 20px 0 8px 0; }
+  p { margin-bottom: 12px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 22px 0; font-size: 12px; }
+  th { background: var(--primary); color: #FFF; font-weight: 600; text-align: left; padding: 10px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--card-bg); }
+
+  .info-box { padding: 14px 18px; border-radius: 8px; margin: 16px 0; font-size: 12px; line-height: 1.6; }
+  .info-box.note { background: #EFF6FF; border-left: 4px solid #3B82F6; }
+  .info-box.tip { background: #ECFDF5; border-left: 4px solid #10B981; }
+  .info-box.important { background: #FEF3C7; border-left: 4px solid #F59E0B; }
+
+  .diagram-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 18px 0; overflow-x: auto; }
+  .diagram-container .mermaid { display: flex; justify-content: center; }
+  .diagram-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 14px; text-align: center; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  code { font-family: 'JetBrains Mono', monospace; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 11.5px; }
+  pre { background: #1E293B; color: #E2E8F0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.6; margin: 12px 0; }
+
+  .verdict { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; margin-bottom: 12px; background: #ECFDF5; color: #065F46; }
+
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+
+  @media print {
+    body { font-size: 11px; }
+    .cover-page { min-height: 100vh; }
+    .section { padding: 30px 40px; }
+    .diagram-container { break-inside: avoid; }
+    table { break-inside: avoid; }
+    h3 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover-page">
+  <div class="cover-badge">Mini Project Report 2026</div>
+  <h1>Portfolio Tracker</h1>
+  <p class="subtitle">Real-Time Indian Stock and Crypto Portfolio Management System with AI-Powered Analytics, Live Market Data, and Aggregated Financial News</p>
+  <dl class="cover-meta">
+    <dt>Project Type</dt>
+    <dd>Full-Stack Web Application</dd>
+    <dt>Technology Stack</dt>
+    <dd>Python Flask + SQLite + Vanilla JS</dd>
+    <dt>Frontend</dt>
+    <dd>HTML5, CSS3, Chart.js, GSAP</dd>
+    <dt>External APIs</dt>
+    <dd>Yahoo Finance, Google Gemini, Google OAuth</dd>
+  </dl>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc-page">
+  <h2>Table of Contents</h2>
+  <ol class="toc-list">
+    <li><span>Project Synopsis (Project Proposal)</span></li>
+    <li><span>Requirement Specification (Software and Hardware)</span></li>
+    <li><span>Feasibility Study</span>
+      <ul class="toc-sub">
+        <li>A. Technical Feasibility</li>
+        <li>B. Economical Feasibility</li>
+        <li>C. Organizational Feasibility</li>
+        <li>D. Cultural Feasibility</li>
+      </ul>
+    </li>
+    <li><span>Event Table</span></li>
+    <li><span>ER Diagram (Entity-Relationship)</span></li>
+    <li><span>System Design Details</span>
+      <ul class="toc-sub">
+        <li>A. Use Case Diagram</li>
+        <li>B. Class Diagram</li>
+        <li>C. Activity Diagrams</li>
+        <li>D. Sequence Diagrams</li>
+        <li>E. Component Diagram</li>
+        <li>F. Deployment Diagram</li>
+      </ul>
+    </li>
+    <li><span>API Endpoint Reference</span></li>
+    <li><span>File Structure</span></li>
+  </ol>
+</div>
+
+<!-- 1. PROJECT SYNOPSIS -->
+<div class="section">
+  <span class="section-number">Section 1</span>
+  <h2 class="section-title">Project Synopsis (Project Proposal)</h2>
+  <p class="section-desc">A comprehensive overview of the project objectives, problem statement, proposed solution, and scope.</p>
+
+  <h3>1.1 Problem Statement</h3>
+  <p>Individual investors in India lack a unified, free, and intelligent platform to track stock and cryptocurrency holdings in real-time. Existing platforms like Groww and Zerodha are broker-locked -- they only show holdings purchased through their own service. An investor with accounts across multiple brokers has no single dashboard to see their total net worth, overall profit/loss, and allocation breakdown.</p>
+
+  <h3>1.2 Proposed Solution</h3>
+  <p>A full-stack web application that allows users to:</p>
+  <ul>
+    <li><strong>Register/Login</strong> securely (email+password or Google OAuth 2.0).</li>
+    <li><strong>Add holdings</strong> from any Indian stock exchange (NSE/BSE) or cryptocurrency.</li>
+    <li><strong>Track live prices</strong> via Yahoo Finance API integration.</li>
+    <li><strong>View analytics</strong> -- allocation pie charts, sector distribution, and performance metrics.</li>
+    <li><strong>Ask AI</strong> -- an AI-powered portfolio analyst (Gemini/Grok) that answers questions about diversification, risk, and performance.</li>
+    <li><strong>Read curated news</strong> -- aggregated from Moneycontrol RSS and Yahoo Finance, matched to the user's specific holdings.</li>
+  </ul>
+
+  <h3>1.3 Scope</h3>
+  <table>
+    <thead><tr><th>In Scope</th><th>Out of Scope</th></tr></thead>
+    <tbody>
+      <tr><td>Multi-user authentication (email + Google OAuth)</td><td>Actual trade execution (buy/sell orders)</td></tr>
+      <tr><td>CRUD operations on holdings</td><td>Broker API integration (Zerodha/Groww)</td></tr>
+      <tr><td>Live price fetching via Yahoo Finance</td><td>Tax computation or ITR filing</td></tr>
+      <tr><td>AI-powered portfolio analysis</td><td>Mobile native app (Android/iOS)</td></tr>
+      <tr><td>News aggregation matched to holdings</td><td>Real-time WebSocket price streaming</td></tr>
+      <tr><td>Admin dashboard for owner oversight</td><td>Multi-currency portfolios</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.4 Objectives</h3>
+  <ol>
+    <li>Build a responsive, premium-quality single-page web application.</li>
+    <li>Implement secure authentication with PBKDF2 password hashing and Google OAuth 2.0.</li>
+    <li>Provide real-time market data via a CORS-bypass proxy to Yahoo Finance.</li>
+    <li>Deliver intelligent portfolio insights using AI (Gemini API) with a local fallback analyzer.</li>
+    <li>Aggregate and display portfolio-relevant news from multiple sources.</li>
+  </ol>
+
+  <h3>1.5 Technology Stack -- Justification</h3>
+  <table>
+    <thead><tr><th>Layer</th><th>Technology</th><th>Why We Used It</th><th>What If We Don't Use It</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Backend</strong></td><td>Python Flask</td><td>Lightweight, minimal boilerplate, perfect for REST APIs. Single-file server deployment.</td><td>Express.js (Node) or Django -- both heavier. Django has ORM overhead; Express lacks built-in session management.</td></tr>
+      <tr><td><strong>Database</strong></td><td>SQLite</td><td>Zero-configuration, file-based, serverless. No separate DB server needed.</td><td>PostgreSQL/MySQL require separate server setup, hosting costs, connection pooling -- overkill for a mini project.</td></tr>
+      <tr><td><strong>Frontend</strong></td><td>Vanilla HTML/CSS/JS</td><td>Full control, no build step, no framework lock-in. Loads instantly.</td><td>React/Vue add npm build pipelines, 200+ node_modules packages, slower initial load.</td></tr>
+      <tr><td><strong>Charts</strong></td><td>Chart.js</td><td>Free, lightweight, responsive canvas-based charts with excellent documentation.</td><td>D3.js is far more complex. Highcharts requires a commercial license.</td></tr>
+      <tr><td><strong>Animations</strong></td><td>GSAP</td><td>Industry-standard, hardware-accelerated, smooth ScrollTrigger integration.</td><td>CSS-only animations lack scroll-triggered reveals and complex sequencing.</td></tr>
+      <tr><td><strong>Market Data</strong></td><td>Yahoo Finance API</td><td>Free, no API key required, covers NSE/BSE/Crypto with real-time prices.</td><td>Alpha Vantage: 5 calls/min limit. NSE official API blocks scrapers.</td></tr>
+      <tr><td><strong>AI</strong></td><td>Gemini + Grok APIs</td><td>Free tier available, multi-model fallback ensures reliability.</td><td>Without AI, users only get static numbers -- no personalized insights.</td></tr>
+      <tr><td><strong>News</strong></td><td>Moneycontrol RSS + Yahoo News</td><td>Free, no authentication. Moneycontrol covers Indian markets specifically.</td><td>Paid news APIs cost $50-200/month.</td></tr>
+      <tr><td><strong>Auth</strong></td><td>PBKDF2 + Google OAuth 2.0</td><td>PBKDF2 is NIST-recommended. OAuth eliminates password management for users.</td><td>Plain-text passwords are a critical security vulnerability.</td></tr>
+      <tr><td><strong>Session</strong></td><td>Flask signed cookies</td><td>Stateless, no server-side session store. Cryptographically signed (HMAC).</td><td>Server-side sessions (Redis) add infrastructure complexity.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2. REQUIREMENT SPECIFICATION -->
+<div class="section">
+  <span class="section-number">Section 2</span>
+  <h2 class="section-title">Requirement Specification</h2>
+  <p class="section-desc">Software, hardware, functional, and non-functional requirements.</p>
+
+  <h3>2.1 Software Requirements</h3>
+  <table>
+    <thead><tr><th>Category</th><th>Requirement</th><th>Version</th></tr></thead>
+    <tbody>
+      <tr><td>Operating System</td><td>Windows 10/11, macOS, or Linux</td><td>64-bit</td></tr>
+      <tr><td>Runtime</td><td>Python</td><td>3.8+</td></tr>
+      <tr><td>Web Framework</td><td>Flask</td><td>2.x+</td></tr>
+      <tr><td>Database</td><td>SQLite3</td><td>Built into Python</td></tr>
+      <tr><td>Browser</td><td>Chrome / Edge / Firefox</td><td>Latest</td></tr>
+      <tr><td>Package Manager</td><td>pip</td><td>Bundled</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box note"><strong>Note:</strong> Flask is the <strong>only</strong> external Python dependency. All other modules (sqlite3, hashlib, json, urllib, socket, os, xml, re, concurrent.futures, uuid) are part of the Python standard library.</div>
+
+  <h3>2.2 Hardware Requirements</h3>
+  <table>
+    <thead><tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr></thead>
+    <tbody>
+      <tr><td>Processor</td><td>Intel i3 / AMD Ryzen 3</td><td>Intel i5 / AMD Ryzen 5+</td></tr>
+      <tr><td>RAM</td><td>4 GB</td><td>8 GB+</td></tr>
+      <tr><td>Storage</td><td>500 MB free</td><td>1 GB free</td></tr>
+      <tr><td>Network</td><td>Active internet</td><td>10+ Mbps broadband</td></tr>
+      <tr><td>Display</td><td>1366x768</td><td>1920x1080 Full HD</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 Functional Requirements</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td>FR-01</td><td>User registration with email and password</td><td>High</td></tr>
+      <tr><td>FR-02</td><td>User login with email/password or Google OAuth 2.0</td><td>High</td></tr>
+      <tr><td>FR-03</td><td>Password reset via security question</td><td>Medium</td></tr>
+      <tr><td>FR-04</td><td>Add, edit, and delete stock/crypto holdings</td><td>High</td></tr>
+      <tr><td>FR-05</td><td>Live price fetching from Yahoo Finance</td><td>High</td></tr>
+      <tr><td>FR-06</td><td>Portfolio summary: net worth, invested, P and L, day change</td><td>High</td></tr>
+      <tr><td>FR-07</td><td>Analytics dashboard: allocation charts, sector breakdown</td><td>High</td></tr>
+      <tr><td>FR-08</td><td>AI-powered portfolio analyst (Ask AI tab)</td><td>Medium</td></tr>
+      <tr><td>FR-09</td><td>Stock news aggregation matched to user holdings</td><td>Medium</td></tr>
+      <tr><td>FR-10</td><td>Admin dashboard for owner oversight</td><td>Low</td></tr>
+      <tr><td>FR-11</td><td>Session persistence across browser refreshes</td><td>High</td></tr>
+      <tr><td>FR-12</td><td>Responsive design for mobile and desktop</td><td>High</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.4 Non-Functional Requirements</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Requirement</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td>NFR-01</td><td><strong>Security</strong></td><td>PBKDF2-HMAC-SHA256 (100K iterations). HttpOnly, SameSite=Lax cookies.</td></tr>
+      <tr><td>NFR-02</td><td><strong>Performance</strong></td><td>60-second price refresh. 10-minute news cache. Sub-2s page load.</td></tr>
+      <tr><td>NFR-03</td><td><strong>Scalability</strong></td><td>SQLite supports up to 140 TB. Flask handles 100+ concurrent users.</td></tr>
+      <tr><td>NFR-04</td><td><strong>Usability</strong></td><td>Premium dark theme, smooth animations, single-page architecture.</td></tr>
+      <tr><td>NFR-05</td><td><strong>Availability</strong></td><td>Runs locally. Market data depends on Yahoo Finance availability.</td></tr>
+      <tr><td>NFR-06</td><td><strong>Maintainability</strong></td><td>Single app.py backend. Clear REST API routes. Modular JS functions.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3. FEASIBILITY STUDY -->
+<div class="section">
+  <span class="section-number">Section 3</span>
+  <h2 class="section-title">Feasibility Study</h2>
+  <p class="section-desc">Analysis of whether the project is achievable from four key perspectives.</p>
+
+  <h3>A. Technical Feasibility</h3>
+  <span class="verdict">FEASIBLE</span>
+  <table>
+    <thead><tr><th>Factor</th><th>Assessment</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Language Maturity</strong></td><td>Python (30+ years). Flask has 67K+ GitHub stars.</td></tr>
+      <tr><td><strong>Database</strong></td><td>SQLite is embedded in Python -- zero installation. Most deployed database in the world.</td></tr>
+      <tr><td><strong>API Availability</strong></td><td>Yahoo Finance: free, no key. Gemini API: free tier (15 RPM).</td></tr>
+      <tr><td><strong>CORS Bypass</strong></td><td>Flask proxy route forwards requests server-side where CORS does not apply. Without this, all price fetches would be blocked by the browser.</td></tr>
+      <tr><td><strong>OAuth 2.0</strong></td><td>Google OAuth is well-documented. Flask session handles CSRF state tokens.</td></tr>
+      <tr><td><strong>Browser Support</strong></td><td>ES6+ JavaScript supported since 2017 in all modern browsers.</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box tip"><strong>Why not Django?</strong> Django includes ORM, admin panel, template engine, migration system. For 2 tables and a single-page app, this overhead is unnecessary. Flask gives full control with minimal abstraction.</div>
+
+  <h3>B. Economical Feasibility</h3>
+  <span class="verdict">FEASIBLE -- Zero Cost</span>
+  <table>
+    <thead><tr><th>Cost Category</th><th>Amount</th><th>Justification</th></tr></thead>
+    <tbody>
+      <tr><td>Software Licenses</td><td>Rs. 0</td><td>All tools are free and open source</td></tr>
+      <tr><td>Market Data API</td><td>Rs. 0</td><td>Yahoo Finance requires no API key</td></tr>
+      <tr><td>AI API</td><td>Rs. 0</td><td>Gemini free tier: 15 RPM, 1500/day</td></tr>
+      <tr><td>Hosting + Domain + SSL</td><td>Rs. 0</td><td>Runs on localhost</td></tr>
+      <tr><td>Database</td><td>Rs. 0</td><td>SQLite is serverless and free</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>Rs. 0</strong></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>C. Organizational Feasibility</h3>
+  <span class="verdict">FEASIBLE</span>
+  <table>
+    <thead><tr><th>Factor</th><th>Assessment</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Team Size</strong></td><td>Designed for 1-3 developers. Monolithic architecture eliminates coordination overhead.</td></tr>
+      <tr><td><strong>Deployment</strong></td><td>Run python app.py and open browser. No Docker or CI/CD required.</td></tr>
+      <tr><td><strong>Training</strong></td><td>Self-explanatory UI with labeled tabs. No training needed.</td></tr>
+      <tr><td><strong>Maintenance</strong></td><td>Self-contained codebase. Auto migrations in init_db().</td></tr>
+    </tbody>
+  </table>
+
+  <h3>D. Cultural Feasibility</h3>
+  <span class="verdict">FEASIBLE</span>
+  <table>
+    <thead><tr><th>Factor</th><th>Assessment</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Target Audience</strong></td><td>Indian retail investors (18-45) familiar with Groww, Zerodha, Angel One.</td></tr>
+      <tr><td><strong>Language</strong></td><td>English -- standard for Indian financial apps. NSE/BSE symbol conventions.</td></tr>
+      <tr><td><strong>Currency</strong></td><td>Indian Rupees with lakhs/crores formatting.</td></tr>
+      <tr><td><strong>Privacy</strong></td><td>Data stored locally (SQLite file). No third-party data sharing except price/AI fetches.</td></tr>
+      <tr><td><strong>Digital Literacy</strong></td><td>800M+ Indian internet users. Stock investors use web apps regularly.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4. EVENT TABLE -->
+<div class="section">
+  <span class="section-number">Section 4</span>
+  <h2 class="section-title">Event Table</h2>
+  <p class="section-desc">All system events, their triggers, sources, activities, and responses.</p>
+  <table>
+    <thead><tr><th>#</th><th>Event</th><th>Trigger</th><th>Source</th><th>Activity</th><th>Response</th></tr></thead>
+    <tbody>
+      <tr><td>E1</td><td>Registration</td><td>Click Sign Up</td><td>User</td><td>Validate, hash password (PBKDF2), insert users table, create session</td><td>Dashboard loads</td></tr>
+      <tr><td>E2</td><td>Login (Email)</td><td>Click Sign In</td><td>User</td><td>Verify PBKDF2 hash, create session cookie</td><td>Dashboard loads</td></tr>
+      <tr><td>E3</td><td>Login (Google)</td><td>Click Google button</td><td>User</td><td>OAuth redirect, exchange code, fetch email, create/find user</td><td>Dashboard loads</td></tr>
+      <tr><td>E4</td><td>Add Holding</td><td>Submit form</td><td>User</td><td>Generate UUID, fetch price, POST to /api/holdings</td><td>Row appears with live price</td></tr>
+      <tr><td>E5</td><td>Delete Holding</td><td>Click delete icon</td><td>User</td><td>Remove from array, POST updated list, replace in DB</td><td>Row removed, totals updated</td></tr>
+      <tr><td>E6</td><td>Price Refresh</td><td>60s timer</td><td>System</td><td>Fetch via /proxy/ from Yahoo Finance, update price field</td><td>P and L and net worth updated</td></tr>
+      <tr><td>E7</td><td>View Analytics</td><td>Click Analytics tab</td><td>User</td><td>Calculate allocation %, render Chart.js charts</td><td>Pie/bar charts shown</td></tr>
+      <tr><td>E8</td><td>Ask AI</td><td>Type + Send</td><td>User</td><td>POST /api/ask-ai, try Gemini, try Grok, fallback local</td><td>Markdown AI response</td></tr>
+      <tr><td>E9</td><td>View News</td><td>Click News tab</td><td>User</td><td>GET /api/news, fetch 4 MC feeds + Yahoo, match symbols</td><td>News cards displayed</td></tr>
+      <tr><td>E10</td><td>Logout</td><td>Click Logout</td><td>User</td><td>POST /api/logout, clear session cookie</td><td>Login screen shown</td></tr>
+      <tr><td>E11</td><td>Password Reset</td><td>Click Forgot</td><td>User</td><td>Verify security question, update hash in DB</td><td>Password updated</td></tr>
+      <tr><td>E12</td><td>Admin Access</td><td>Navigate /admin</td><td>Admin</td><td>Validate secret key, query all data</td><td>Admin dashboard</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 5. ER DIAGRAM -->
+<div class="section">
+  <span class="section-number">Section 5</span>
+  <h2 class="section-title">ER Diagram (Entity-Relationship)</h2>
+  <p class="section-desc">Database schema showing entities, attributes, and relationships.</p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Entity-Relationship Diagram</div>
+    <div class="mermaid">
+erDiagram
+    USERS {
+        INTEGER id PK "Auto-increment"
+        TEXT email UK "Unique NOT NULL"
+        TEXT password_hash "PBKDF2 salt hash"
+        TEXT security_question "Optional"
+        TEXT security_answer "Optional"
+    }
+    HOLDINGS {
+        TEXT id PK "UUID"
+        TEXT user_email FK "References users"
+        TEXT symbol "e.g. RELIANCE"
+        TEXT exchange "NSE or BSE"
+        TEXT name "Company name"
+        TEXT yahooSymbol "e.g. RELIANCE.NS"
+        TEXT assetClass "Equity ETF Crypto"
+        REAL qty "Quantity"
+        REAL buyPrice "Buy price INR"
+        REAL price "Current price INR"
+    }
+    USERS ||--o{ HOLDINGS : "owns"
+    </div>
+  </div>
+
+  <h3>Design Justifications</h3>
+  <table>
+    <thead><tr><th>Decision</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td><strong>No prices table</strong></td><td>Prices fetched in real-time from Yahoo Finance every 60s. Historical storage would require background schedulers and gigabytes of data.</td></tr>
+      <tr><td><strong>No sessions table</strong></td><td>Flask uses cryptographically signed cookies. Session data stored in cookie itself (HMAC-SHA256 signed).</td></tr>
+      <tr><td><strong>Composite PK (id, user_email)</strong></td><td>Each UUID unique per user. ON DELETE CASCADE auto-removes orphaned holdings.</td></tr>
+      <tr><td><strong>Separate yahooSymbol column</strong></td><td>Yahoo uses different format (RELIANCE.NS) than NSE tickers (RELIANCE). Avoids repeated concatenation.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 6A. USE CASE DIAGRAM -->
+<div class="section">
+  <span class="section-number">Section 6A</span>
+  <h2 class="section-title">Use Case Diagram</h2>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Use Case Diagram</div>
+    <div class="mermaid">
+graph TB
+    subgraph "Portfolio Tracker System"
+        UC1["Register Account"]
+        UC2["Login Email/Password"]
+        UC3["Login Google OAuth"]
+        UC4["Add Holding"]
+        UC5["Edit Holding"]
+        UC6["Delete Holding"]
+        UC7["View Dashboard"]
+        UC8["View Analytics"]
+        UC9["Ask AI Analyst"]
+        UC10["View Stock News"]
+        UC11["Logout"]
+        UC12["Reset Password"]
+        UC13["Admin Dashboard"]
+    end
+    User["User"]
+    Admin["Admin"]
+    Yahoo["Yahoo Finance"]
+    GoogleO["Google OAuth"]
+    GeminiA["Gemini AI"]
+    MC["Moneycontrol"]
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
+    User --> UC5
+    User --> UC6
+    User --> UC7
+    User --> UC8
+    User --> UC9
+    User --> UC10
+    User --> UC11
+    User --> UC12
+    Admin --> UC13
+    UC3 -.-> GoogleO
+    UC7 -.-> Yahoo
+    UC9 -.-> GeminiA
+    UC10 -.-> MC
+    UC10 -.-> Yahoo
+    </div>
+  </div>
+
+  <h3>Use Case Descriptions</h3>
+  <table>
+    <thead><tr><th>Use Case</th><th>Actor</th><th>Precondition</th><th>Postcondition</th></tr></thead>
+    <tbody>
+      <tr><td>Register</td><td>User</td><td>Not logged in</td><td>Account created, session started</td></tr>
+      <tr><td>Login (Email)</td><td>User</td><td>Account exists</td><td>Session cookie set, dashboard loaded</td></tr>
+      <tr><td>Login (Google)</td><td>User</td><td>Has Google account</td><td>Auto-created if new, session set</td></tr>
+      <tr><td>Add Holding</td><td>User</td><td>Logged in</td><td>Holding saved, price fetched</td></tr>
+      <tr><td>View Dashboard</td><td>User</td><td>Logged in, has holdings</td><td>Net worth, P and L displayed</td></tr>
+      <tr><td>Ask AI</td><td>User</td><td>Logged in</td><td>AI response in Markdown</td></tr>
+      <tr><td>Admin Panel</td><td>Admin</td><td>Knows secret key</td><td>All data visible</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 6B. CLASS DIAGRAM -->
+<div class="section">
+  <span class="section-number">Section 6B</span>
+  <h2 class="section-title">Class Diagram</h2>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Class Diagram</div>
+    <div class="mermaid">
+classDiagram
+    class FlaskApp {
+        -secret_key
+        -DATABASE
+        -PORT
+        +init_db()
+        +index()
+        +run()
+    }
+    class AuthModule {
+        +hash_password()
+        +verify_password()
+        +register()
+        +login()
+        +logout()
+        +google_login()
+        +google_callback()
+    }
+    class HoldingsModule {
+        +get_holdings()
+        +save_holdings()
+    }
+    class ProxyModule {
+        +proxy()
+    }
+    class AIModule {
+        -GEMINI_KEY
+        -XAI_KEY
+        +ask_ai()
+        +run_local_analysis()
+    }
+    class NewsModule {
+        -news_cache
+        -CACHE_TTL
+        +get_news()
+    }
+    class UserModel {
+        +id
+        +email
+        +password_hash
+    }
+    class HoldingModel {
+        +id
+        +user_email
+        +symbol
+        +qty
+        +buyPrice
+        +price
+    }
+    class FrontendApp {
+        -holdings
+        -currentUser
+        +enterDashboard()
+        +switchTab()
+        +renderHoldings()
+        +refreshPrices()
+    }
+    FlaskApp *-- AuthModule
+    FlaskApp *-- HoldingsModule
+    FlaskApp *-- ProxyModule
+    FlaskApp *-- AIModule
+    FlaskApp *-- NewsModule
+    AuthModule ..> UserModel
+    HoldingsModule ..> HoldingModel
+    FrontendApp ..> FlaskApp
+    UserModel "1" --> "*" HoldingModel
+    </div>
+  </div>
+</div>
+
+<!-- 6C. ACTIVITY DIAGRAMS -->
+<div class="section">
+  <span class="section-number">Section 6C</span>
+  <h2 class="section-title">Activity Diagrams</h2>
+
+  <h3>C1. User Login Flow</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">Activity Diagram -- User Login</div>
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B{Login Method?}
+    B -->|Email| C[Enter Credentials]
+    B -->|Google| D[Click Google Sign-In]
+    C --> E["POST /api/login"]
+    E --> F{User Exists?}
+    F -->|No| G[Show Error]
+    G --> C
+    F -->|Yes| H{Hash Matches?}
+    H -->|No| G
+    H -->|Yes| I[Create Session]
+    D --> J[Redirect to Google]
+    J --> K[User Authorizes]
+    K --> L[Exchange Auth Code]
+    L --> M[Fetch Email]
+    M --> N{User in DB?}
+    N -->|No| O[Create User]
+    N -->|Yes| P[Skip]
+    O --> I
+    P --> I
+    I --> Q[Load Dashboard]
+    Q --> R[Fetch Holdings]
+    R --> S[Fetch Prices]
+    S --> T([End])
+    </div>
+  </div>
+
+  <h3>C2. Add Holding Flow</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">Activity Diagram -- Add Holding</div>
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B[Open Modal]
+    B --> C[Enter Details]
+    C --> D{Valid?}
+    D -->|No| E[Show Error]
+    E --> C
+    D -->|Yes| F[Generate UUID]
+    F --> G[Construct Yahoo Symbol]
+    G --> H[Fetch Live Price]
+    H --> I{OK?}
+    I -->|No| J[Use Buy Price]
+    I -->|Yes| K[Set Market Price]
+    J --> L[Add to Array]
+    K --> L
+    L --> M[POST to Server]
+    M --> N[Re-render Table]
+    N --> O[Update Stats]
+    O --> P([End])
+    </div>
+  </div>
+
+  <h3>C3. AI Query with Fallback</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">Activity Diagram -- AI Analysis</div>
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B[User Types Question]
+    B --> C["POST /api/ask-ai"]
+    C --> D{Gemini Key?}
+    D -->|Yes| E[Try Gemini]
+    E --> F{Success?}
+    F -->|Yes| G[Return Gemini Response]
+    F -->|No| H{Grok Key?}
+    D -->|No| H
+    H -->|Yes| I[Try Grok]
+    I --> J{Success?}
+    J -->|Yes| K[Return Grok Response]
+    J -->|No| L[Local Analyzer]
+    H -->|No| L
+    L --> M[Return Local Response]
+    G --> N([End])
+    K --> N
+    M --> N
+    </div>
+  </div>
+</div>
+
+<!-- 6D. SEQUENCE DIAGRAMS -->
+<div class="section">
+  <span class="section-number">Section 6D</span>
+  <h2 class="section-title">Sequence Diagrams</h2>
+
+  <h3>D1. Login and Dashboard Load</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">Sequence Diagram -- Login Flow</div>
+    <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Flask
+    participant SQLite
+    participant Yahoo
+    User->>Browser: Enter credentials
+    Browser->>Flask: POST /api/login
+    Flask->>SQLite: SELECT password_hash
+    SQLite-->>Flask: hash
+    Flask->>Flask: verify_password()
+    alt Match
+        Flask-->>Browser: 200 success
+        Browser->>Flask: GET /api/holdings
+        Flask->>SQLite: SELECT holdings
+        SQLite-->>Flask: holdings list
+        Flask-->>Browser: JSON
+        loop Each Holding
+            Browser->>Flask: GET /proxy/yahoo
+            Flask->>Yahoo: GET price
+            Yahoo-->>Flask: price data
+            Flask-->>Browser: response
+        end
+        Browser->>Browser: Render dashboard
+    else Mismatch
+        Flask-->>Browser: 400 error
+    end
+    </div>
+  </div>
+
+  <h3>D2. Google OAuth Flow</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">Sequence Diagram -- Google OAuth 2.0</div>
+    <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Flask
+    participant Google
+    participant SQLite
+    User->>Browser: Click Google Sign-In
+    Browser->>Flask: GET /api/login/google
+    Flask-->>Browser: 302 to Google
+    Browser->>Google: Auth request
+    User->>Google: Select account
+    Google-->>Browser: 302 with code
+    Browser->>Flask: GET /callback
+    Flask->>Google: POST /token
+    Google-->>Flask: access_token
+    Flask->>Google: GET /userinfo
+    Google-->>Flask: email
+    Flask->>SQLite: Check user
+    alt New
+        Flask->>SQLite: INSERT user
+    end
+    Flask-->>Browser: 302 to /
+    Browser->>Browser: Load dashboard
+    </div>
+  </div>
+
+  <h3>D3. AI Query with Fallback</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">Sequence Diagram -- AI Multi-Provider Fallback</div>
+    <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant Browser
+    participant Flask
+    participant Gemini
+    participant Grok
+    User->>Browser: Type question
+    Browser->>Flask: POST /api/ask-ai
+    Flask->>Flask: Build prompt
+    alt Gemini Key
+        Flask->>Gemini: POST generateContent
+        alt OK
+            Gemini-->>Flask: response
+            Flask-->>Browser: mode=ai
+        else Fail
+            Flask->>Gemini: Try next model
+        end
+    end
+    alt Grok Key
+        Flask->>Grok: POST completions
+        alt OK
+            Grok-->>Flask: response
+            Flask-->>Browser: mode=ai
+        else Fail
+            Flask->>Flask: local_analysis()
+            Flask-->>Browser: mode=local
+        end
+    end
+    alt No Keys
+        Flask->>Flask: local_analysis()
+        Flask-->>Browser: mode=local
+    end
+    Browser->>Browser: Render Markdown
+    </div>
+  </div>
+</div>
+
+<!-- 6E. COMPONENT DIAGRAM -->
+<div class="section">
+  <span class="section-number">Section 6E</span>
+  <h2 class="section-title">Component Diagram</h2>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Component Diagram -- Three-Tier Architecture</div>
+    <div class="mermaid">
+graph TB
+    subgraph Client["Client Tier"]
+        HTML["HTML + JS + Chart.js + GSAP"]
+        CSS["style.css"]
+    end
+    subgraph Server["Server Tier - Flask"]
+        AUTH["Auth Routes"]
+        HOLD["Holdings Routes"]
+        PROXY["Proxy Route"]
+        AI["AI Route"]
+        NEWS["News Route"]
+        CACHE["News Cache"]
+        LOCAL["Local Analyzer"]
+    end
+    subgraph Data["Data Tier"]
+        DB["SQLite database.db"]
+        ENV["env file"]
+    end
+    subgraph External["External APIs"]
+        YAHOO["Yahoo Finance"]
+        GOOGLE["Google OAuth"]
+        GEMINI["Gemini AI"]
+        MC["Moneycontrol RSS"]
+    end
+    HTML --> AUTH
+    HTML --> HOLD
+    HTML --> PROXY
+    HTML --> AI
+    HTML --> NEWS
+    AUTH --> DB
+    AUTH --> GOOGLE
+    HOLD --> DB
+    PROXY --> YAHOO
+    AI --> GEMINI
+    AI --> LOCAL
+    NEWS --> MC
+    NEWS --> YAHOO
+    NEWS --> CACHE
+    Server --> ENV
+    </div>
+  </div>
+
+  <h3>Component Responsibilities</h3>
+  <table>
+    <thead><tr><th>Component</th><th>Lines</th><th>Purpose</th><th>Why It Exists</th></tr></thead>
+    <tbody>
+      <tr><td>app.py</td><td>1,085</td><td>All server logic</td><td>Single entry point eliminates import chains</td></tr>
+      <tr><td>HTML</td><td>~3,300</td><td>Complete frontend SPA</td><td>Zero page reloads, all client-side rendering</td></tr>
+      <tr><td>style.css</td><td>~3,900</td><td>Design system</td><td>Separated for independent styling updates</td></tr>
+      <tr><td>Proxy Route</td><td>~30</td><td>CORS bypass</td><td>Critical: browsers block Yahoo requests without it</td></tr>
+      <tr><td>News Cache</td><td>~10</td><td>10-min TTL</td><td>Prevents hammering Moneycontrol servers</td></tr>
+      <tr><td>Local Analyzer</td><td>~130</td><td>Fallback AI</td><td>Ask AI works even without API keys</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 6F. DEPLOYMENT DIAGRAM -->
+<div class="section">
+  <span class="section-number">Section 6F</span>
+  <h2 class="section-title">Deployment Diagram</h2>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Deployment Diagram</div>
+    <div class="mermaid">
+graph TB
+    subgraph Machine["User Machine - Windows"]
+        subgraph Runtime["Python 3.8+"]
+            FLASK["Flask on 0.0.0.0:8080"]
+        end
+        subgraph FS["File System"]
+            DB["database.db"]
+            FILES["HTML + CSS + Logo"]
+            ENVF["env API Keys"]
+        end
+        subgraph BRW["Browser"]
+            CHROME["Chrome / Edge"]
+        end
+    end
+    subgraph Cloud["External Services"]
+        YAHOO["Yahoo Finance HTTPS"]
+        GSVC["Google OAuth + Gemini"]
+        MCSVC["Moneycontrol RSS"]
+    end
+    subgraph Mobile["Mobile Device"]
+        MOB["Mobile Browser via WiFi"]
+    end
+    CHROME --> FLASK
+    FLASK --> DB
+    FLASK --> FILES
+    FLASK --> ENVF
+    FLASK --> YAHOO
+    FLASK --> GSVC
+    FLASK --> MCSVC
+    MOB --> FLASK
+    </div>
+  </div>
+
+  <h3>Deployment Details</h3>
+  <table>
+    <thead><tr><th>Aspect</th><th>Configuration</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Host: 0.0.0.0</td><td>All interfaces</td><td>Allows localhost + LAN access (mobile over WiFi)</td></tr>
+      <tr><td>Port: 8080</td><td>Non-privileged</td><td>Port 80 requires admin. 8080 works without elevation.</td></tr>
+      <tr><td>Debug: True</td><td>Development mode</td><td>Detailed errors. Must be False in production.</td></tr>
+      <tr><td>No Nginx/Docker</td><td>Direct Flask</td><td>Unnecessary complexity for a local mini project.</td></tr>
+      <tr><td>Mobile Access</td><td>Same WiFi LAN IP</td><td>Server prints IP on startup for easy access.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 7. API REFERENCE -->
+<div class="section">
+  <span class="section-number">Section 7</span>
+  <h2 class="section-title">API Endpoint Reference</h2>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td>/</td><td>No</td><td>Serve frontend SPA</td></tr>
+      <tr><td>GET</td><td>/api/session</td><td>No</td><td>Check login status</td></tr>
+      <tr><td>POST</td><td>/api/register</td><td>No</td><td>Create user account</td></tr>
+      <tr><td>POST</td><td>/api/login</td><td>No</td><td>Authenticate user</td></tr>
+      <tr><td>POST</td><td>/api/logout</td><td>Yes</td><td>Destroy session</td></tr>
+      <tr><td>GET</td><td>/api/login/google</td><td>No</td><td>Start OAuth flow</td></tr>
+      <tr><td>GET</td><td>/api/login/google/callback</td><td>No</td><td>Complete OAuth</td></tr>
+      <tr><td>GET</td><td>/api/holdings</td><td>Yes</td><td>Get user holdings</td></tr>
+      <tr><td>POST</td><td>/api/holdings</td><td>Yes</td><td>Save all holdings</td></tr>
+      <tr><td>GET</td><td>/proxy/url</td><td>No</td><td>CORS bypass for Yahoo</td></tr>
+      <tr><td>POST</td><td>/api/ask-ai</td><td>Yes</td><td>AI portfolio analysis</td></tr>
+      <tr><td>GET</td><td>/api/news</td><td>Yes</td><td>Portfolio news feed</td></tr>
+      <tr><td>GET</td><td>/admin</td><td>Admin key</td><td>Admin dashboard</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 8. FILE STRUCTURE -->
+<div class="section">
+  <span class="section-number">Section 8</span>
+  <h2 class="section-title">File Structure</h2>
+  <pre>
+d:\NEW PROJECT\mini project\
+  app.py                          # Flask backend (1,085 lines)
+  PORTFOLIO TRACKER.html          # Frontend SPA (~3,300 lines)
+  style.css                       # Design system (~3,900 lines)
+  database.db                     # SQLite (auto-created)
+  env                             # API keys (GOOGLE, GEMINI)
+  requirements.txt                # Python deps (flask)
+  logo.png                        # Brand logo (512x512)
+  logo_icon.png                   # Mountain icon (200x200)
+  .gitignore                      # Git ignore rules
+  </pre>
+  <div class="info-box important"><strong>Important:</strong> The database.db file is auto-generated on first run via init_db(). The env file contains sensitive API keys and must never be committed to version control.</div>
+</div>
+
+<!-- FOOTER -->
+<div style="padding: 40px 60px; text-align: center; color: var(--text-muted); font-size: 11px; border-top: 1px solid var(--border); margin-top: 40px;">
+  <p><strong>Portfolio Tracker -- Project Report</strong></p>
+  <p>Generated for academic submission</p>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#EEF2FF',
+      primaryTextColor: '#1E293B',
+      primaryBorderColor: '#818CF8',
+      lineColor: '#64748B',
+      secondaryColor: '#F0FDF4',
+      tertiaryColor: '#FEF3C7',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '12px'
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+    sequence: { actorFontSize: '12px', messageFontSize: '11px' }
+  });
+</script>
+</body>
+</html>
