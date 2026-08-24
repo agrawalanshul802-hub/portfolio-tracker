@@ -1326,49 +1326,89 @@
       let performanceChartInstance = null;
       let classSplitChartInstance = null;
 
-      async function loadHoldings() {
+      function getHoldingsStorageKey() {
+        const email = (currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || 'default_user';
+        return 'ptracker_holdings_' + email.trim().toLowerCase();
+      }
+
+      function getLocalHoldings() {
         try {
-          const res = await fetch('/api/holdings');
-          if (res.ok) {
-            let h = await res.json();
-            if (!h || !h.length) {
-              h = seedHoldings();
-              await persistHoldings(h);
-            }
-            state.holdings = h;
-          } else {
-            state.holdings = seedHoldings();
-            if (res.status === 401) {
-              toast('Session expired. Please log in again.');
-            } else {
-              toast('Failed to load portfolio from database.');
-            }
+          const raw = localStorage.getItem(getHoldingsStorageKey());
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
           }
         } catch (e) {
-          console.error("Failed to load holdings:", e);
-          state.holdings = seedHoldings();
-          toast('Server connection error. Make sure app.py is running.');
+          console.warn('LocalStorage read error:', e);
+        }
+        return null;
+      }
+
+      function saveLocalHoldings(list) {
+        try {
+          localStorage.setItem(getHoldingsStorageKey(), JSON.stringify(list || []));
+        } catch (e) {
+          console.warn('LocalStorage write error:', e);
+        }
+      }
+
+      async function loadHoldings() {
+        const email = (currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || '';
+        
+        // 1. Instant local read so user data is visible immediately on page load/refresh
+        const local = getLocalHoldings();
+        if (local && local.length > 0) {
+          state.holdings = local;
+          computeDayOpen();
+        }
+
+        // 2. Fetch from backend database
+        try {
+          const url = '/api/holdings' + (email ? '?email=' + encodeURIComponent(email) : '');
+          const res = await fetch(url);
+          if (res.ok) {
+            const serverList = await res.json();
+            if (Array.isArray(serverList) && serverList.length > 0) {
+              state.holdings = serverList;
+              saveLocalHoldings(serverList);
+            } else if (local && local.length > 0) {
+              // Server database was fresh/empty but client has saved holdings: sync client holdings to DB!
+              state.holdings = local;
+              await persistHoldings(local);
+            } else {
+              state.holdings = [];
+              saveLocalHoldings([]);
+            }
+          } else if (local && local.length > 0) {
+            // Server error or session refresh in progress: keep local holdings!
+            state.holdings = local;
+          }
+        } catch (e) {
+          console.error("Failed to load holdings from server:", e);
+          if (local && local.length > 0) {
+            state.holdings = local;
+          }
         }
         computeDayOpen();
       }
 
       async function persistHoldings(list) {
+        const safeList = list || state.holdings || [];
+        saveLocalHoldings(safeList);
+
+        const email = (currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || '';
         try {
-          const res = await fetch('/api/holdings', {
+          const url = '/api/holdings' + (email ? '?email=' + encodeURIComponent(email) : '');
+          await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(list)
+            body: JSON.stringify({
+              email: email,
+              holdings: safeList
+            })
           });
-          if (!res.ok) {
-            if (res.status === 401) {
-              toast('Session expired. Please log in again to save.');
-            } else {
-              toast('Failed to save portfolio to database.');
-            }
-          }
         } catch (e) {
-          console.error("Failed to persist holdings:", e);
-          toast('Server connection error. Failed to save portfolio.');
+          console.error("Failed to persist holdings to database:", e);
         }
       }
 

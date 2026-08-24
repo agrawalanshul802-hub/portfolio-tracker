@@ -442,10 +442,10 @@ def google_callback():
     session['email'] = email
     return redirect(f"/?login_email={urllib.parse.quote(email)}")
 
-# REST API: Get Holdings
+# REST API: Get Holdings (Supports session and explicit email parameter)
 @app.route('/api/holdings', methods=['GET'])
 def get_holdings():
-    email = session.get('email')
+    email = session.get('email') or request.args.get('email')
     if not email:
         return jsonify({'error': 'Unauthorized'}), 401
 
@@ -453,32 +453,41 @@ def get_holdings():
         with sqlite3.connect(DATABASE) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute('''
+            cursor.execute("""
                 SELECT id, symbol, exchange, name, yahooSymbol, assetClass, qty, buyPrice, price 
                 FROM holdings WHERE user_email = ?
-            ''', (email,))
+            """, (email,))
             rows = cursor.fetchall()
             
             holdings = []
             for row in rows:
                 h = dict(row)
-                # Compute amounts
-                h['amount'] = h['buyPrice'] * h['qty']
+                h['amount'] = float(h.get('buyPrice') or 0) * float(h.get('qty') or 0)
                 holdings.append(h)
             return jsonify(holdings)
     except Exception as e:
         return jsonify({'error': f'Database error: {str(e)}'}), 500
 
-# REST API: Save Holdings (Sync full list from UI state)
+# REST API: Save Holdings (Sync full list from UI state, supports session & explicit email)
 @app.route('/api/holdings', methods=['POST'])
 def save_holdings():
-    email = session.get('email')
+    payload = request.get_json(silent=True)
+    if payload is None:
+        return jsonify({'error': 'Invalid holdings payload'}), 400
+
+    email = None
+    holdings = []
+    if isinstance(payload, dict):
+        email = payload.get('email') or session.get('email') or request.args.get('email')
+        holdings = payload.get('holdings', [])
+    elif isinstance(payload, list):
+        email = session.get('email') or request.args.get('email')
+        holdings = payload
+    else:
+        return jsonify({'error': 'Invalid payload format'}), 400
+
     if not email:
         return jsonify({'error': 'Unauthorized'}), 401
-
-    holdings = request.get_json()
-    if not isinstance(holdings, list):
-        return jsonify({'error': 'Invalid holdings payload'}), 400
 
     try:
         with sqlite3.connect(DATABASE) as conn:
@@ -487,10 +496,10 @@ def save_holdings():
             
             # Batch insert new ones
             for h in holdings:
-                conn.execute('''
+                conn.execute("""
                     INSERT INTO holdings (id, user_email, symbol, exchange, name, yahooSymbol, assetClass, qty, buyPrice, price)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
+                """, (
                     h.get('id'),
                     email,
                     h.get('symbol'),
@@ -507,7 +516,6 @@ def save_holdings():
     except Exception as e:
         return jsonify({'error': f'Database error: {str(e)}'}), 500
 
-# REST API: Proxy Yahoo Finance requests to bypass CORS
 # REST API: High-performance concurrent live stock and crypto price fetcher
 @app.route('/api/live-prices', methods=['GET', 'POST'])
 def get_live_prices():
