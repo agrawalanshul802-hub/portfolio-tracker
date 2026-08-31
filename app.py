@@ -146,6 +146,12 @@ def index():
 
 @app.route('/project-report')
 
+
+@app.route('/final-report')
+@app.route('/final-docs')
+def serve_final_report():
+    return send_from_directory(DIRECTORY, 'FINAL_PROJECT_REPORT.html')
+
 def project_report():
 
     return send_from_directory(DIRECTORY, 'PROJECT_REPORT.html')
