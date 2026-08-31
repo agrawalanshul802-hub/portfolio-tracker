@@ -1361,60 +1361,49 @@
         lastFetchErrors = [];
         if (!state.holdings || !state.holdings.length) return;
 
-        // 1. Primary: Direct high-speed backend live price API
+        // Visual feedback on refresh button/label
+        const updatedLabel = document.getElementById('updatedLabel');
+        if (updatedLabel) updatedLabel.textContent = "Updating live prices...";
+
+        const symbols = state.holdings.map(h => h.yahooSymbol || h.symbol).filter(Boolean);
+        if (symbols.length === 0) return;
+
+        // 1. Primary: Direct high-speed backend live price API with timeout
         try {
-          const symbols = state.holdings.map(h => h.yahooSymbol || h.symbol).filter(Boolean);
-          if (symbols.length > 0) {
-            const url = '/api/live-prices?symbols=' + encodeURIComponent(symbols.join(','));
-            const res = await fetch(url);
-            if (res.ok) {
-              const json = await res.json();
-              if (json.success && json.prices) {
-                Object.keys(json.prices).forEach(key => {
-                  const item = json.prices[key];
-                  if (item && item.price) {
-                    livePriceCache[key.toUpperCase()] = {
-                      price: item.price,
-                      prevClose: item.prevClose || item.price
-                    };
-                  }
-                });
-              }
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 4500);
+          const url = '/api/live-prices?symbols=' + encodeURIComponent(symbols.join(','));
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(timer);
+
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.prices) {
+              Object.keys(json.prices).forEach(key => {
+                const item = json.prices[key];
+                if (item && item.price) {
+                  livePriceCache[key.toUpperCase()] = {
+                    price: item.price,
+                    prevClose: item.prevClose || item.price
+                  };
+                }
+              });
             }
           }
         } catch (e) {
-          console.warn('Backend live price fetch failed, trying client fallbacks:', e);
+          console.warn('Backend live price fetch notice:', e.message);
         }
 
-        // 2. Crypto fallback via CoinGecko
-        await fetchLiveCryptoPrices();
-
-        // 3. Client-side fallback for any symbols still not resolved
-        const byExchange = { NSE: [], BSE: [], GLOBAL: [] };
-        state.holdings.forEach(h => {
-          const base = (h.yahooSymbol || h.symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          if (getCachedPrice(base)) return;
-          if (h.exchange === 'BSE') {
-            byExchange.BSE.push(h);
-          } else if (h.exchange === 'NSE') {
-            byExchange.NSE.push(h);
-          } else {
-            byExchange.GLOBAL.push(h);
-          }
+        // 2. Only fetch crypto if user actually holds crypto (BTC, ETH)
+        const hasCrypto = state.holdings.some(h => {
+          const s = (h.symbol || '').toUpperCase();
+          const ac = (h.assetClass || '').toLowerCase();
+          return s.includes('BTC') || s.includes('ETH') || ac.includes('crypto');
         });
-
-        const unresIndian = [...byExchange.NSE, ...byExchange.BSE];
-        if (unresIndian.length > 0) {
-          await Promise.allSettled(unresIndian.map(async (h) => {
-            const base = (h.yahooSymbol || h.symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-            const priceObj = await fetchLiveEquityPriceYahoo(h.yahooSymbol || h.symbol);
-            if (priceObj) livePriceCache[base] = priceObj;
-          }));
-        }
-
-        const unresGlobal = byExchange.GLOBAL.map(h => (h.yahooSymbol || h.symbol).toUpperCase().replace(/\.(NS|BO)$/, ''));
-        if (unresGlobal.length > 0) {
-          await fetchLiveEquityPricesBatch(unresGlobal, 'US');
+        if (hasCrypto) {
+          try {
+            await fetchLiveCryptoPrices();
+          } catch (e) {}
         }
       }
 
@@ -1838,20 +1827,33 @@
 
       /* ---------------- refresh (attempt live prices, else re-guess with small simulated drift) ---------------- */
       async function refreshPrices() {
-        await refreshLivePricesForHoldings();
-        state.holdings.forEach(h => {
-          const baseSymbol = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
-          const cached = getCachedPrice(baseSymbol);
-          if (cached) {
-            h.price = +cached.toFixed(2);
-            return;
-          }
-          const rand = mulberry32(hashSeed(h.yahooSymbol + Date.now() + Math.random()));
-          const jitter = 1 + (rand() - 0.5) * 0.012;
-          h.price = +(h.price * jitter).toFixed(2);
+        const refreshBtn = document.getElementById('refreshBtn');
+        const sortIcon = document.getElementById('sortDirIcon');
+        const updateLabel = document.getElementById('updatedLabel');
+        if (updateLabel) updateLabel.textContent = 'Updating...';
+
+        // Animate refresh icon/dock
+        document.querySelectorAll('[data-dock-action="refresh"] svg, #refreshBtn svg').forEach(svg => {
+          svg.style.transition = 'transform 0.6s ease';
+          svg.style.transform = 'rotate(360deg)';
+          setTimeout(() => { svg.style.transform = 'rotate(0deg)'; }, 650);
         });
+
+        // 1. Fetch live prices via fast backend
+        try {
+          await refreshLivePricesForHoldings();
+        } catch (err) {
+          console.warn("Fast refresh notice:", err);
+        }
+
+        // 2. Apply prices
+        applyLivePricesToHoldings();
+        computeDayOpen();
         state.lastUpdated = new Date();
-        persist(); renderAll(); tickUpdatedLabel();
+        persist();
+        renderAll();
+        tickUpdatedLabel();
+        toast('⚡ Live prices updated!');
       }
 
       /* ---------------- modal / CRUD ---------------- */
