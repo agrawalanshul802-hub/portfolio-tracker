@@ -2703,6 +2703,211 @@
         }
       };
 
+      
+      /* -------------------------------------------------------------
+         REPORTS & ACCOUNT MODAL CONTROLLERS
+         ------------------------------------------------------------- */
+      function openReportsModal() {
+        const dd = document.getElementById('profileDropdownWrapper');
+        if (dd) dd.classList.remove('active');
+
+        const email = (currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || 'Investor';
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+        const emailEl = document.getElementById('reportUserEmail');
+        if (emailEl) emailEl.textContent = email;
+        const dateEl = document.getElementById('reportDateStamp');
+        if (dateEl) dateEl.textContent = dateStr;
+
+        const list = (typeof allHoldings === 'function') ? allHoldings() : (state.holdings || []);
+        let totalInvested = 0;
+        let totalValue = 0;
+
+        const rowsHtml = list.map(h => {
+          const qty = Number(h.qty || h.shares) || 0;
+          const buy = Number(h.buyPrice) || 0;
+          const cmp = Number(h.price) || buy;
+          const inv = qty * buy;
+          const val = qty * cmp;
+          const gain = val - inv;
+          const gainPct = inv > 0 ? (gain / inv) * 100 : 0;
+
+          totalInvested += inv;
+          totalValue += val;
+
+          return `
+            <tr>
+              <td><b>${h.symbol}</b> <div style="font-size:11px;color:var(--text-dim);">${h.name || h.yahooSymbol || ''}</div></td>
+              <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);">${h.exchange || 'NSE'}</span></td>
+              <td>${qty}</td>
+              <td>₹${buy.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>₹${cmp.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>₹${inv.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>₹${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td style="color:${gain >= 0 ? '#10B981' : '#EF4444'};font-weight:700;">${gain >= 0 ? '+' : ''}₹${gain.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td style="color:${gain >= 0 ? '#10B981' : '#EF4444'};font-weight:700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(2)}%</td>
+            </tr>`;
+        }).join('');
+
+        const totalGain = totalValue - totalInvested;
+        const totalGainPct = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
+
+        const nwEl = document.getElementById('repNetWorth');
+        if (nwEl) nwEl.textContent = '₹' + totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const invEl = document.getElementById('repInvested');
+        if (invEl) invEl.textContent = '₹' + totalInvested.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        const gainEl = document.getElementById('repGain');
+        if (gainEl) {
+          gainEl.textContent = (totalGain >= 0 ? '+' : '') + '₹' + totalGain.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          gainEl.style.color = totalGain >= 0 ? '#10B981' : '#EF4444';
+        }
+
+        const gainPctEl = document.getElementById('repGainPct');
+        if (gainPctEl) {
+          gainPctEl.textContent = (totalGainPct >= 0 ? '+' : '') + totalGainPct.toFixed(2) + '%';
+          gainPctEl.className = 'kpi-sub ' + (totalGain >= 0 ? 'pos' : 'neg');
+        }
+
+        const cntEl = document.getElementById('repHoldingsCount');
+        if (cntEl) cntEl.textContent = list.length + ' Asset' + (list.length === 1 ? '' : 's');
+        
+        let divRating = "Empty Portfolio";
+        if (list.length >= 5) divRating = "Well Diversified (High)";
+        else if (list.length >= 2) divRating = "Moderate Balance";
+        else if (list.length === 1) divRating = "Single Stock Risk";
+        const divEl = document.getElementById('repDiversification');
+        if (divEl) divEl.textContent = divRating;
+
+        const sumEl = document.getElementById('repTableSummary');
+        if (sumEl) sumEl.textContent = `${list.length} positions tracked`;
+        const bodyEl = document.getElementById('reportTableBody');
+        if (bodyEl) bodyEl.innerHTML = rowsHtml || '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-dim);">No holdings added yet.</td></tr>';
+
+        const modal = document.getElementById('reportsModalOverlay');
+        if (modal) modal.classList.add('open');
+      }
+
+      function closeReportsModal() {
+        const modal = document.getElementById('reportsModalOverlay');
+        if (modal) modal.classList.remove('open');
+      }
+
+      function exportReportCSV() {
+        const list = (typeof allHoldings === 'function') ? allHoldings() : (state.holdings || []);
+        if (!list.length) {
+          toast('No holdings to export!');
+          return;
+        }
+
+        const email = (currentUser && currentUser.email) || 'investor';
+        let csv = 'Symbol,Name,Exchange,YahooSymbol,AssetClass,Quantity,BuyPrice,CMP,Invested,CurrentValue,GainLoss,ReturnPct\n';
+        
+        list.forEach(h => {
+          const qty = Number(h.qty || h.shares) || 0;
+          const buy = Number(h.buyPrice) || 0;
+          const cmp = Number(h.price) || buy;
+          const inv = qty * buy;
+          const val = qty * cmp;
+          const gain = val - inv;
+          const gainPct = inv > 0 ? (gain / inv) * 100 : 0;
+
+          const row = [
+            `"${h.symbol || ''}"`,
+            `"${(h.name || '').replace(/"/g, '""')}"`,
+            `"${h.exchange || 'NSE'}"`,
+            `"${h.yahooSymbol || ''}"`,
+            `"${h.assetClass || 'Equity'}"`,
+            qty,
+            buy.toFixed(2),
+            cmp.toFixed(2),
+            inv.toFixed(2),
+            val.toFixed(2),
+            gain.toFixed(2),
+            gainPct.toFixed(2) + '%'
+          ];
+          csv += row.join(',') + '\n';
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `portfolio_statement_${email.split('@')[0]}_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast('📥 Statement downloaded as CSV!');
+      }
+
+      function copyReportSummary() {
+        const list = (typeof allHoldings === 'function') ? allHoldings() : (state.holdings || []);
+        const totalInvested = list.reduce((s, h) => s + (Number(h.qty || h.shares) || 0) * (Number(h.buyPrice) || 0), 0);
+        const totalValue = list.reduce((s, h) => s + (Number(h.qty || h.shares) || 0) * (Number(h.price) || Number(h.buyPrice) || 0), 0);
+        const gain = totalValue - totalInvested;
+        const gainPct = totalInvested > 0 ? (gain / totalInvested) * 100 : 0;
+
+        const summary = `📊 *Portfolio Summary Report*\n` +
+          `• Total Value: ₹${totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+          `• Total Invested: ₹${totalInvested.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+          `• Total P&L: ${gain >= 0 ? '+' : ''}₹${gain.toLocaleString('en-IN', { minimumFractionDigits: 2 })} (${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(2)}%)\n` +
+          `• Total Holdings: ${list.length} assets\n` +
+          `• Generated: ${new Date().toLocaleString('en-IN')}`;
+
+        navigator.clipboard.writeText(summary).then(() => {
+          toast('📋 Portfolio summary copied to clipboard!');
+        }).catch(() => {
+          toast('Summary ready (clipboard permission denied)');
+        });
+      }
+
+      function openAccountModal() {
+        const dd = document.getElementById('profileDropdownWrapper');
+        if (dd) dd.classList.remove('active');
+
+        const email = (currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || 'Investor';
+        const list = (typeof allHoldings === 'function') ? allHoldings() : (state.holdings || []);
+        const totalValue = list.reduce((s, h) => s + (Number(h.qty || h.shares) || 0) * (Number(h.price) || Number(h.buyPrice) || 0), 0);
+
+        const avEl = document.getElementById('accAvatarLarge');
+        if (avEl) avEl.textContent = email.charAt(0).toUpperCase();
+        const emEl = document.getElementById('accEmailDisplay');
+        if (emEl) emEl.textContent = email;
+        const cntEl = document.getElementById('accHoldingsCount');
+        if (cntEl) cntEl.textContent = list.length + ' Asset' + (list.length === 1 ? '' : 's');
+        const valEl = document.getElementById('accPortfolioValue');
+        if (valEl) valEl.textContent = '₹' + totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const modal = document.getElementById('accountModalOverlay');
+        if (modal) modal.classList.add('open');
+      }
+
+      function closeAccountModal() {
+        const modal = document.getElementById('accountModalOverlay');
+        if (modal) modal.classList.remove('open');
+      }
+
+      function exportDataJson() {
+        const list = state.holdings || [];
+        const email = (currentUser && currentUser.email) || 'investor';
+        const data = {
+          user: email,
+          exportedAt: new Date().toISOString(),
+          version: '2.0-supabase',
+          holdings: list
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `portfolio_backup_${email.split('@')[0]}_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast('📥 Backup exported as JSON!');
+      }
+
       /* ---------------- wiring ---------------- */
       function wire() {
         document.getElementById('tabBtnPortfolio').addEventListener('click', () => switchTab('portfolio'));
@@ -2757,7 +2962,13 @@
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
         overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') {
+            if (overlay && overlay.classList.contains('open')) closeModal();
+            closeReportsModal();
+            closeAccountModal();
+          }
+        });
 
         document.getElementById('symbolInput').addEventListener('input', (e) => {
           const val = e.target.value;
