@@ -531,6 +531,36 @@
       <!-- View 1: Portfolio (Default) -->
       <div id="viewPortfolio" class="dashboard-view-content active">
         <!-- Stripe-like stats block featuring Total Net Worth -->
+        
+        <!-- Live Major Indian Indices & Market Mood Ribbon -->
+        <div class="market-ribbon" id="marketIndicesRibbon">
+          <div class="index-ticker-card">
+            <span class="index-name">NIFTY 50</span>
+            <span class="index-price" id="ribbonNiftyPrice">24,080.40</span>
+            <span class="index-delta neg" id="ribbonNiftyDelta">-0.39%</span>
+          </div>
+          <div class="index-ticker-card">
+            <span class="index-name">SENSEX</span>
+            <span class="index-price" id="ribbonSensexPrice">76,957.27</span>
+            <span class="index-delta neg" id="ribbonSensexDelta">-0.40%</span>
+          </div>
+          <div class="index-ticker-card">
+            <span class="index-name">BANK NIFTY</span>
+            <span class="index-price" id="ribbonBankNiftyPrice">58,024.95</span>
+            <span class="index-delta pos" id="ribbonBankNiftyDelta">+0.92%</span>
+          </div>
+          <div class="index-ticker-card">
+            <span class="index-name">INDIA VIX</span>
+            <span class="index-price" id="ribbonVixPrice">11.19</span>
+            <span class="index-delta pos" id="ribbonVixDelta">+4.78%</span>
+          </div>
+          <div class="index-ticker-card" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.35);">
+            <span class="index-name">🌡️ Market Mood</span>
+            <span class="index-price" id="ribbonMmiScore" style="color: #10B981;">74.1</span>
+            <span class="index-delta pos" id="ribbonMmiSentiment">Extreme Greed</span>
+          </div>
+        </div>
+
         <div class="stats-row">
           <div class="net-worth-card animate-card">
             <div class="net-worth-header">
@@ -653,6 +683,92 @@
           </div>
 
           <!-- Card 3: Portfolio Weightings List -->
+          
+          <!-- Card: Indian Market Mood Index Speedometer -->
+          <div class="chart-card mmi-card">
+            <h3 style="margin-bottom: 2px;">🌡️ Indian Market Mood Index (MMI)</h3>
+            <p style="font-size: 11.5px; color: var(--text-dim); margin-bottom: 12px;">Real-time sentiment calculated from NIFTY momentum &amp; INDIA VIX</p>
+            
+            <div class="mmi-meter-wrap">
+              <div class="mmi-arc-bg"></div>
+              <div class="mmi-needle" id="mmiNeedle"></div>
+            </div>
+
+            <div class="mmi-score-display" id="mmiScoreVal">74.1</div>
+            <div class="mmi-sentiment-badge" id="mmiBadge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3);">
+              🟢 Extreme Greed
+            </div>
+            <p id="mmiDescription" style="font-size: 12px; color: var(--text-dim); margin-top: 10px; max-width: 280px; line-height: 1.4;">
+              Market is heavily bullish &amp; euphoric. Tighten trailing stop-losses.
+            </p>
+          </div>
+
+          <!-- Card: Interactive Goal & Compound Wealth Planner -->
+          <div class="goal-planner-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 style="font-size: 19px; font-weight: 800; color: #FFF; margin: 0 0 4px 0;">🎯 Financial Milestone &amp; SIP Wealth Planner</h3>
+                <p style="font-size: 12.5px; color: var(--text-dim); margin: 0;">Project your portfolio's compound growth (CAGR) and track target progress.</p>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 11px; text-transform: uppercase; color: var(--text-dim);">Projected Valuation</div>
+                <div style="font-size: 22px; font-weight: 800; color: #8B5CF6;" id="goalProjectedVal">₹0.00</div>
+              </div>
+            </div>
+
+            <div class="goal-presets">
+              <button class="goal-preset-btn active" onclick="setGoalPreset('retirement', 10000000, 15, 12)">🏖️ Retirement (₹1 Cr)</button>
+              <button class="goal-preset-btn" onclick="setGoalPreset('house', 2500000, 5, 12)">🏡 House Downpayment (₹25L)</button>
+              <button class="goal-preset-btn" onclick="setGoalPreset('car', 1500000, 3, 12)">🚗 Dream Car (₹15L)</button>
+              <button class="goal-preset-btn" onclick="setGoalPreset('emergency', 500000, 2, 8)">🛡️ Emergency Fund (₹5L)</button>
+              <button class="goal-preset-btn" onclick="setGoalPreset('education', 2000000, 4, 11)">🎓 Higher Education (₹20L)</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 14px;">
+              <div>
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Monthly SIP Addition</span>
+                    <span id="sliderSipVal" style="color: #10B981;">₹10,000</span>
+                  </div>
+                  <input type="range" min="0" max="100000" step="1000" value="10000" class="range-slider" id="sliderSip" oninput="updateGoalProjection()">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Expected Annual Return (CAGR)</span>
+                    <span id="sliderCagrVal" style="color: #8B5CF6;">12.0%</span>
+                  </div>
+                  <input type="range" min="6" max="25" step="0.5" value="12" class="range-slider" id="sliderCagr" oninput="updateGoalProjection()">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span>Investment Horizon</span>
+                    <span id="sliderYearsVal" style="color: #3B82F6;">10 Years</span>
+                  </div>
+                  <input type="range" min="1" max="30" step="1" value="10" class="range-slider" id="sliderYears" oninput="updateGoalProjection()">
+                </div>
+
+                <!-- Goal Progress Bar -->
+                <div style="margin-top: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 600; margin-bottom: 6px;">
+                    <span style="color: var(--text-dim);">Milestone Progress</span>
+                    <span id="goalProgressPct" style="color: #10B981;">0% Funded</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden;">
+                    <div id="goalProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #8B5CF6, #10B981); border-radius: 99px; transition: width 0.4s ease;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Compound Growth Chart -->
+              <div style="height: 220px; position: relative;">
+                <canvas id="goalGrowthChart"></canvas>
+              </div>
+            </div>
+          </div>
+
           <div class="chart-card" style="min-height: 380px; justify-content: flex-start; align-items: stretch;">
             <h3>Portfolio Concentration List</h3>
             <div id="weightingsListContainer"
@@ -980,6 +1096,18 @@
               works, recognized symbols fall back to a price captured 13 Jul 2026, and others to a simulated estimate.
             </div>
           </div>
+          
+          <div class="form-row">
+            <div class="form-field">
+              <label>Target Price ₹ (Optional Alert)</label>
+              <input type="number" step="any" min="0" name="targetPrice" id="targetPriceInput" placeholder="e.g. 3200">
+            </div>
+            <div class="form-field">
+              <label>Stop-Loss Limit ₹ (Optional Alert)</label>
+              <input type="number" step="any" min="0" name="stopLoss" id="stopLossInput" placeholder="e.g. 2500">
+            </div>
+          </div>
+
           <div class="modal-actions">
             <button type="submit" class="btn btn-primary" id="modalSave">Add holding</button>
             <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
@@ -1753,7 +1881,13 @@
             <tbody>
               ${list.map(h => `
                 <tr>
-                  <td class="cell-primary">${h.symbol}<div class="cell-sub">${h.yahooSymbol}</div></td>
+                  <td class="cell-primary">
+                    ${h.symbol}
+                    <div class="cell-sub">${h.yahooSymbol}</div>
+                    ${h.targetPrice && h.price >= h.targetPrice ? `<span class="watchdog-badge target-hit">🎯 Target Hit (₹${h.targetPrice})</span>` : ''}
+                    ${h.stopLoss && h.price <= h.stopLoss ? `<span class="watchdog-badge stoploss-hit">⚠️ Stop-Loss Alert (₹${h.stopLoss})</span>` : ''}
+                    ${h.targetPrice && h.price < h.targetPrice && (!h.stopLoss || h.price > h.stopLoss) ? `<span class="watchdog-badge neutral">🎯 ₹${fmtINR2(h.targetPrice)}</span>` : ''}
+                  </td>
                   <td>${fmtINR2(h.buyPrice)}</td>
                   <td>${h.qty}</td>
                   <td>${fmtINR(h.amount)}</td>
@@ -1822,6 +1956,8 @@
         renderTable();
         if (state.currentTab === 'analytics') {
           renderCharts();
+          fetchMarketMoodData();
+          updateGoalProjection();
         }
       }
 
@@ -1882,6 +2018,8 @@
           modalForm.symbol.value = r.symbol;
           modalForm.exchange.value = r.exchange;
           modalForm.name.value = r.name;
+          modalForm.targetPrice.value = r.targetPrice || '';
+          modalForm.stopLoss.value = r.stopLoss || '';
           modalForm.name.dataset.touched = '1';
           modalForm.buyPrice.value = r.buyPrice;
           modalForm.qty.value = r.qty;
@@ -3047,6 +3185,207 @@
         }
       }
 
+      
+      /* -------------------------------------------------------------
+         FEATURE 1, 3, 5: MARKET MOOD, GOAL SIMULATOR, WATCHDOG LOGIC
+         ------------------------------------------------------------- */
+      let goalGrowthChartInstance = null;
+      let currentGoalTarget = 10000000;
+
+      async function fetchMarketMoodData() {
+        try {
+          const res = await fetch('/api/market-mood');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (!data.success) return;
+
+          const idx = data.indices || {};
+          // Update ribbon
+          if (idx.NIFTY50) {
+            document.getElementById('ribbonNiftyPrice').textContent = fmtINR2(idx.NIFTY50.price);
+            const d = document.getElementById('ribbonNiftyDelta');
+            d.textContent = fmtPct(idx.NIFTY50.changePct);
+            d.className = 'index-delta ' + (idx.NIFTY50.changePct >= 0 ? 'pos' : 'neg');
+          }
+          if (idx.SENSEX) {
+            document.getElementById('ribbonSensexPrice').textContent = fmtINR2(idx.SENSEX.price);
+            const d = document.getElementById('ribbonSensexDelta');
+            d.textContent = fmtPct(idx.SENSEX.changePct);
+            d.className = 'index-delta ' + (idx.SENSEX.changePct >= 0 ? 'pos' : 'neg');
+          }
+          if (idx.BANKNIFTY) {
+            document.getElementById('ribbonBankNiftyPrice').textContent = fmtINR2(idx.BANKNIFTY.price);
+            const d = document.getElementById('ribbonBankNiftyDelta');
+            d.textContent = fmtPct(idx.BANKNIFTY.changePct);
+            d.className = 'index-delta ' + (idx.BANKNIFTY.changePct >= 0 ? 'pos' : 'neg');
+          }
+          if (idx.INDIAVIX) {
+            document.getElementById('ribbonVixPrice').textContent = Number(idx.INDIAVIX.price).toFixed(2);
+            const d = document.getElementById('ribbonVixDelta');
+            d.textContent = fmtPct(idx.INDIAVIX.changePct);
+            d.className = 'index-delta ' + (idx.INDIAVIX.changePct >= 0 ? 'pos' : 'neg');
+          }
+
+          // Update MMI Gauge
+          const mmi = data.mmi || {};
+          const score = mmi.score || 50;
+          document.getElementById('ribbonMmiScore').textContent = score;
+          document.getElementById('ribbonMmiSentiment').textContent = mmi.sentiment || 'Neutral';
+          
+          const scoreVal = document.getElementById('mmiScoreVal');
+          if (scoreVal) scoreVal.textContent = score;
+          const badge = document.getElementById('mmiBadge');
+          if (badge) {
+            badge.textContent = (score >= 50 ? '🟢 ' : '🔴 ') + (mmi.sentiment || 'Neutral');
+            badge.style.color = mmi.color || '#10B981';
+          }
+          const desc = document.getElementById('mmiDescription');
+          if (desc) desc.textContent = mmi.description || '';
+
+          // Rotate needle (-90deg at 0 to +90deg at 100)
+          const needleAngle = -90 + (score / 100) * 180;
+          const needle = document.getElementById('mmiNeedle');
+          if (needle) needle.style.transform = `rotate(${needleAngle}deg)`;
+        } catch (e) {
+          console.warn("Market mood fetch error:", e);
+        }
+      }
+
+      function setGoalPreset(type, amount, years, cagr) {
+        currentGoalTarget = amount;
+        document.querySelectorAll('.goal-preset-btn').forEach(btn => btn.classList.remove('active'));
+        if (event && event.target) event.target.classList.add('active');
+
+        const sYears = document.getElementById('sliderYears');
+        if (sYears) sYears.value = years;
+        const sCagr = document.getElementById('sliderCagr');
+        if (sCagr) sCagr.value = cagr;
+
+        updateGoalProjection();
+      }
+
+      function updateGoalProjection() {
+        const list = (typeof allHoldings === 'function') ? allHoldings() : (state.holdings || []);
+        const currentPortfolioValue = list.reduce((s, h) => s + (Number(h.qty || h.shares) || 0) * (Number(h.price) || Number(h.buyPrice) || 0), 0);
+
+        const sip = Number(document.getElementById('sliderSip').value) || 0;
+        const cagr = Number(document.getElementById('sliderCagr').value) || 12;
+        const years = Number(document.getElementById('sliderYears').value) || 10;
+
+        document.getElementById('sliderSipVal').textContent = '₹' + sip.toLocaleString('en-IN');
+        document.getElementById('sliderCagrVal').textContent = cagr.toFixed(1) + '%';
+        document.getElementById('sliderYearsVal').textContent = years + ' Year' + (years === 1 ? '' : 's');
+
+        const monthlyRate = (cagr / 100) / 12;
+        const months = years * 12;
+
+        let labels = [];
+        let investedData = [];
+        let wealthData = [];
+
+        let currentVal = currentPortfolioValue;
+        let totalInvested = currentPortfolioValue;
+
+        for (let y = 0; y <= years; y++) {
+          labels.push(`Yr ${y}`);
+          if (y === 0) {
+            investedData.push(Math.round(totalInvested));
+            wealthData.push(Math.round(currentVal));
+          } else {
+            for (let m = 1; m <= 12; m++) {
+              currentVal = currentVal * (1 + monthlyRate) + sip;
+              totalInvested += sip;
+            }
+            investedData.push(Math.round(totalInvested));
+            wealthData.push(Math.round(currentVal));
+          }
+        }
+
+        const finalWealth = wealthData[wealthData.length - 1];
+        document.getElementById('goalProjectedVal').textContent = '₹' + Math.round(finalWealth).toLocaleString('en-IN');
+
+        // Progress against current goal target
+        const progressPct = currentGoalTarget > 0 ? Math.min(100, (currentPortfolioValue / currentGoalTarget) * 100) : 0;
+        document.getElementById('goalProgressPct').textContent = `${progressPct.toFixed(1)}% Funded (Goal ₹${(currentGoalTarget/100000).toFixed(1)}L)`;
+        document.getElementById('goalProgressBar').style.width = `${progressPct}%`;
+
+        // Render Chart.js
+        renderGoalChart(labels, investedData, wealthData);
+      }
+
+      function renderGoalChart(labels, investedData, wealthData) {
+        const canvas = document.getElementById('goalGrowthChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        if (goalGrowthChartInstance) {
+          goalGrowthChartInstance.destroy();
+        }
+
+        goalGrowthChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Future Wealth (Compounded)',
+                data: wealthData,
+                borderColor: '#8B5CF6',
+                backgroundColor: 'rgba(139, 92, 246, 0.15)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 2.5,
+                pointRadius: 3,
+                pointBackgroundColor: '#8B5CF6'
+              },
+              {
+                label: 'Total Invested Capital',
+                data: investedData,
+                borderColor: '#10B981',
+                backgroundColor: 'transparent',
+                borderDash: [5, 5],
+                borderWidth: 1.8,
+                pointRadius: 0
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: '#9CA3AF', font: { size: 11 } }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(c) {
+                    return c.dataset.label + ': ₹' + Number(c.raw).toLocaleString('en-IN');
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: '#6B7280', font: { size: 10 } },
+                grid: { color: 'rgba(255, 255, 255, 0.04)' }
+              },
+              y: {
+                ticks: {
+                  color: '#6B7280',
+                  font: { size: 10 },
+                  callback: function(v) {
+                    if (v >= 10000000) return '₹' + (v / 10000000).toFixed(1) + 'Cr';
+                    if (v >= 100000) return '₹' + (v / 100000).toFixed(1) + 'L';
+                    return '₹' + v;
+                  }
+                },
+                grid: { color: 'rgba(255, 255, 255, 0.04)' }
+              }
+            }
+          }
+        });
+      }
+
       /* ---------------- auth ---------------- */
       function simpleHash(str) {
         let h = 0;
@@ -3890,6 +4229,7 @@
         // 1. Wire UI interaction listeners safely
         try { wireAuth(); } catch (e) { console.warn(e); }
         try { wire(); } catch (e) { console.warn(e); }
+        try { fetchMarketMoodData(); setInterval(fetchMarketMoodData, 60000); } catch (e) { console.warn(e); }
         try { wireMenuDrawer(); } catch (e) { console.warn(e); }
         try { initDock(); } catch (e) { console.warn(e); }
 
