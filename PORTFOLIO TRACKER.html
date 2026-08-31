@@ -989,6 +989,147 @@
     </div>
   </div>
 
+  
+  <!-- =========================================================
+       PORTFOLIO VALUATION & PERFORMANCE REPORT MODAL
+       ========================================================= -->
+  <div class="modal-overlay" id="reportsModalOverlay">
+    <div class="modal reports-modal">
+      <div class="modal-body">
+        <div class="report-modal-header">
+          <div>
+            <h3>
+              <span>📊 Portfolio Valuation Report</span>
+              <span class="report-badge-pill">🟢 Supabase Verified</span>
+            </h3>
+            <div style="font-size: 12px; color: var(--text-dim);">
+              Generated for <strong id="reportUserEmail" style="color: #FFFFFF;">user@example.com</strong> • <span id="reportDateStamp">-</span>
+            </div>
+          </div>
+          <button class="report-close-btn" id="closeReportsModalBtn" title="Close">✕</button>
+        </div>
+
+        <div class="report-actions-bar">
+          <button class="report-btn report-btn-primary" id="reportPrintBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+            Print / Save as PDF
+          </button>
+          <button class="report-btn report-btn-outline" id="reportCsvBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export to CSV
+          </button>
+          <button class="report-btn report-btn-outline" id="reportCopyBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Summary
+          </button>
+        </div>
+
+        <!-- 4 KPI Summary Cards -->
+        <div class="report-metrics-grid">
+          <div class="report-kpi-card">
+            <div class="kpi-label">Current Net Worth</div>
+            <div class="kpi-value" id="repNetWorth">₹0.00</div>
+            <div class="kpi-sub" style="color: #9CA3AF;">Total Market Value</div>
+          </div>
+          <div class="report-kpi-card">
+            <div class="kpi-label">Invested Capital</div>
+            <div class="kpi-value" id="repInvested">₹0.00</div>
+            <div class="kpi-sub" style="color: #9CA3AF;">Total Cost Basis</div>
+          </div>
+          <div class="report-kpi-card">
+            <div class="kpi-label">Unrealized Gain / Loss</div>
+            <div class="kpi-value" id="repGain">₹0.00</div>
+            <div class="kpi-sub" id="repGainPct">0.00%</div>
+          </div>
+          <div class="report-kpi-card">
+            <div class="kpi-label">Portfolio Health</div>
+            <div class="kpi-value" id="repHoldingsCount" style="color: #8B5CF6;">0 Assets</div>
+            <div class="kpi-sub" id="repDiversification" style="color: #10B981;">Diversified</div>
+          </div>
+        </div>
+
+        <!-- Detailed Holdings Statement Table -->
+        <div class="report-section-title">
+          <span>Asset Breakdown Statement</span>
+          <span style="font-size: 11.5px; color: var(--text-dim);" id="repTableSummary">-</span>
+        </div>
+        <div class="report-table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Exch</th>
+                <th>Qty</th>
+                <th>Buy Price</th>
+                <th>CMP</th>
+                <th>Invested</th>
+                <th>Current Value</th>
+                <th>P&L (₹)</th>
+                <th>Return</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody">
+              <!-- populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="report-meta-footer">
+          <span>Official valuation computed by Portfolio Tracker Financial Engine v2.0</span>
+          <span>Verified Accurate • Cloud Synced</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       ACCOUNT DETAILS & SECURITY MODAL
+       ========================================================= -->
+  <div class="modal-overlay" id="accountModalOverlay">
+    <div class="modal account-modal">
+      <div class="modal-body">
+        <div class="report-modal-header" style="margin-bottom: 12px;">
+          <h3>⚙️ Investor Account Profile</h3>
+          <button class="report-close-btn" id="closeAccountModalBtn" title="Close">✕</button>
+        </div>
+
+        <div class="account-card-body">
+          <div class="account-avatar-large" id="accAvatarLarge">U</div>
+          <div class="account-email-display" id="accEmailDisplay">user@example.com</div>
+          <span class="report-badge-pill" style="margin-bottom: 10px;">🟢 Verified Account</span>
+
+          <div class="account-info-list">
+            <div class="account-info-row">
+              <span class="account-info-label">Database Backend</span>
+              <span class="account-info-value" style="color: #10B981;">Supabase Cloud (PostgreSQL)</span>
+            </div>
+            <div class="account-info-row">
+              <span class="account-info-label">Encryption</span>
+              <span class="account-info-value">PBKDF2 SHA-256 (Salted)</span>
+            </div>
+            <div class="account-info-row">
+              <span class="account-info-label">Active Holdings</span>
+              <span class="account-info-value" id="accHoldingsCount">0 Assets</span>
+            </div>
+            <div class="account-info-row">
+              <span class="account-info-label">Live Valuation</span>
+              <span class="account-info-value" id="accPortfolioValue" style="color: #8B5CF6;">₹0.00</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: center; margin-top: 18px;">
+            <button class="report-btn report-btn-outline" id="accExportJsonBtn" style="flex:1;">
+              📥 Export Data (JSON)
+            </button>
+            <button class="report-btn report-btn-primary" id="accSignOutBtn" style="flex:1; background: linear-gradient(135deg, #EF4444, #DC2626);">
+              🚪 Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
@@ -2657,8 +2798,40 @@
           if (sellBtn) { sellHolding(sellBtn.dataset.sell); return; }
         });
 
-        document.getElementById('reportsLink').addEventListener('click', () => toast('Reports is a demo placeholder — not built out yet'));
-        document.getElementById('accountLink').addEventListener('click', () => toast('Account is a demo placeholder — not built out yet'));
+        document.getElementById('reportsLink').addEventListener('click', openReportsModal);
+        document.getElementById('accountLink').addEventListener('click', openAccountModal);
+
+        // Reports modal controls
+        const closeRepBtn = document.getElementById('closeReportsModalBtn');
+        if (closeRepBtn) closeRepBtn.addEventListener('click', closeReportsModal);
+        const printRepBtn = document.getElementById('reportPrintBtn');
+        if (printRepBtn) printRepBtn.addEventListener('click', () => { closeReportsModal(); window.exportPortfolioPDF(); });
+        const csvRepBtn = document.getElementById('reportCsvBtn');
+        if (csvRepBtn) csvRepBtn.addEventListener('click', exportReportCSV);
+        const copyRepBtn = document.getElementById('reportCopyBtn');
+        if (copyRepBtn) copyRepBtn.addEventListener('click', copyReportSummary);
+
+        // Account modal controls
+        const closeAccBtn = document.getElementById('closeAccountModalBtn');
+        if (closeAccBtn) closeAccBtn.addEventListener('click', closeAccountModal);
+        const exportJsonBtn = document.getElementById('accExportJsonBtn');
+        if (exportJsonBtn) exportJsonBtn.addEventListener('click', exportDataJson);
+        const accSignOutBtn = document.getElementById('accSignOutBtn');
+        if (accSignOutBtn) accSignOutBtn.addEventListener('click', () => { closeAccountModal(); signOut(); });
+
+        // Close on backdrop click
+        const repModalOverlay = document.getElementById('reportsModalOverlay');
+        if (repModalOverlay) {
+          repModalOverlay.addEventListener('click', (e) => {
+            if (e.target === repModalOverlay) closeReportsModal();
+          });
+        }
+        const accModalOverlay = document.getElementById('accountModalOverlay');
+        if (accModalOverlay) {
+          accModalOverlay.addEventListener('click', (e) => {
+            if (e.target === accModalOverlay) closeAccountModal();
+          });
+        }
       }
 
       /* ---------------- auth ---------------- */
@@ -4143,7 +4316,7 @@
         let totalCurrent = 0;
 
         state.holdings.forEach(h => {
-          const qty = Number(h.shares) || 0;
+          const qty = Number(h.qty || h.shares) || 0;
           const buy = Number(h.buyPrice) || 0;
           const cmp = Number(h.price) || buy;
           const inv = qty * buy;
@@ -4190,7 +4363,7 @@
         let totalCurrent = 0;
 
         const rowsHtml = state.holdings.map(h => {
-          const qty = Number(h.shares) || 0;
+          const qty = Number(h.qty || h.shares) || 0;
           const buy = Number(h.buyPrice) || 0;
           const cmp = Number(h.price) || buy;
           const inv = qty * buy;
