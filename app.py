@@ -516,7 +516,7 @@ def generate_welcome_email_html(to_email, user_name=None):
       <div class="signoff">
         Sincerely,<br />
         <strong>The Portfolio Tracker Team</strong><br />
-        <span style="color: #64748B; font-size: 13px;">Department of Computer Science &bull; Vidyavardhini's A.V. College</span>
+        
       </div>
     </div>
 
