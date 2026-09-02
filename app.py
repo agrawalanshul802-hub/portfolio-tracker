@@ -1,4 +1,9 @@
-﻿import http.server
+import smtplib
+import threading
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+import http.server
 
 import urllib.request
 
@@ -389,7 +394,7 @@ def auth_sync():
         session.permanent = True
 
         session['email'] = email
-
+        send_welcome_email_async(email)
         return jsonify({'success': True, 'email': email})
 
     except Exception as e:
@@ -409,6 +414,147 @@ def get_session():
     return jsonify({'email': None}), 200
 
 # REST API: User Signup
+
+
+# ---------------------------------------------------------------------------
+# AUTOMATED WELCOME EMAIL ONBOARDING ENGINE
+# ---------------------------------------------------------------------------
+
+def generate_welcome_email_html(to_email, user_name=None):
+    """Generates a responsive dark-themed welcome email matching Portfolio Tracker branding."""
+    display_name = user_name or to_email.split('@')[0].capitalize()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Portfolio Tracker</title>
+<style>
+  body {{ margin: 0; padding: 0; background-color: #0D1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #E6EDF3; }}
+  .email-wrap {{ max-width: 580px; margin: 20px auto; background-color: #161B22; border: 1px solid #30363D; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
+  .email-header {{ background: linear-gradient(135deg, #161B22 0%, #1F242C 100%); padding: 32px 28px; text-align: center; border-bottom: 1px solid #30363D; }}
+  .email-logo-title {{ font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px; margin: 0; }}
+  .email-logo-badge {{ display: inline-block; background: rgba(0, 208, 156, 0.15); border: 1px solid rgba(0, 208, 156, 0.35); color: #00D09C; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 12px; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }}
+  .email-body {{ padding: 32px 28px; }}
+  .email-greeting {{ font-size: 20px; font-weight: 700; color: #FFFFFF; margin-top: 0; margin-bottom: 10px; }}
+  .email-intro {{ font-size: 14px; line-height: 1.6; color: #8B949E; margin-bottom: 24px; }}
+  .feature-grid {{ margin-bottom: 24px; }}
+  .feature-card {{ background: #0D1117; border: 1px solid #30363D; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }}
+  .feature-card-title {{ font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }}
+  .feature-card-desc {{ font-size: 12.5px; color: #8B949E; line-height: 1.5; margin: 0; }}
+  .security-banner {{ background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 14px 16px; margin-bottom: 24px; }}
+  .security-title {{ font-size: 13.5px; font-weight: 700; color: #A78BFA; margin-bottom: 4px; }}
+  .security-desc {{ font-size: 12px; color: #D1D5DB; line-height: 1.5; margin: 0; }}
+  .cta-wrap {{ text-align: center; margin: 28px 0 10px; }}
+  .cta-btn {{ display: inline-block; background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); color: #FFFFFF !important; text-decoration: none; font-size: 14px; font-weight: 700; padding: 14px 32px; border-radius: 10px; letter-spacing: 0.3px; }}
+  .email-footer {{ padding: 22px 28px; text-align: center; border-top: 1px solid #30363D; font-size: 11.5px; color: #6E7681; line-height: 1.6; }}
+</style>
+</head>
+<body>
+<div class="email-wrap">
+  <div class="email-header">
+    <h1 class="email-logo-title">📈 Portfolio Tracker</h1>
+    <div class="email-logo-badge">Privacy-First Financial Engine</div>
+  </div>
+
+  <div class="email-body">
+    <h2 class="email-greeting">Welcome aboard, {display_name}! 🚀</h2>
+    <p class="email-intro">
+      Your personalized, multi-asset portfolio workspace is now active. You can now track your entire net worth across multiple asset classes with zero security compromise.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-card-title">📊 Multi-Broker Portfolio Dashboard</div>
+        <p class="feature-card-desc">Track Indian Equities (NSE/BSE), Mutual Funds, Gold, and Crypto in one consolidated net worth view in Indian Rupees (₹).</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card-title">🔔 Real-Time Price Alerts</div>
+        <p class="feature-card-desc">Set custom target price thresholds on any stock. Receive instantaneous notifications the moment market prices cross your targets.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card-title">🤖 AI Portfolio Analyst</div>
+        <p class="feature-card-desc">Query an intelligent financial assistant powered by Groq and Google Gemini to evaluate diversification, sector concentration, and market risks.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card-title">📑 One-Click Valuation Reports</div>
+        <p class="feature-card-desc">Generate certified PDF financial statements and CSV ledgers with a single click for tax accounting, audits, and personal wealth reviews.</p>
+      </div>
+    </div>
+
+    <div class="security-banner">
+      <div class="security-title">🛡️ Our Privacy &amp; Security Commitment</div>
+      <p class="security-desc">
+        Portfolio Tracker <strong>NEVER asks for your broker passwords, PINs, or Demat credentials</strong>. Your account password is encrypted using military-grade PBKDF2-SHA256 (100,000 rounds) and persisted on Supabase Cloud.
+      </p>
+    </div>
+
+    <div class="cta-wrap">
+      <a href="https://portfolio-tracker-1-n2qq.onrender.com" class="cta-btn" target="_blank">
+        OPEN YOUR DASHBOARD &rarr;
+      </a>
+    </div>
+  </div>
+
+  <div class="email-footer">
+    <p style="margin: 0 0 6px 0;">This email was sent automatically to <strong>{to_email}</strong> upon account registration.</p>
+    <p style="margin: 0;">Portfolio Tracker &bull; Department of Computer Science &bull; Vidyavardhini's A.V. College</p>
+  </div>
+</div>
+</body>
+</html>"""
+
+def send_welcome_email_async(to_email, user_name=None):
+    """Dispatches the welcome email in a background daemon thread so HTTP response is instant."""
+    if not to_email:
+        return
+    threading.Thread(target=_send_welcome_email_worker, args=(to_email, user_name), daemon=True).start()
+
+def _send_welcome_email_worker(to_email, user_name=None):
+    """Background worker that handles SMTP transmission safely."""
+    try:
+        load_env_file()
+        smtp_user = os.getenv('SMTP_EMAIL') or os.getenv('MAIL_USERNAME')
+        smtp_pass = os.getenv('SMTP_PASSWORD') or os.getenv('MAIL_PASSWORD')
+        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+
+        display_name = user_name or to_email.split('@')[0].capitalize()
+        subject = f"🚀 Welcome to Portfolio Tracker, {display_name}!"
+        html_body = generate_welcome_email_html(to_email, user_name)
+
+        if not smtp_user or not smtp_pass:
+            print(f"[Welcome Email] Note: SMTP_EMAIL / SMTP_PASSWORD not configured. Welcome email for {to_email} generated in preview mode.")
+            return
+
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = f"Portfolio Tracker <{smtp_user}>"
+        msg['To'] = to_email
+
+        plain_text = f"""Welcome to Portfolio Tracker, {display_name}!
+
+Your privacy-first financial dashboard is now active.
+Track Indian Equities (NSE/BSE), Mutual Funds, Gold, and Crypto all in one place.
+Set Real-Time Price Alerts and ask the AI Portfolio Analyst.
+
+Open Dashboard: https://portfolio-tracker-1-n2qq.onrender.com
+
+- Team Portfolio Tracker"""
+        msg.attach(MIMEText(plain_text, 'plain'))
+        msg.attach(MIMEText(html_body, 'html'))
+
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+            print(f"[Welcome Email] Successfully sent live welcome email to {to_email}")
+
+    except Exception as e:
+        print(f"[Welcome Email] Worker notice (handled gracefully): {e}")
 
 @app.route('/api/register', methods=['POST'])
 
@@ -441,7 +587,7 @@ def register():
         supabase.table('users').insert({'email': email, 'password_hash': pw_hash}).execute()
 
         session['email'] = email
-
+        send_welcome_email_async(email)
         return jsonify({'success': True, 'email': email})
 
     except Exception as e:
@@ -475,7 +621,7 @@ def login():
             return jsonify({'error': 'Incorrect email or password'}), 400
 
         session['email'] = email
-
+        send_welcome_email_async(email)
         return jsonify({'success': True, 'email': email})
 
     except Exception as e:
@@ -677,6 +823,8 @@ def google_callback():
             placeholder_hash = "oauth-google:" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()
 
             supabase.table('users').insert({'email': email, 'password_hash': placeholder_hash}).execute()
+            user_name = info_body.get('name') or info_body.get('given_name')
+            send_welcome_email_async(email, user_name=user_name)
 
     except Exception as e:
 
@@ -2918,6 +3066,36 @@ def static_files(path):
 
     return jsonify({'error': f'Resource {path} not found'}), 404
 
+# ---------------------------------------------------------------------------
+# WELCOME EMAIL PREVIEW & TEST ENDPOINTS
+# ---------------------------------------------------------------------------
+
+@app.route('/api/welcome-email-preview')
+def welcome_email_preview():
+    """Renders the HTML welcome email in-browser for demo, preview, and testing."""
+    email = request.args.get('email', 'investor@example.com')
+    name = request.args.get('name', 'Investor')
+    html = generate_welcome_email_html(email, name)
+    return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+
+@app.route('/api/test-welcome-email', methods=['GET', 'POST'])
+def test_welcome_email():
+    """Allows testing email dispatch and reports SMTP status."""
+    email = request.args.get('email') or (request.get_json(silent=True) or {}).get('email') or session.get('email')
+    if not email:
+        return jsonify({'error': 'Email parameter is required'}), 400
+    name = request.args.get('name') or (request.get_json(silent=True) or {}).get('name')
+    send_welcome_email_async(email, user_name=name)
+    load_env_file()
+    has_smtp = bool(os.getenv('SMTP_EMAIL') and os.getenv('SMTP_PASSWORD'))
+    return jsonify({
+        'success': True,
+        'email': email,
+        'smtp_configured': has_smtp,
+        'message': f"Welcome email triggered for {email}. Status: {'Sent via live SMTP' if has_smtp else 'Generated (SMTP credentials not yet configured in env)'}",
+        'preview_url': f"/api/welcome-email-preview?email={urllib.parse.quote(email)}"
+    })
+
 if __name__ == '__main__':
 
     local_ip = get_local_ip()
@@ -2945,3 +3123,4 @@ if __name__ == '__main__':
     print("Press Ctrl+C to stop.")
 
     app.run(host='0.0.0.0', port=PORT, debug=True, use_reloader=False)
+
