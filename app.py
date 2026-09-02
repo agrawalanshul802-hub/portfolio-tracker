@@ -421,87 +421,111 @@ def get_session():
 # ---------------------------------------------------------------------------
 
 def generate_welcome_email_html(to_email, user_name=None):
-    """Generates a responsive dark-themed welcome email matching Portfolio Tracker branding."""
     display_name = user_name or to_email.split('@')[0].capitalize()
-    return f"""<!DOCTYPE html>
-<html lang="en">
+    
+    return f"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Welcome to Portfolio Tracker</title>
-<style>
-  body {{ margin: 0; padding: 0; background-color: #0D1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #E6EDF3; }}
-  .email-wrap {{ max-width: 580px; margin: 20px auto; background-color: #161B22; border: 1px solid #30363D; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
-  .email-header {{ background: linear-gradient(135deg, #161B22 0%, #1F242C 100%); padding: 32px 28px; text-align: center; border-bottom: 1px solid #30363D; }}
-  .email-logo-title {{ font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px; margin: 0; }}
-  .email-logo-badge {{ display: inline-block; background: rgba(0, 208, 156, 0.15); border: 1px solid rgba(0, 208, 156, 0.35); color: #00D09C; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 12px; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }}
-  .email-body {{ padding: 32px 28px; }}
-  .email-greeting {{ font-size: 20px; font-weight: 700; color: #FFFFFF; margin-top: 0; margin-bottom: 10px; }}
-  .email-intro {{ font-size: 14px; line-height: 1.6; color: #8B949E; margin-bottom: 24px; }}
-  .feature-grid {{ margin-bottom: 24px; }}
-  .feature-card {{ background: #0D1117; border: 1px solid #30363D; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }}
-  .feature-card-title {{ font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }}
-  .feature-card-desc {{ font-size: 12.5px; color: #8B949E; line-height: 1.5; margin: 0; }}
-  .security-banner {{ background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: 12px; padding: 14px 16px; margin-bottom: 24px; }}
-  .security-title {{ font-size: 13.5px; font-weight: 700; color: #A78BFA; margin-bottom: 4px; }}
-  .security-desc {{ font-size: 12px; color: #D1D5DB; line-height: 1.5; margin: 0; }}
-  .cta-wrap {{ text-align: center; margin: 28px 0 10px; }}
-  .cta-btn {{ display: inline-block; background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); color: #FFFFFF !important; text-decoration: none; font-size: 14px; font-weight: 700; padding: 14px 32px; border-radius: 10px; letter-spacing: 0.3px; }}
-  .email-footer {{ padding: 22px 28px; text-align: center; border-top: 1px solid #30363D; font-size: 11.5px; color: #6E7681; line-height: 1.6; }}
+<style type="text/css">
+  body {{ margin: 0; padding: 0; min-width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; background-color: #F1F5F9; color: #1E293B; }}
+  table {{ border-collapse: collapse; }}
+  .email-container {{ max-width: 600px; margin: 30px auto; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04); }}
+  .header-band {{ background: #0F172A; padding: 26px 36px; text-align: left; }}
+  .header-title {{ font-size: 20px; font-weight: 700; color: #FFFFFF; margin: 0; letter-spacing: -0.3px; }}
+  .header-sub {{ font-size: 12px; color: #94A3B8; margin-top: 4px; }}
+  .content-body {{ padding: 36px 36px 28px; }}
+  .salutation {{ font-size: 17px; font-weight: 700; color: #0F172A; margin: 0 0 16px 0; }}
+  .paragraph {{ font-size: 14.5px; line-height: 1.65; color: #334155; margin: 0 0 18px 0; }}
+  .info-table {{ width: 100%; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; margin: 20px 0 24px; padding: 14px 18px; }}
+  .info-table td {{ padding: 5px 8px; font-size: 13.5px; color: #475569; }}
+  .info-table td.label {{ font-weight: 600; color: #0F172A; width: 35%; }}
+  .steps-title {{ font-size: 14.5px; font-weight: 700; color: #0F172A; margin: 24px 0 12px 0; }}
+  .step-item {{ margin-bottom: 12px; padding-left: 20px; position: relative; font-size: 13.5px; line-height: 1.6; color: #334155; }}
+  .step-item b {{ color: #0F172A; }}
+  .security-box {{ background: #F5F3FF; border-left: 4px solid #7C3AED; border-radius: 4px; padding: 14px 16px; margin: 24px 0; font-size: 13px; line-height: 1.55; color: #4C1D95; }}
+  .button-wrap {{ text-align: left; margin: 28px 0 20px; }}
+  .btn-primary {{ display: inline-block; background: #6D28D9; color: #FFFFFF !important; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 28px; border-radius: 8px; box-shadow: 0 2px 8px rgba(109, 40, 217, 0.25); }}
+  .signoff {{ margin-top: 28px; padding-top: 20px; border-top: 1px solid #E2E8F0; font-size: 14px; line-height: 1.6; color: #334155; }}
+  .footer-band {{ background: #F8FAFC; padding: 20px 36px; text-align: center; border-top: 1px solid #E2E8F0; font-size: 11.5px; color: #64748B; line-height: 1.6; }}
 </style>
 </head>
 <body>
-<div class="email-wrap">
-  <div class="email-header">
-    <h1 class="email-logo-title">📈 Portfolio Tracker</h1>
-    <div class="email-logo-badge">Privacy-First Financial Engine</div>
-  </div>
-
-  <div class="email-body">
-    <h2 class="email-greeting">Welcome aboard, {display_name}! 🚀</h2>
-    <p class="email-intro">
-      Your personalized, multi-asset portfolio workspace is now active. You can now track your entire net worth across multiple asset classes with zero security compromise.
-    </p>
-
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feature-card-title">📊 Multi-Broker Portfolio Dashboard</div>
-        <p class="feature-card-desc">Track Indian Equities (NSE/BSE), Mutual Funds, Gold, and Crypto in one consolidated net worth view in Indian Rupees (₹).</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card-title">🔔 Real-Time Price Alerts</div>
-        <p class="feature-card-desc">Set custom target price thresholds on any stock. Receive instantaneous notifications the moment market prices cross your targets.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card-title">🤖 AI Portfolio Analyst</div>
-        <p class="feature-card-desc">Query an intelligent financial assistant powered by Groq and Google Gemini to evaluate diversification, sector concentration, and market risks.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card-title">📑 One-Click Valuation Reports</div>
-        <p class="feature-card-desc">Generate certified PDF financial statements and CSV ledgers with a single click for tax accounting, audits, and personal wealth reviews.</p>
-      </div>
+<div style="background-color: #F1F5F9; padding: 20px 10px;">
+  <div class="email-container">
+    
+    <!-- Top Branding Header -->
+    <div class="header-band">
+      <h1 class="header-title">Portfolio Tracker</h1>
+      <div class="header-sub">Financial Analytics &amp; Wealth Management Platform</div>
     </div>
 
-    <div class="security-banner">
-      <div class="security-title">🛡️ Our Privacy &amp; Security Commitment</div>
-      <p class="security-desc">
-        Portfolio Tracker <strong>NEVER asks for your broker passwords, PINs, or Demat credentials</strong>. Your account password is encrypted using military-grade PBKDF2-SHA256 (100,000 rounds) and persisted on Supabase Cloud.
+    <!-- Main Letter Content -->
+    <div class="content-body">
+      <p class="salutation">Dear {display_name},</p>
+
+      <p class="paragraph">
+        Thank you for creating an account with <strong>Portfolio Tracker</strong>. We are pleased to confirm that your registration has been processed successfully, and your personal investment workspace is now active.
       </p>
+
+      <!-- Account Summary Table -->
+      <table class="info-table">
+        <tr>
+          <td class="label">Registered Email:</td>
+          <td>{to_email}</td>
+        </tr>
+        <tr>
+          <td class="label">Account Status:</td>
+          <td><span style="color: #059669; font-weight: 600;">● Active (Verified)</span></td>
+        </tr>
+        <tr>
+          <td class="label">Platform:</td>
+          <td>Cloud Synced (Supabase PostgreSQL)</td>
+        </tr>
+      </table>
+
+      <div class="steps-title">Getting Started with Your Portfolio:</div>
+      
+      <div class="step-item">
+        <b>1. Add Your Holdings:</b> Track Indian Equities (NSE &amp; BSE), Mutual Funds, Gold, and Cryptocurrencies in a single consolidated net worth view in Indian Rupees (₹).
+      </div>
+      <div class="step-item">
+        <b>2. Set Real-Time Price Alerts:</b> Specify your target prices on any stock and receive automated notifications the moment market prices cross your targets.
+      </div>
+      <div class="step-item">
+        <b>3. AI Portfolio Analyst:</b> Ask financial questions and get immediate portfolio health, sector concentration, and risk assessment powered by AI.
+      </div>
+      <div class="step-item">
+        <b>4. Valuation Statements:</b> Export official PDF valuation certificates and CSV ledgers with a single click for tax preparation and financial audits.
+      </div>
+
+      <!-- Security Guarantee -->
+      <div class="security-box">
+        <strong>Privacy &amp; Security Note:</strong><br />
+        Portfolio Tracker operates on a strict privacy-first principle. We will <strong>never</strong> ask for your Demat login, broker passwords, or transaction PINs. Your data is protected by industry-standard encryption and stored securely.
+      </div>
+
+      <!-- Call to Action Button -->
+      <div class="button-wrap">
+        <a href="https://portfolio-tracker-1-n2qq.onrender.com" class="btn-primary" target="_blank">Access Your Dashboard &rarr;</a>
+      </div>
+
+      <!-- Formal Sign-off -->
+      <div class="signoff">
+        Sincerely,<br />
+        <strong>The Portfolio Tracker Team</strong><br />
+        <span style="color: #64748B; font-size: 13px;">Department of Computer Science &bull; Vidyavardhini's A.V. College</span>
+      </div>
     </div>
 
-    <div class="cta-wrap">
-      <a href="https://portfolio-tracker-1-n2qq.onrender.com" class="cta-btn" target="_blank">
-        OPEN YOUR DASHBOARD &rarr;
-      </a>
+    <!-- Footer -->
+    <div class="footer-band">
+      This is an automated confirmation sent to <strong>{to_email}</strong>.<br />
+      If you did not create this account, please disregard this message.
     </div>
-  </div>
 
-  <div class="email-footer">
-    <p style="margin: 0 0 6px 0;">This email was sent automatically to <strong>{to_email}</strong> upon account registration.</p>
-    <p style="margin: 0;">Portfolio Tracker &bull; Department of Computer Science &bull; Vidyavardhini's A.V. College</p>
   </div>
 </div>
 </body>
