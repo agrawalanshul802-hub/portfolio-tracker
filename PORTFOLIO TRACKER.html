@@ -1536,7 +1536,7 @@
             </div>
             <div class="form-field">
               <label>Quantity <span class="req">*</span></label>
-              <input required type="number" step="any" min="0" name="qty" placeholder="68">
+              <input required type="number" step="any" min="0.0001" name="qty" placeholder="e.g. 1" value="1">
             </div>
           </div>
           <div class="form-field">
@@ -1896,7 +1896,7 @@
         { ticker: 'COPPER', name: 'Copper (MCX / kg)', assetClass: 'Commodity', exchange: 'MCX', price: 825 }
       ];
       function findKnown(symbol) {
-        const s = (symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+        const s = (symbol || '').toUpperCase().replace(/\.(NS|BO|MCX)$/, '');
         return KNOWN.find(c => c.ticker === s);
       }
       function guessAssetClass(symbol, exchange) {
@@ -2080,7 +2080,7 @@
 
       function applyLivePricesToHoldings() {
         state.holdings.forEach(h => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO|MCX)$/, '');
           const cached = getCachedPrice(base);
           if (cached) h.price = +cached.toFixed(2);
         });
@@ -2088,7 +2088,7 @@
       }
 
       function guessCurrentPrice(yahooSymbol, buyPrice) {
-        const baseSymbol = (yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+        const baseSymbol = (yahooSymbol || '').toUpperCase().replace(/\.(NS|BO|MCX)$/, '');
         const cached = getCachedPrice(baseSymbol);
         if (cached) {
           return +cached.toFixed(2);
@@ -2223,7 +2223,7 @@
 
       function computeDayOpen() {
         state.holdings.forEach(h => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO|MCX)$/, '');
           const realPrevClose = getCachedPrevClose(base);
           if (realPrevClose) {
             state.dayOpen[h.id] = realPrevClose;
@@ -2368,7 +2368,7 @@
         }
 
         const liveResolvedCount = list.filter(h => {
-          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
+          const base = (h.yahooSymbol || '').toUpperCase().replace(/\.(NS|BO|MCX)$/, '');
           return !!livePriceCache[base];
         }).length;
         const liveEl = document.getElementById('liveCount');
@@ -2689,7 +2689,7 @@
         };
 
         const targetSym = opts.yahooOverride || buildYahooSymbol(opts.symbol, opts.exchange);
-        const baseSym = opts.symbol.replace(/\.(NS|BO)$/, '');
+        const baseSym = opts.symbol.replace(/\.(NS|BO|MCX)$/, '');
 
         // 1. Build holding
         let newHolding = buildHolding(opts, modalMode === 'edit' ? modalId : null);
@@ -3810,7 +3810,7 @@
                 if (res.ok) {
                   const json = await res.json();
                   if (json.success && json.prices) {
-                    const base = val.replace(/\.(NS|BO)$/, '');
+                    const base = val.replace(/\.(NS|BO|MCX)$/, '');
                     const item = json.prices[base] || json.prices[target] || Object.values(json.prices)[0];
                     if (item && item.price) {
                       lastLiveCmpVal = +Number(item.price).toFixed(2);
