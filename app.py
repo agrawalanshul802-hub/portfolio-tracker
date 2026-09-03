@@ -489,7 +489,7 @@ def generate_welcome_email_html(to_email, user_name=None):
       <div class="steps-title">Getting Started with Your Portfolio:</div>
       
       <div class="step-item">
-        <b>1. Add Your Holdings:</b> Track Indian Equities (NSE &amp; BSE), Mutual Funds, Gold, and Cryptocurrencies in a single consolidated net worth view in Indian Rupees (₹).
+        <b>1. Add Your Holdings:</b> Track Indian Equities (NSE &amp; BSE) and Commodities (MCX Gold, Silver, Crude Oil) in dedicated portfolio sections in Indian Rupees (₹).
       </div>
       <div class="step-item">
         <b>2. Set Real-Time Price Alerts:</b> Specify your target prices on any stock and receive automated notifications the moment market prices cross your targets.
@@ -562,7 +562,7 @@ def _send_welcome_email_worker(to_email, user_name=None):
         plain_text = f"""Welcome to Portfolio Tracker, {display_name}!
 
 Your privacy-first financial dashboard is now active.
-Track Indian Equities (NSE/BSE), Mutual Funds, Gold, and Crypto all in one place.
+Track Indian Equities (NSE/BSE) and Commodities (MCX Gold, Silver, Crude Oil) all in one place.
 Set Real-Time Price Alerts and ask the AI Portfolio Analyst.
 
 Open Dashboard: https://portfolio-tracker-1-n2qq.onrender.com
@@ -1004,15 +1004,47 @@ def get_live_prices():
     # 2. Fetch missing symbols in parallel with optimized fast timeouts
     if missing_symbols:
         def fetch_single_quote(sym_clean):
+            # 1. Handle MCX Commodities (Gold, Silver, Crude, Natural Gas, Copper)
+            clean_upper = sym_clean.replace('.MCX', '').replace('MCX:', '').strip().upper()
+            commodity_configs = {
+                'GOLD': {'yahoo': 'GC=F', 'mult': 16.55, 'unit': '10g'},       # Gold ~74,000 / 10g
+                'SILVER': {'yahoo': 'SI=F', 'mult': 1277.0, 'unit': '1kg'},    # Silver ~85,000 / 1kg
+                'CRUDEOIL': {'yahoo': 'CL=F', 'mult': 70.0, 'unit': 'bbl'},     # Crude ~6,280 / bbl
+                'NATURALGAS': {'yahoo': 'NG=F', 'mult': 66.0, 'unit': 'mmBtu'}, # Nat Gas ~199 / mmBtu
+                'COPPER': {'yahoo': 'HG=F', 'mult': 183.0, 'unit': 'kg'},       # Copper ~825 / kg
+            }
+
+            if clean_upper in commodity_configs:
+                cfg = commodity_configs[clean_upper]
+                try:
+                    url = f'https://query1.finance.yahoo.com/v8/finance/chart/{cfg["yahoo"]}?range=1d&interval=1m'
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req, timeout=3.0) as res:
+                        data = json.loads(res.read().decode('utf-8'))
+                        meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
+                        raw_p = meta.get('regularMarketPrice')
+                        raw_prev = meta.get('chartPreviousClose') or raw_p
+                        if raw_p is not None and float(raw_p) > 0:
+                            calc_price = round(float(raw_p) * cfg['mult'], 2)
+                            calc_prev = round(float(raw_prev) * cfg['mult'], 2)
+                            price_obj = {
+                                'price': calc_price,
+                                'prevClose': calc_prev,
+                                'symbol': f'{clean_upper}.MCX',
+                                'assetClass': 'Commodity',
+                                'live': True
+                            }
+                            LIVE_PRICE_CACHE[clean_upper] = (current_time, price_obj)
+                            LIVE_PRICE_CACHE[f'{clean_upper}.MCX'] = (current_time, price_obj)
+                            return clean_upper, price_obj
+                except Exception as e:
+                    pass
+
+            # 2. Handle Indian Equities (NSE / BSE)
             candidates = []
-            if sym_clean in ['BTC', 'BTC-INR', 'BTCINR']:
-                candidates.append('BTC-INR')
-            elif sym_clean in ['ETH', 'ETH-INR', 'ETHINR']:
-                candidates.append('ETH-INR')
-            elif sym_clean.endswith('.NS') or sym_clean.endswith('.BO'):
+            if sym_clean.endswith('.NS') or sym_clean.endswith('.BO'):
                 candidates.append(sym_clean)
             else:
-                # Default to NSE first (.NS), then BSE (.BO)
                 candidates.append(f'{sym_clean}.NS')
                 candidates.append(f'{sym_clean}.BO')
                 candidates.append(sym_clean)

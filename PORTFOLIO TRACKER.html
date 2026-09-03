@@ -183,6 +183,101 @@
       from { opacity: 0; transform: translateX(50px) scale(0.9); }
       to { opacity: 1; transform: translateX(0) scale(1); }
     }
+      /* Dedicated Section Switcher & MCX Styles */
+    .sec-tabs-wrapper {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .sec-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .sec-tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .sec-tab-btn.active {
+      background: var(--accent);
+      color: #FFFFFF;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(139, 92, 246, 0.35);
+    }
+    .sec-tab-btn.active#secBtnMcx {
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4) !important;
+    }
+    .sec-tab-btn.active#secBtnStocks {
+      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4) !important;
+    }
+    .sec-pill-count {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.16);
+      color: currentColor;
+    }
+    .mcx-quick-btn {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FBBF24;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .mcx-quick-btn:hover {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: #F59E0B;
+      transform: translateY(-1px);
+    }
+    .exchange-badge-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      vertical-align: middle;
+      line-height: 1.2;
+    }
+    .exchange-badge-tag.mcx {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #F59E0B;
+    }
+    .exchange-badge-tag.nse {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #60A5FA;
+    }
+    .exchange-badge-tag.bse {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #A78BFA;
+    }
+
   </style>
 
 </head>
@@ -764,6 +859,25 @@
             live prices</span>
         </div>
 
+        <!-- Dedicated Portfolio Section Switcher (Stocks vs MCX Commodities) -->
+        <div class="portfolio-section-bar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin: 20px 0 16px;">
+          <div class="sec-tabs-wrapper" style="display:inline-flex; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:4px; gap:4px;">
+            <button class="sec-tab-btn active" id="secBtnAll" onclick="switchPortfolioSection('all')">
+              <span>🌐 All Assets</span>
+              <span class="sec-pill-count" id="secCountAll">0</span>
+            </button>
+            <button class="sec-tab-btn" id="secBtnStocks" onclick="switchPortfolioSection('stocks')">
+              <span>📈 Stocks &amp; Equities (NSE/BSE)</span>
+              <span class="sec-pill-count stocks-count" id="secCountStocks">0</span>
+            </button>
+            <button class="sec-tab-btn" id="secBtnMcx" onclick="switchPortfolioSection('mcx')">
+              <span>🪙 Commodities (MCX)</span>
+              <span class="sec-pill-count mcx-count" id="secCountMcx">0</span>
+            </button>
+          </div>
+          <div id="sectionSummaryBadge" style="font-size:12px; color:var(--text-dim); font-weight:600;">Showing All Assets</div>
+        </div>
+
         <div class="panel">
           <div class="panel-toolbar">
             <div class="toolbar-left">
@@ -1154,10 +1268,21 @@
             </div>
             <div class="form-field">
               <label>Exchange</label>
-              <select name="exchange" id="exchangeInput">
-                <option value="NSE">NSE</option>
-                <option value="BSE">BSE</option>
+              <select name="exchange" id="exchangeInput" onchange="handleExchangeChange(this.value)">
+                <option value="NSE">NSE (Equities / ETFs)</option>
+                <option value="BSE">BSE (Equities)</option>
+                <option value="MCX">MCX (Commodities)</option>
               </select>
+            </div>
+          </div>
+          <div id="mcxQuickPills" style="margin: 6px 0 12px; padding: 10px 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 10px;">
+            <div style="font-size: 11px; font-weight: 700; color: #F59E0B; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Quick Select MCX Commodity:</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <button type="button" class="mcx-quick-btn" onclick="selectMcxCommodity('GOLD', 'Gold 24K (10g)', 73945)">🪙 Gold (10g)</button>
+              <button type="button" class="mcx-quick-btn" onclick="selectMcxCommodity('SILVER', 'Silver (1kg)', 84700)">🥈 Silver (1kg)</button>
+              <button type="button" class="mcx-quick-btn" onclick="selectMcxCommodity('CRUDEOIL', 'Crude Oil (bbl)', 6280)">🛢️ Crude Oil</button>
+              <button type="button" class="mcx-quick-btn" onclick="selectMcxCommodity('NATURALGAS', 'Natural Gas (mmBtu)', 199)">🔥 Natural Gas</button>
+              <button type="button" class="mcx-quick-btn" onclick="selectMcxCommodity('COPPER', 'Copper (kg)', 825)">🥉 Copper</button>
             </div>
           </div>
           <div class="form-field">
@@ -1522,24 +1647,30 @@
         { ticker: 'NTPC', name: 'NTPC Ltd', assetClass: 'Equity', price: 349.70 },
         { ticker: 'DIXON', name: 'Dixon Technologies Ltd', assetClass: 'Equity', price: 13421.00 },
         { ticker: 'NIFTYBEES', name: 'Nippon India ETF Nifty BeES', assetClass: 'ETF', price: 273.98 },
-        { ticker: 'GOLDBEES', name: 'Nippon India ETF Gold BeES', assetClass: 'ETF', price: 118.14 },
-        { ticker: 'BTC', name: 'Bitcoin', assetClass: 'Crypto', price: 6110000 },
-        { ticker: 'ETH', name: 'Ethereum', assetClass: 'Crypto', price: 170000 }
+        { ticker: 'GOLDBEES', name: 'Nippon India ETF Gold BeES', assetClass: 'ETF', exchange: 'NSE', price: 126.05 },
+        { ticker: 'SILVERBEES', name: 'Nippon India Silver ETF', assetClass: 'ETF', exchange: 'NSE', price: 220.45 },
+        { ticker: 'GOLD', name: 'Gold 24K (MCX / 10g)', assetClass: 'Commodity', exchange: 'MCX', price: 73945 },
+        { ticker: 'SILVER', name: 'Silver (MCX / 1kg)', assetClass: 'Commodity', exchange: 'MCX', price: 84700 },
+        { ticker: 'CRUDEOIL', name: 'Crude Oil (MCX / bbl)', assetClass: 'Commodity', exchange: 'MCX', price: 6280 },
+        { ticker: 'NATURALGAS', name: 'Natural Gas (MCX / mmBtu)', assetClass: 'Commodity', exchange: 'MCX', price: 199 },
+        { ticker: 'COPPER', name: 'Copper (MCX / kg)', assetClass: 'Commodity', exchange: 'MCX', price: 825 }
       ];
       function findKnown(symbol) {
         const s = (symbol || '').toUpperCase().replace(/\.(NS|BO)$/, '');
         return KNOWN.find(c => c.ticker === s);
       }
-      function guessAssetClass(symbol) {
-        const known = findKnown(symbol);
+      function guessAssetClass(symbol, exchange) {
+        if (exchange === 'MCX') return 'Commodity';
+        const s = (symbol || '').toUpperCase().trim().replace(/\.(NS|BO|MCX)$/, '');
+        const known = findKnown(s);
         if (known) return known.assetClass;
-        const s = (symbol || '').toUpperCase();
-        if (s.includes('BTC') || s.includes('ETH') || s.includes('COIN')) return 'Crypto';
+        if (['GOLD', 'SILVER', 'CRUDEOIL', 'NATURALGAS', 'COPPER', 'ZINC', 'ALUMINIUM', 'LEAD', 'NICKEL'].includes(s)) return 'Commodity';
         if (s.includes('BEES') || s.includes('ETF')) return 'ETF';
         return 'Equity';
       }
       function buildYahooSymbol(symbol, exchange) {
-        const s = (symbol || '').toUpperCase().trim().replace(/\.(NS|BO)$/, '');
+        const s = (symbol || '').toUpperCase().trim().replace(/\.(NS|BO|MCX)$/, '');
+        if (exchange === 'MCX') return s + '.MCX';
         return s + (exchange === 'BSE' ? '.BO' : '.NS');
       }
       /* ---------------- live prices ----------------
@@ -1704,17 +1835,7 @@
           console.warn('Backend live price fetch notice:', e.message);
         }
 
-        // 2. Only fetch crypto if user actually holds crypto (BTC, ETH)
-        const hasCrypto = state.holdings.some(h => {
-          const s = (h.symbol || '').toUpperCase();
-          const ac = (h.assetClass || '').toLowerCase();
-          return s.includes('BTC') || s.includes('ETH') || ac.includes('crypto');
-        });
-        if (hasCrypto) {
-          try {
-            await fetchLiveCryptoPrices();
-          } catch (e) {}
-        }
+  // Crypto polling completely purged (MCX Commodity & NSE/BSE focused)
       }
 
       function applyLivePricesToHoldings() {
@@ -1757,10 +1878,13 @@
       }
 
       function seedHoldings() {
-        return [buildHolding({ symbol: 'DIXON', exchange: 'NSE', buyPrice: 11000, qty: 55 })];
+        return [
+          buildHolding({ symbol: 'DIXON', exchange: 'NSE', name: 'Dixon Technologies (India) Ltd', buyPrice: 11000, qty: 55 }),
+          buildHolding({ symbol: 'GOLD', exchange: 'MCX', name: 'Gold 24K (MCX / 10g)', buyPrice: 72000, qty: 5 })
+        ];
       }
 
-      const state = window.state = { holdings: [], filter: 'all', search: '', sort: 'default', sortDir: 'desc', dayOpen: {}, lastUpdated: new Date(), currentTab: 'portfolio' };
+      const state = window.state = { holdings: [], filter: 'all', search: '', sort: 'default', sortDir: 'desc', dayOpen: {}, lastUpdated: new Date(), currentTab: 'portfolio', portfolioSection: 'all' };
       let _ipoLoaded = false;   // tracks whether IPO data has been fetched
       let _currentIpoSection = 'open'; // tracks active IPO tab
       let allocationChartInstance = null;
@@ -1943,7 +2067,31 @@
 
       /* ---------------- render: stats ---------------- */
       function renderStats() {
-        const list = allHoldings();
+        const allList = allHoldings();
+        const stocksList = allList.filter(h => h.assetClass !== 'Commodity' && (h.exchange || 'NSE') !== 'MCX');
+        const mcxList = allList.filter(h => h.assetClass === 'Commodity' || h.exchange === 'MCX');
+
+        // Update counts on section tab badges
+        const countAllEl = document.getElementById('secCountAll');
+        const countStocksEl = document.getElementById('secCountStocks');
+        const countMcxEl = document.getElementById('secCountMcx');
+        if (countAllEl) countAllEl.textContent = allList.length;
+        if (countStocksEl) countStocksEl.textContent = stocksList.length;
+        if (countMcxEl) countMcxEl.textContent = mcxList.length;
+
+        // Choose list depending on active section
+        let list = allList;
+        const netWorthLabel = document.querySelector('.net-worth-header .card-label');
+        if (state.portfolioSection === 'stocks') {
+          list = stocksList;
+          if (netWorthLabel) netWorthLabel.textContent = 'Stocks Net Worth (NSE/BSE)';
+        } else if (state.portfolioSection === 'mcx') {
+          list = mcxList;
+          if (netWorthLabel) netWorthLabel.textContent = 'Commodities Net Worth (MCX)';
+        } else {
+          if (netWorthLabel) netWorthLabel.textContent = 'Total Net Worth (Consolidated)';
+        }
+
         const invested = list.reduce((s, h) => s + h.amount, 0);
         const value = list.reduce((s, h) => s + h.value, 0);
         const gain = value - invested;
@@ -2016,9 +2164,60 @@
       }
       function tickUpdatedLabel() { document.getElementById('updatedLabel').textContent = updatedLabelText(); }
 
+      
+      /* ---------------- Portfolio Section Switcher (Stocks vs MCX) ---------------- */
+      function switchPortfolioSection(sec) {
+        state.portfolioSection = sec;
+        document.querySelectorAll('.sec-tab-btn').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById(sec === 'stocks' ? 'secBtnStocks' : (sec === 'mcx' ? 'secBtnMcx' : 'secBtnAll'));
+        if (activeBtn) activeBtn.classList.add('active');
+
+        const summaryBadge = document.getElementById('sectionSummaryBadge');
+        if (summaryBadge) {
+          if (sec === 'stocks') summaryBadge.innerHTML = 'Showing <b style="color:#A78BFA;">NSE / BSE Stocks</b> only';
+          else if (sec === 'mcx') summaryBadge.innerHTML = 'Showing <b style="color:#FBBF24;">MCX Commodities</b> (Gold, Silver, Metals, Crude)';
+          else summaryBadge.textContent = 'Showing Consolidated Net Worth (All Assets)';
+        }
+
+        renderAll();
+      }
+      window.switchPortfolioSection = switchPortfolioSection;
+
+      function selectMcxCommodity(ticker, name, refPrice) {
+        const symInput = document.getElementById('symbolInput');
+        const exchInput = document.getElementById('exchangeInput');
+        const nameInput = document.getElementById('nameInput');
+        const buyPriceInput = modalForm ? modalForm.buyPrice : null;
+
+        if (symInput) { symInput.value = ticker; }
+        if (exchInput) { exchInput.value = 'MCX'; }
+        if (nameInput) { nameInput.value = name; }
+        if (buyPriceInput && !buyPriceInput.value && refPrice) { buyPriceInput.value = refPrice; }
+
+        // Trigger live price lookup immediately
+        if (symInput) {
+          symInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        toast(`Selected MCX ${ticker} • ${name}`);
+      }
+      window.selectMcxCommodity = selectMcxCommodity;
+
+      function handleExchangeChange(exchVal) {
+        const mcxPills = document.getElementById('mcxQuickPills');
+        if (mcxPills) {
+          mcxPills.style.display = (exchVal === 'MCX') ? 'block' : 'none';
+        }
+      }
+      window.handleExchangeChange = handleExchangeChange;
+
       /* ---------------- render: table ---------------- */
       function filteredSorted() {
         let list = allHoldings();
+        if (state.portfolioSection === 'stocks') {
+          list = list.filter(h => h.assetClass !== 'Commodity' && (h.exchange || 'NSE') !== 'MCX');
+        } else if (state.portfolioSection === 'mcx') {
+          list = list.filter(h => h.assetClass === 'Commodity' || h.exchange === 'MCX');
+        }
         if (state.filter === 'profit') list = list.filter(h => h.isProfit);
         if (state.filter === 'loss') list = list.filter(h => !h.isProfit);
         if (state.search) list = list.filter(h => (h.symbol + h.name).toLowerCase().includes(state.search));
@@ -2052,19 +2251,29 @@
           footerBar.style.display = 'none';
           return;
         }
-        const totalValue = list.reduce((s, h) => s + h.value, 0);
+        const totalBuy = list.reduce((s, h) => s + h.amount, 0);
+        const totalCurrent = list.reduce((s, h) => s + h.value, 0);
+        const totalGain = totalCurrent - totalBuy;
+        const totalGainPct = totalBuy ? (totalGain / totalBuy) * 100 : 0;
+        const totalValue = totalCurrent;
 
         wrap.innerHTML = `
         <!-- Desktop Table View (>= 768px) -->
         <div class="desktop-holdings-table table-responsive">
           <table>
             <thead><tr>
-              <th>Stock</th><th>Buy Price</th><th>Qty</th><th>Buy Value</th><th>CMP</th><th>Current Value</th><th>% Gain</th><th>Gain ₹</th><th style="text-align:right;">Actions</th>
+              <th>${state.portfolioSection === 'mcx' ? 'Commodity' : (state.portfolioSection === 'stocks' ? 'Stock (NSE/BSE)' : 'Instrument')}</th><th>Buy Price</th><th>Qty</th><th>Buy Value</th><th>CMP</th><th>Current Value</th><th>% Gain</th><th>Gain ₹</th><th style="text-align:right;">Actions</th>
             </tr></thead>
             <tbody>
               ${list.map(h => `
                 <tr>
-                  <td class="cell-primary">${h.symbol}<div class="cell-sub">${h.yahooSymbol}</div></td>
+                  <td class="cell-primary">
+                    <div style="display:flex; align-items:center;">
+                      <b>${h.symbol}</b>
+                      <span class="exchange-badge-tag ${(h.exchange || 'NSE').toLowerCase()}">${h.exchange || 'NSE'}</span>
+                    </div>
+                    <div class="cell-sub">${h.name && h.name !== h.symbol ? h.name : h.yahooSymbol}</div>
+                  </td>
                   <td>${fmtINR2(h.buyPrice)}</td>
                   <td>${h.qty}</td>
                   <td>${fmtINR(h.amount)}</td>
@@ -2092,8 +2301,11 @@
             <div class="m-holding-card">
               <div class="m-card-top">
                 <div>
-                  <h4 class="m-stock-title">${h.symbol}</h4>
-                  <div class="m-stock-sub">${h.yahooSymbol}</div>
+                  <div style="display:flex; align-items:center;">
+                    <h4 class="m-stock-title" style="margin:0;">${h.symbol}</h4>
+                    <span class="exchange-badge-tag ${(h.exchange || 'NSE').toLowerCase()}">${h.exchange || 'NSE'}</span>
+                  </div>
+                  <div class="m-stock-sub">${h.name && h.name !== h.symbol ? h.name : h.yahooSymbol}</div>
                 </div>
                 <div class="m-cmp-wrap">
                   <span class="m-cmp-val">${fmtINR2(h.price)}</span>
@@ -2187,6 +2399,18 @@
       function openModal(mode, id) {
         modalMode = mode; modalId = id;
         modalForm.reset();
+
+        const exchInput = document.getElementById('exchangeInput');
+        const mcxPills = document.getElementById('mcxQuickPills');
+        if (mode === 'add' && exchInput) {
+          if (state.portfolioSection === 'mcx') {
+            exchInput.value = 'MCX';
+            if (mcxPills) mcxPills.style.display = 'block';
+          } else if (state.portfolioSection === 'stocks') {
+            exchInput.value = 'NSE';
+            if (mcxPills) mcxPills.style.display = 'none';
+          }
+        }
         delete modalForm.name.dataset.touched;
         document.getElementById('modalTitle').textContent = mode === 'add' ? 'Add holding' : 'Edit holding';
         document.getElementById('modalSave').textContent = mode === 'add' ? 'Add holding' : 'Save changes';
@@ -2205,6 +2429,8 @@
         setTimeout(() => document.getElementById('symbolInput').focus(), 50);
       }
       function closeModal() { overlay.classList.remove('open'); modalMode = null; modalId = null; }
+      window.openModal = openModal;
+      window.closeModal = closeModal;
 
       async function saveModal(e) {
         if (e) e.preventDefault();
@@ -2488,24 +2714,24 @@
             });
             const maxWeightVal = (maxAsset.value / totalVal) * 100;
 
-            // Risk level assessment
-            const cryptoVal = list.filter(h => h.assetClass === 'Crypto').reduce((sum, h) => sum + h.value, 0);
-            const cryptoPct = (cryptoVal / totalVal) * 100;
+            // Risk & Diversification assessment (Equities vs MCX Commodities)
+            const commodityVal = list.filter(h => h.assetClass === 'Commodity' || h.exchange === 'MCX').reduce((sum, h) => sum + h.value, 0);
+            const commodityPct = (commodityVal / totalVal) * 100;
 
-            let riskRating = 'Low / Conservative';
-            let riskColor = '#8B5CF6'; // Green
-            if (cryptoPct > 15) {
-              riskRating = 'High (Crypto Heavy)';
-              riskColor = '#EC4899'; // Pink
+            let riskRating = 'Balanced (Equities & MCX Commodities)';
+            let riskColor = '#10B981'; // Green
+            if (commodityPct > 50) {
+              riskRating = 'Commodity Heavy (High Gold/Metals Concentration)';
+              riskColor = '#F59E0B'; // Amber
             } else {
               const equityVal = list.filter(h => h.assetClass === 'Equity').reduce((sum, h) => sum + h.value, 0);
               const equityPct = (equityVal / totalVal) * 100;
-              if (equityPct > 70) {
-                riskRating = 'Medium-High (Growth Heavy)';
-                riskColor = '#3B82F6'; // Blue
-              } else if (equityPct > 35) {
-                riskRating = 'Moderate / Balanced';
-                riskColor = '#F59E0B'; // Amber
+              if (equityPct > 80) {
+                riskRating = 'High Growth (Equity Dominant)';
+                riskColor = '#8B5CF6'; // Violet
+              } else if (equityPct > 40) {
+                riskRating = 'Optimal Multi-Asset Mix';
+                riskColor = '#10B981'; // Green
               }
             }
 
