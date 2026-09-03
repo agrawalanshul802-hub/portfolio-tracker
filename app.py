@@ -847,8 +847,9 @@ def google_callback():
             placeholder_hash = "oauth-google:" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()
 
             supabase.table('users').insert({'email': email, 'password_hash': placeholder_hash}).execute()
-            user_name = info_body.get('name') or info_body.get('given_name')
-            send_welcome_email_async(email, user_name=user_name)
+
+        user_name = info_body.get('name') or info_body.get('given_name')
+        send_welcome_email_async(email, user_name=user_name)
 
     except Exception as e:
 
