@@ -1142,6 +1142,11 @@
             <div class="form-field">
               <label>Symbol <span class="req">*</span></label>
               <input required name="symbol" id="symbolInput" placeholder="NTPC" style="text-transform:uppercase;">
+              <div id="symbolCmpIndicator" style="display:none; font-size:12px; font-weight:600; color:#00D09C; margin-top:5px; align-items:center; gap:6px;">
+                <span style="display:inline-block; width:6px; height:6px; background:#00D09C; border-radius:50%;"></span>
+                <span id="symbolCmpText">Live CMP: ₹0.00</span>
+                <button type="button" id="useCmpAsBuyPriceBtn" style="background:rgba(0,208,156,0.15); border:1px solid rgba(0,208,156,0.3); color:#00D09C; border-radius:6px; font-size:10.5px; font-weight:700; padding:1px 6px; cursor:pointer; margin-left:4px;">Use as Buy Price</button>
+              </div>
               <div id="symbolWarning"
                 style="color:var(--red); font-size:11px; margin-top:4px; display:none; line-height:1.4;">Tickers usually
                 do not contain spaces. If you are entering a company name, try entering its ticker symbol instead (e.g.,
@@ -1676,7 +1681,7 @@
         // 1. Primary: Direct high-speed backend live price API with timeout
         try {
           const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 4500);
+          const timer = setTimeout(() => controller.abort(), 10000);
           const url = '/api/live-prices?symbols=' + encodeURIComponent(symbols.join(','));
           const res = await fetch(url, { signal: controller.signal });
           clearTimeout(timer);
@@ -2201,33 +2206,71 @@
       }
       function closeModal() { overlay.classList.remove('open'); modalMode = null; modalId = null; }
 
-      function saveModal(e) {
+      async function saveModal(e) {
         if (e) e.preventDefault();
         if (!modalForm.reportValidity()) return;
         const opts = {
-          symbol: modalForm.symbol.value,
+          symbol: (modalForm.symbol.value || '').trim().toUpperCase(),
           exchange: modalForm.exchange.value,
-          name: modalForm.name.value,
-          buyPrice: modalForm.buyPrice.value,
-          qty: modalForm.qty.value,
-          yahooOverride: modalForm.yahooOverride.value
+          name: (modalForm.name.value || '').trim(),
+          buyPrice: Number(modalForm.buyPrice.value),
+          qty: Number(modalForm.qty.value),
+          yahooOverride: (modalForm.yahooOverride.value || '').trim()
         };
+
+        const targetSym = opts.yahooOverride || buildYahooSymbol(opts.symbol, opts.exchange);
+        const baseSym = opts.symbol.replace(/\.(NS|BO)$/, '');
+
+        // 1. Build holding
+        let newHolding = buildHolding(opts, modalMode === 'edit' ? modalId : null);
+
+        // 2. Fetch live price IMMEDIATELY for this specific stock (takes ~300ms)
+        const saveBtn = document.getElementById('modalSave');
+        const origBtnText = saveBtn.textContent;
+        saveBtn.textContent = 'Fetching live CMP...';
+        saveBtn.disabled = true;
+
+        try {
+          const res = await fetch('/api/live-prices?symbols=' + encodeURIComponent(targetSym));
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.prices) {
+              const item = json.prices[baseSym] || json.prices[targetSym] || Object.values(json.prices)[0];
+              if (item && item.price) {
+                const liveP = +Number(item.price).toFixed(2);
+                livePriceCache[baseSym] = { price: liveP, prevClose: item.prevClose || liveP };
+                livePriceCache[targetSym] = livePriceCache[baseSym];
+                newHolding.price = liveP;
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Instant price fetch notice:', err);
+        } finally {
+          saveBtn.textContent = origBtnText;
+          saveBtn.disabled = false;
+        }
+
         if (modalMode === 'add') {
-          state.holdings.push(buildHolding(opts));
-          toast('Holding added');
+          state.holdings.push(newHolding);
+          toast(`Added ${newHolding.symbol} • CMP ₹${newHolding.price}`);
         } else {
           const idx = state.holdings.findIndex(h => h.id === modalId);
-          state.holdings[idx] = buildHolding(opts, modalId);
-          toast('Holding updated');
+          state.holdings[idx] = newHolding;
+          toast(`Updated ${newHolding.symbol} • CMP ₹${newHolding.price}`);
         }
-        computeDayOpen();
-        persist(); closeModal(); renderAll();
 
-        // best-effort: try to resolve a live price for this holding in the background
+        computeDayOpen();
+        persist();
+        closeModal();
+        renderAll();
+
+        // 3. Background refresh to ensure full consistency and alert watchdog check
         refreshLivePricesForHoldings().then(() => {
           applyLivePricesToHoldings();
           computeDayOpen();
-          persist(); renderAll();
+          persist();
+          renderAll();
         });
       }
 
@@ -3271,6 +3314,57 @@
 
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
+
+        // Live CMP auto-fetch while typing in Add Holding modal
+        let symbolSearchTimer = null;
+        const symInput = document.getElementById('symbolInput');
+        const cmpIndicator = document.getElementById('symbolCmpIndicator');
+        const cmpText = document.getElementById('symbolCmpText');
+        const useCmpBtn = document.getElementById('useCmpAsBuyPriceBtn');
+        let lastLiveCmpVal = null;
+
+        if (symInput && cmpIndicator) {
+          symInput.addEventListener('input', () => {
+            const val = symInput.value.trim().toUpperCase();
+            if (symbolSearchTimer) clearTimeout(symbolSearchTimer);
+            if (!val || val.length < 2) {
+              cmpIndicator.style.display = 'none';
+              return;
+            }
+
+            symbolSearchTimer = setTimeout(async () => {
+              try {
+                const exch = (document.getElementById('exchangeInput') || {}).value || 'NSE';
+                const target = buildYahooSymbol(val, exch);
+                const res = await fetch('/api/live-prices?symbols=' + encodeURIComponent(target));
+                if (res.ok) {
+                  const json = await res.json();
+                  if (json.success && json.prices) {
+                    const base = val.replace(/\.(NS|BO)$/, '');
+                    const item = json.prices[base] || json.prices[target] || Object.values(json.prices)[0];
+                    if (item && item.price) {
+                      lastLiveCmpVal = +Number(item.price).toFixed(2);
+                      cmpText.textContent = `Live CMP: ₹${lastLiveCmpVal.toLocaleString('en-IN')}`;
+                      cmpIndicator.style.display = 'flex';
+                      return;
+                    }
+                  }
+                }
+              } catch (e) {}
+              cmpIndicator.style.display = 'none';
+            }, 350);
+          });
+
+          if (useCmpBtn) {
+            useCmpBtn.addEventListener('click', () => {
+              if (lastLiveCmpVal && modalForm.buyPrice) {
+                modalForm.buyPrice.value = lastLiveCmpVal;
+                toast(`Buy price set to Live CMP ₹${lastLiveCmpVal}`);
+              }
+            });
+          }
+        }
+
         overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
         document.addEventListener('keydown', e => {
           if (e.key === 'Escape') {
