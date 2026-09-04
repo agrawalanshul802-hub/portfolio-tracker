@@ -319,7 +319,7 @@ I, <strong>ANSHUL RAMESH AGRAWAL</strong> hereby declare that the project entitl
 <tr><td class="bold">Backend Server</td><td>Python 3.11+, Flask 3.0, Gunicorn</td><td>RESTful API routing, session management, and multi-threaded price resolution.</td></tr>
 <tr><td class="bold">Cloud Database</td><td>Supabase (PostgreSQL 15)</td><td>Fully managed cloud relational database hosting user accounts and holdings.</td></tr>
 <tr><td class="bold">Authentication</td><td>PBKDF2-SHA256, Google OAuth 2.0</td><td>Military-grade cryptographic password salting and Google social login.</td></tr>
-<tr><td class="bold">Financial Data APIs</td><td>Yahoo Finance API v8, CoinGecko</td><td>Live price feeds for NSE, BSE, US Equities, Gold, and cryptocurrency assets.</td></tr>
+<tr><td class="bold">Financial Data APIs</td><td>Yahoo Finance API v8 (NSE/BSE & MCX Derivatives)</td><td>Live price feeds for NSE, BSE, US Equities, Gold, and cryptocurrency assets.</td></tr>
 <tr><td class="bold">News Intelligence</td><td>Moneycontrol RSS, Yahoo Finance News</td><td>Live market news aggregation mapped to user holdings via keyword matching.</td></tr>
 <tr><td class="bold">AI Analytics</td><td>Groq, Google Gemini 2.0, OpenRouter</td><td>Multi-provider AI fallback chain for portfolio risk analysis and investment insights.</td></tr>
 <tr><td class="bold">Cloud Hosting</td><td>Render Cloud Web Services</td><td>Automated CI/CD deployment from GitHub with SSL/TLS encryption.</td></tr>
@@ -351,7 +351,7 @@ I, <strong>ANSHUL RAMESH AGRAWAL</strong> hereby declare that the project entitl
 <ul style="line-height:1.55;">
 <li><strong>Real-Time Net Worth Valuation:</strong> Instant computation of invested capital, market value, total unrealized gain, and day return using multi-threaded price workers.</li>
 <li><strong>In-Memory Multi-Worker Price Caching:</strong> 45-second high-speed cache with ThreadPoolExecutor (up to 20 workers) eliminating outbound latency and preventing API rate limiting.</li>
-<li><strong>Multi-Asset Support:</strong> Manages Equities, ETFs, Mutual Funds, Bonds, Gold, and Crypto holdings in one unified table with INR valuation.</li>
+<li><strong>Multi-Asset Support:</strong> Manages Indian Equities (NSE/BSE) and MCX Commodities (Gold, Silver, Crude Oil, Natural Gas) holdings in one unified table with INR valuation.</li>
 <li><strong>Partial Sell with Weighted Average Cost:</strong> Records partial sell transactions with automatic recalculation of average cost basis for remaining shares.</li>
 <li><strong>Interactive Valuation Reports:</strong> Modal generator with live KPIs, holding tables, and one-click PDF printing / CSV download for tax audit trails.</li>
 <li><strong>IPO Tracker with Live GMP:</strong> Aggregates Open, Upcoming, and Recently Listed IPOs from NSE, Groww, and IPOWatch with real-time Grey Market Premium data.</li>
@@ -1654,7 +1654,7 @@ lxml==6.1.1</div>
 <tr><td>T12</td><td>Atomic Delete + Re-Insert Sync Strategy</td><td>POST /api/holdings</td><td>200 Success</td><td style="color:green;font-weight:bold;">PASS</td></tr>
 <tr><td>T13</td><td>Live NSE Price (.NS suffix) Resolution</td><td>POST /api/live-prices</td><td>Price &gt; 0</td><td style="color:green;font-weight:bold;">PASS</td></tr>
 <tr><td>T14</td><td>Live BSE Price (.BO suffix) Fallback</td><td>POST /api/live-prices</td><td>Price &gt; 0</td><td style="color:green;font-weight:bold;">PASS</td></tr>
-<tr><td>T15</td><td>Cryptocurrency BTC-INR Price Resolution</td><td>POST /api/live-prices</td><td>Price &gt; 0</td><td style="color:green;font-weight:bold;">PASS</td></tr>
+<tr><td>T15</td><td>MCX Commodity GOLD & SILVER Price Resolution</td><td>POST /api/live-prices</td><td>Price &gt; 0</td><td style="color:green;font-weight:bold;">PASS</td></tr>
 <tr><td>T16</td><td>45-Second In-Memory Cache Serve Speed</td><td>POST /api/live-prices</td><td>&lt; 50ms</td><td style="color:green;font-weight:bold;">PASS</td></tr>
 <tr><td>T17</td><td>Parallel 20-Worker Price Batch Fetch</td><td>POST /api/live-prices</td><td>&lt; 3 seconds</td><td style="color:green;font-weight:bold;">PASS</td></tr>
 <tr><td>T18</td><td>Moneycontrol RSS News Feed Load</td><td>GET /api/news</td><td>Articles[]</td><td style="color:green;font-weight:bold;">PASS</td></tr>
@@ -1723,7 +1723,7 @@ lxml==6.1.1</div>
 <li>Google OAuth 2.0 Authorization Documentation. <em>https://developers.google.com/identity/protocols/oauth2</em></li>
 <li>Python hashlib Module (PBKDF2 HMAC). <em>https://docs.python.org/3/library/hashlib.html</em></li>
 <li>NSE India Official IPO Data API. <em>https://www.nseindia.com/market-data/ipo</em></li>
-<li>CoinGecko Cryptocurrency REST API. <em>https://www.coingecko.com/en/api/documentation</em></li>
+<li>Multi Commodity Exchange of India (MCX). <em>Market Data & Contract Specifications, https://www.mcxindia.com</em></li>
 <li>Groq Cloud LLM API Documentation. <em>https://console.groq.com/docs/quickstart</em></li>
 <li>Google Gemini AI API Reference. <em>https://ai.google.dev/gemini-api/docs</em></li>
 <li>Moneycontrol RSS News Feeds. <em>https://www.moneycontrol.com/rss/MCtopnews.xml</em></li>
