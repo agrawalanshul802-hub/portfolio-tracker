@@ -2970,7 +2970,8 @@
           `;
 
           try {
-            const res = await fetch('/api/news');
+            const symbolsParam = holdingsSymbols.length ? `?symbols=${encodeURIComponent(holdingsSymbols.join(','))}` : '';
+            const res = await fetch(`/api/news${symbolsParam}`);
             if (!res.ok) throw new Error('Failed to fetch news from server');
             cachedNewsArticles = await res.json();
             lastNewsFetchTime = Date.now();
@@ -3012,7 +3013,17 @@
         }
 
         if (articles.length === 0) {
-          feedContent.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">No news articles found matching your filters.</div>`;
+          feedContent.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 48px 24px;">
+              <div style="font-size: 32px;">📰</div>
+              <div style="font-size: 15px; font-weight: 600; color: #FFF;">No news articles found matching your filters.</div>
+              <div style="font-size: 13px; color: var(--text-dim);">Try switching category tabs or resetting the ticker filter.</div>
+              <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <button onclick="switchNewsCategory('ALL');filterNewsBySymbol('ALL');" class="btn btn-sm btn-secondary" style="padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; cursor: pointer;">Reset Filters</button>
+                <button onclick="lastNewsFetchTime=0;fetchAndRenderNews();" class="btn btn-sm btn-primary" style="padding: 6px 14px; border-radius: 999px; background: var(--accent, #6366f1); border: none; color: #fff; cursor: pointer;">Refresh News</button>
+              </div>
+            </div>
+          `;
           return;
         }
 

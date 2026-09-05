@@ -1395,467 +1395,275 @@ Here is a quick snapshot of your active portfolio:
 
 *Disclaimer: Automatically generated from holdings data for informational purposes only.*"""
 
-# Upgraded Hybrid News Cache: 
-
-# 'mc_articles' -> (timestamp, list_of_mc_articles)
-
-# 'yahoo_articles' -> { symbol -> (timestamp, list_of_yahoo_articles) }
-
+# Upgraded High-Performance Multi-Source Market & Portfolio News Cache
 news_cache = {
-
-    'mc_articles': None,
-
-    'yahoo_articles': {}
-
+    'market_articles': None,  # (timestamp, list_of_articles)
+    'yahoo_articles': {}      # symbol -> (timestamp, list_of_yahoo_articles)
 }
 
-CACHE_DURATION_SEC = 600
+CACHE_DURATION_SEC = 300  # 5 minutes
+
+NEWS_FEED_SOURCES = [
+    {
+        'type': 'BUZZING',
+        'publisher': 'Economic Times',
+        'url': 'https://economictimes.indiatimes.com/markets/stocks/rssfeeds/2146842.cms'
+    },
+    {
+        'type': 'RECOS',
+        'publisher': 'ET Recos',
+        'url': 'https://economictimes.indiatimes.com/markets/stocks/recos/rssfeeds/2146843.cms'
+    },
+    {
+        'type': 'LATEST',
+        'publisher': 'LiveMint',
+        'url': 'https://www.livemint.com/rss/markets'
+    },
+    {
+        'type': 'OUTLOOK',
+        'publisher': 'Economic Times',
+        'url': 'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms'
+    },
+    {
+        'type': 'LATEST',
+        'publisher': 'Google News India',
+        'url': 'https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-IN&gl=IN&ceid=IN:en'
+    }
+]
 
 @app.route('/api/news', methods=['GET'])
-
 def get_portfolio_news():
-
-    email = session.get('email')
-
-    if not email:
-
-        return jsonify({'error': 'Unauthorized'}), 401
-
-    symbols_arg = request.args.get('symbols', '')
-
-    
-
-    # 1. Fetch holdings details to build symbol matching keywords
-
-    holdings_data = []
-
-    try:
-
-        res = supabase.table('holdings').select('symbol, name, "yahooSymbol"').eq('user_email', email).execute()
-
-        holdings_data = res.data or []
-
-    except Exception as e:
-
-        return jsonify({'error': f'Database error: {str(e)}'}), 500
-
-    if symbols_arg:
-
-        symbols = [s.strip().upper() for s in symbols_arg.split(',') if s.strip()]
-
-    else:
-
-        symbols = [h['yahooSymbol'].strip().upper() for h in holdings_data if h['yahooSymbol']]
-
-    if not symbols and not symbols_arg:
-
-        return jsonify([])
-
     import time
-
     import email.utils
-
     import xml.etree.ElementTree as ET
-
     import re
-
     from concurrent.futures import ThreadPoolExecutor
 
-    # 2. Build Symbol Matchers for Moneycontrol (matches by ticker symbol or parts of stock name)
+    symbols_arg = request.args.get('symbols', '')
+    email = session.get('email')
 
-    symbol_matchers = []
+    # 1. Resolve symbols from query args and/or user holdings in Supabase
+    holdings_data = []
+    if email:
+        try:
+            res = supabase.table('holdings').select('symbol, name, "yahooSymbol"').eq('user_email', email).execute()
+            holdings_data = res.data or []
+        except Exception as e:
+            print(f"Error fetching holdings from DB for news: {e}")
 
+    symbols = []
+    if symbols_arg:
+        symbols.extend([s.strip().upper() for s in symbols_arg.split(',') if s.strip()])
     for h in holdings_data:
+        ysym = (h.get('yahooSymbol') or h.get('symbol') or '').strip().upper()
+        if ysym and ysym not in symbols:
+            symbols.append(ysym)
 
-        sym = h.get('symbol', '').upper()
-
-        name = h.get('name', '')
-
-        yahoo_sym = h.get('yahooSymbol', '').upper()
-
-        
-
-        name_words = [w.strip() for w in re.split(r'\s+|,|\.|\&|\-', name) if len(w.strip()) >= 4]
-
-        keywords = {sym, yahoo_sym}
-
-        if name_words:
-
-            keywords.add(name_words[0].upper())
-
-            if len(name_words) > 1:
-
-                keywords.add(f"{name_words[0]} {name_words[1]}".upper())
-
-                
-
+    # 2. Build Symbol Matchers for keyword tagging
+    symbol_matchers = []
+    for sym in symbols:
+        clean_code = sym.split('.')[0].upper()
+        keywords = {sym, clean_code}
+        for h in holdings_data:
+            if (h.get('yahooSymbol') or '').upper() == sym or (h.get('symbol') or '').upper() == sym:
+                name = h.get('name', '')
+                words = [w.strip().upper() for w in re.split(r'\s+|,|\.|\&|\-', name) if len(w.strip()) >= 4]
+                if words:
+                    keywords.add(words[0])
+                    if len(words) > 1:
+                        keywords.add(f"{words[0]} {words[1]}")
         symbol_matchers.append({
-
             'symbol': sym,
-
-            'yahooSymbol': yahoo_sym,
-
-            'keywords': list(keywords)
-
+            'keywords': [k for k in keywords if len(k) >= 3]
         })
 
-    # 3. Fetch/Cache Moneycontrol RSS feeds
-
     current_time = time.time()
+    cached_market = news_cache.get('market_articles')
+    market_articles = []
 
-    mc_cache = news_cache.get('mc_articles')
-
-    mc_articles = []
-
-    
-
-    if mc_cache and (current_time - mc_cache[0] < CACHE_DURATION_SEC):
-
-        mc_articles = mc_cache[1]
-
+    # 3. Fetch/Cache Multi-Source RSS Market Feeds
+    if cached_market and (current_time - cached_market[0] < CACHE_DURATION_SEC):
+        market_articles = cached_market[1]
     else:
-
-        mc_feeds = {
-
-            'BUZZING': 'https://www.moneycontrol.com/rss/buzzingstocks.xml',
-
-            'RECOS': 'https://www.moneycontrol.com/rss/brokeragerecos.xml',
-
-            'LATEST': 'https://www.moneycontrol.com/rss/latestnews.xml',
-
-            'OUTLOOK': 'https://www.moneycontrol.com/rss/business.xml'
-
+        req_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': 'application/rss+xml, application/xml, text/xml, */*'
         }
 
-        
-
-        def fetch_mc_feed(feed_type, url):
-
-            req = urllib.request.Request(
-
-                url,
-
-                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-
-            )
-
+        def fetch_single_feed(cfg):
+            feed_type = cfg['type']
+            publisher = cfg['publisher']
+            url = cfg['url']
+            feed_items = []
             try:
-
-                with urllib.request.urlopen(req, timeout=8) as res:
-
-                    xml_data = res.read()
-
-                    root = ET.fromstring(xml_data)
-
-                    items = root.findall('.//item')
-
-                    feed_articles = []
-
-                    for item in items:
-
+                req = urllib.request.Request(url, headers=req_headers)
+                with urllib.request.urlopen(req, timeout=4.0) as res:
+                    raw_xml = res.read()
+                    root = ET.fromstring(raw_xml)
+                    for item in root.findall('.//item'):
                         title = item.find('title')
-
                         link = item.find('link')
-
                         desc = item.find('description')
-
                         pub_date = item.find('pubDate')
-
                         guid = item.find('guid')
+                        enclosure = item.find('enclosure')
+                        media = item.find('{http://search.yahoo.com/mrss/}content')
 
-                        
+                        title_text = (title.text or '').strip() if title is not None else ''
+                        link_text = (link.text or '').strip() if link is not None else ''
+                        desc_text = (desc.text or '').strip() if desc is not None else ''
+                        pub_date_text = (pub_date.text or '').strip() if pub_date is not None else ''
+                        guid_text = (guid.text or '').strip() if guid is not None else link_text
 
-                        title_text = title.text if title is not None else ''
-
-                        link_text = link.text if link is not None else ''
-
-                        desc_text = desc.text if desc is not None else ''
-
-                        pub_date_text = pub_date.text if pub_date is not None else ''
-
-                        guid_text = guid.text if guid is not None else link_text
-
-                        
-
-                        # Extract image & description from description tag HTML
+                        if not title_text or not link_text:
+                            continue
 
                         img_url = None
+                        if enclosure is not None and enclosure.get('url'):
+                            img_url = enclosure.get('url')
+                        elif media is not None and media.get('url'):
+                            img_url = media.get('url')
+                        elif desc_text:
+                            m = re.search(r'src=["\']([^"\'\s]+\.(?:jpg|jpeg|png|webp)[^"\'\s]*)["\']', desc_text, re.IGNORECASE)
+                            if m:
+                                img_url = m.group(1)
 
-                        clean_desc = desc_text
-
-                        if desc_text:
-
-                            img_match = re.search(r'src="([^"]+)"', desc_text)
-
-                            if img_match:
-
-                                img_url = img_match.group(1)
-
-                            clean_desc = re.sub(r'<[^>]+>', '', desc_text).strip()
-
-                            
-
-                        # Parse target price if it is a brokerage recommendation
+                        clean_desc = re.sub(r'<[^>]+>', ' ', desc_text).strip()
+                        clean_desc = re.sub(r'\s+', ' ', clean_desc)
 
                         target_price = None
-
                         if feed_type == 'RECOS' or 'target' in title_text.lower():
+                            tgt_m = re.search(r'(?:target|tp)\s*(?:of\s*)?(?:rs\.?\s*|₹\s*|inr\s*)?([\d,]+)', title_text, re.IGNORECASE)
+                            if tgt_m:
+                                target_price = f"₹{tgt_m.group(1)}"
 
-                            tgt_match = re.search(r'target\s*(?:of\s*)?(?:Rs\.?\s*|Rs\s*)?([\d,]+)', title_text, re.IGNORECASE)
-
-                            if tgt_match:
-
-                                target_price = f"â‚¹{tgt_match.group(1)}"
-
-                                
-
-                        pub_time = 0
-
+                        pub_time = int(current_time)
                         if pub_date_text:
-
                             try:
-
                                 pub_time = int(email.utils.parsedate_to_datetime(pub_date_text).timestamp())
-
                             except Exception:
-
                                 pass
 
-                                
-
-                        feed_articles.append({
-
+                        feed_items.append({
                             'uuid': guid_text,
-
                             'title': title_text,
-
-                            'publisher': 'Moneycontrol',
-
+                            'publisher': publisher,
                             'link': link_text,
-
                             'providerPublishTime': pub_time,
-
-                            'summary': clean_desc,
-
+                            'summary': clean_desc[:280],
                             'thumbnail': {'resolutions': [{'url': img_url}]} if img_url else None,
-
                             'type': feed_type,
-
                             'targetPrice': target_price,
-
                             'relatedTickers': []
-
                         })
-
-                    return feed_articles
-
             except Exception as e:
+                print(f"Error reading feed {url}: {e}")
+            return feed_items
 
-                print(f"Error fetching Moneycontrol {feed_type} feed: {str(e)}")
-
-                return []
-
-        with ThreadPoolExecutor(max_workers=4) as executor:
-
-            futures = [executor.submit(fetch_mc_feed, name, url) for name, url in mc_feeds.items()]
-
-            for f in futures:
-
-                mc_articles.extend(f.result())
-
-                
+        with ThreadPoolExecutor(max_workers=min(len(NEWS_FEED_SOURCES), 6)) as executor:
+            futs = [executor.submit(fetch_single_feed, cfg) for cfg in NEWS_FEED_SOURCES]
+            for f in futs:
+                market_articles.extend(f.result())
 
         # Deduplicate
-
-        mc_dedup = []
-
-        seen_links = set()
-
-        for art in mc_articles:
-
+        seen_feed_links = set()
+        dedup_market = []
+        for art in market_articles:
             l = art['link']
+            if l not in seen_feed_links:
+                seen_feed_links.add(l)
+                dedup_market.append(art)
+        market_articles = dedup_market
+        news_cache['market_articles'] = (current_time, market_articles)
 
-            if l not in seen_links:
-
-                seen_links.add(l)
-
-                mc_dedup.append(art)
-
-        mc_articles = mc_dedup
-
-        
-
-        # Save to cache
-
-        news_cache['mc_articles'] = (current_time, mc_articles)
-
-    # 4. Map symbols to Moneycontrol articles
-
-    for art in mc_articles:
-
-        title_upper = art['title'].upper()
-
-        summary_upper = art['summary'].upper()
-
-        matched_symbols = []
-
-        for matcher in symbol_matchers:
-
-            matched = False
-
-            for kw in matcher['keywords']:
-
-                pattern = r'\b' + re.escape(kw) + r'\b'
-
-                if re.search(pattern, title_upper) or re.search(pattern, summary_upper):
-
-                    matched = True
-
+    # 4. Keyword Match Market Articles to User Portfolio Symbols
+    for art in market_articles:
+        t_up = art['title'].upper()
+        s_up = art['summary'].upper()
+        matched = []
+        for m in symbol_matchers:
+            for kw in m['keywords']:
+                pat = r'\b' + re.escape(kw) + r'\b'
+                if re.search(pat, t_up) or re.search(pat, s_up):
+                    matched.append(m['symbol'])
                     break
+        art['relatedTickers'] = list(set(matched))
 
-            if matched:
-
-                matched_symbols.append(matcher['yahooSymbol'])
-
-        art['relatedTickers'] = matched_symbols
-
-    # 5. Fetch/Cache Yahoo Finance news for active symbols
-
+    # 5. Fetch Yahoo Finance Specific News for Portfolio Symbols
     yahoo_cache = news_cache.setdefault('yahoo_articles', {})
-
     symbols_to_fetch = []
-
-    
-
     for s in symbols:
-
-        y_cache = yahoo_cache.get(s)
-
-        if not y_cache or (current_time - y_cache[0] > CACHE_DURATION_SEC):
-
+        y_c = yahoo_cache.get(s)
+        if not y_c or (current_time - y_c[0] > CACHE_DURATION_SEC):
             symbols_to_fetch.append(s)
 
-            
-
     def fetch_single_yahoo_news(symbol):
-
         url = f"https://query2.finance.yahoo.com/v1/finance/search?q={urllib.parse.quote(symbol)}&newsCount=8"
-
         req = urllib.request.Request(
-
             url,
-
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+            }
         )
-
+        items = []
         try:
-
-            with urllib.request.urlopen(req, timeout=8) as res:
-
+            with urllib.request.urlopen(req, timeout=4.0) as res:
                 data = json.loads(res.read().decode('utf-8'))
-
-                news_list = data.get('news', [])
-
-                for item in news_list:
-
-                    item['symbol'] = symbol
-
-                    item['type'] = 'YAHOO'
-
+                for it in data.get('news', []):
+                    title = it.get('title', '')
+                    link = it.get('link', '')
+                    if not title or not link:
+                        continue
                     img_url = None
-
-                    resols = item.get('thumbnail', {}).get('resolutions', [])
-
+                    resols = it.get('thumbnail', {}).get('resolutions', [])
                     if resols:
-
                         img_url = resols[0].get('url')
-
-                    item['thumbnail'] = {'resolutions': [{'url': img_url}]} if img_url else None
-
-                    item['summary'] = item.get('summary', '') or ''
-
-                return symbol, news_list
-
+                    items.append({
+                        'uuid': it.get('uuid', link),
+                        'title': title,
+                        'publisher': it.get('publisher', 'Yahoo Finance'),
+                        'link': link,
+                        'providerPublishTime': it.get('providerPublishTime', int(current_time)),
+                        'summary': (it.get('summary') or '')[:280],
+                        'thumbnail': {'resolutions': [{'url': img_url}]} if img_url else None,
+                        'type': 'BUZZING',
+                        'targetPrice': None,
+                        'symbol': symbol,
+                        'relatedTickers': [symbol]
+                    })
         except Exception as e:
-
-            print(f"Error fetching Yahoo news for {symbol}: {str(e)}")
-
-            return symbol, []
+            print(f"Error fetching Yahoo news for {symbol}: {e}")
+        return symbol, items
 
     if symbols_to_fetch:
-
         with ThreadPoolExecutor(max_workers=min(len(symbols_to_fetch), 5)) as executor:
+            y_results = executor.map(fetch_single_yahoo_news, symbols_to_fetch)
+            for sym, items in y_results:
+                yahoo_cache[sym] = (current_time, items)
 
-            fetched = executor.map(fetch_single_yahoo_news, symbols_to_fetch)
-
-            for symbol, news_list in fetched:
-
-                yahoo_cache[symbol] = (current_time, news_list)
-
-    # 6. Merge, filter, and sort all articles
-
+    # 6. Merge All Articles (Symbol-Specific Yahoo News + Market News)
     all_articles = []
-
-    seen_uuids = set()
-
-    
-
-    if symbols_arg:
-
-        requested_symbols = [s.upper() for s in symbols]
-
-        for art in mc_articles:
-
-            if any(t in requested_symbols for t in art.get('relatedTickers', [])):
-
-                uuid = art.get('uuid') or art.get('link')
-
-                if uuid not in seen_uuids:
-
-                    seen_uuids.add(uuid)
-
-                    all_articles.append(art)
-
-    else:
-
-        for art in mc_articles:
-
-            uuid = art.get('uuid') or art.get('link')
-
-            if uuid not in seen_uuids:
-
-                seen_uuids.add(uuid)
-
-                all_articles.append(art)
+    seen_ids = set()
 
     for s in symbols:
-
-        y_cache = yahoo_cache.get(s)
-
-        if y_cache:
-
-            for art in y_cache[1]:
-
-                uuid = art.get('uuid') or art.get('link')
-
-                if uuid not in seen_uuids:
-
-                    seen_uuids.add(uuid)
-
-                    tickers = art.setdefault('relatedTickers', [])
-
-                    if s not in tickers:
-
-                        tickers.append(s)
-
+        y_c = yahoo_cache.get(s)
+        if y_c:
+            for art in y_c[1]:
+                ident = art.get('uuid') or art.get('link')
+                if ident not in seen_ids:
+                    seen_ids.add(ident)
                     all_articles.append(art)
 
-    all_articles.sort(key=lambda x: x.get('providerPublishTime', 0), reverse=True)
+    for art in market_articles:
+        ident = art.get('uuid') or art.get('link')
+        if ident not in seen_ids:
+            seen_ids.add(ident)
+            all_articles.append(art)
 
+    all_articles.sort(key=lambda x: x.get('providerPublishTime', 0), reverse=True)
     return jsonify(all_articles)
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -----------------------------------------------------------------------------
 
 # Fallback Heuristic Financial Analysis Engine
 # ─────────────────────────────────────────────────────────────────────────────
