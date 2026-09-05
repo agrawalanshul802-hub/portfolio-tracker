@@ -1858,421 +1858,330 @@ def get_portfolio_news():
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # Fallback Heuristic Financial Analysis Engine
+# ─────────────────────────────────────────────────────────────────────────────
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+def extract_and_fetch_stock_quote(query):
+    query_clean = query.strip()
+    m = re.search(r'\b([A-Za-z0-9_-]{2,12})\.(NSE|NS|BSE|BO|MCX)\b', query_clean, re.I)
+    ticker = None
+    exchange = 'NSE'
+    if m:
+        ticker = m.group(1).upper()
+        ex = m.group(2).upper()
+        exchange = 'MCX' if ex == 'MCX' else ('BSE' if ex in ('BSE', 'BO') else 'NSE')
+    else:
+        words = re.findall(r'\b[A-Za-z0-9_-]{2,12}\b', query_clean)
+        stopwords = {
+            'WHAT', 'HOW', 'VIEW', 'VIEWS', 'MY', 'ON', 'THE', 'IS', 'OF', 'FOR', 'AND', 
+            'ABOUT', 'SHOULD', 'BUY', 'SELL', 'HOLD', 'GIVE', 'ME', 'ANALYSIS', 'PORTFOLIO',
+            'STOCKS', 'STOCK', 'SHARE', 'SHARES', 'PRICE', 'TELL', 'PLEASE', 'GOOD', 'BAD'
+        }
+        candidates = [w.upper() for w in words if w.upper() not in stopwords and not w.isdigit()]
+        if candidates:
+            ticker = candidates[-1]
 
-def generate_fallback_analysis(holdings_summary, total_val, total_inv, total_pnl, total_pnl_pct, message):
+    if not ticker:
+        return None
 
+    if exchange == 'MCX':
+        yahoo_sym = f"{ticker}.MCX"
+    elif exchange == 'BSE':
+        yahoo_sym = f"{ticker}.BO"
+    else:
+        yahoo_sym = f"{ticker}.NS"
+
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{yahoo_sym}?range=1d&interval=1m"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+    try:
+        with urllib.request.urlopen(req, timeout=4) as res:
+            data = json.loads(res.read().decode('utf-8'))
+            meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
+            p = meta.get('regularMarketPrice')
+            prev = meta.get('chartPreviousClose') or p
+            if p is not None:
+                chg = p - prev if prev else 0
+                chg_pct = (chg / prev * 100) if prev else 0
+                return {
+                    'symbol': ticker,
+                    'yahooSymbol': yahoo_sym,
+                    'exchange': exchange,
+                    'currentMarketPrice': round(float(p), 2),
+                    'previousClose': round(float(prev), 2),
+                    'dayChangeINR': round(float(chg), 2),
+                    'dayChangePct': f"{chg_pct:+.2f}%",
+                    'fiftyTwoWeekHigh': meta.get('fiftyTwoWeekHigh'),
+                    'fiftyTwoWeekLow': meta.get('fiftyTwoWeekLow'),
+                    'currency': meta.get('currency', 'INR')
+                }
+    except Exception as e:
+        return None
+
+def generate_fallback_analysis(holdings_summary, total_val, total_inv, total_pnl, total_pnl_pct, message, stock_quote=None):
     msg_lower = message.lower()
-
-    total_gain_str = f"+â‚¹{total_pnl:,.2f}" if total_pnl >= 0 else f"-â‚¹{abs(total_pnl):,.2f}"
-
-    
-
-    # Identify top winners & losers
-
-    sorted_holdings = sorted(holdings_summary, key=lambda x: x.get('gain', 0), reverse=True)
-
-    top_winner = sorted_holdings[0] if sorted_holdings else None
-
-    top_loser  = sorted_holdings[-1] if sorted_holdings else None
-
     lines = []
 
-    lines.append("### ðŸ“Š Portfolio Executive Summary")
+    # 1. If user asked about a specific stock (e.g. RAIN.NSE)
+    if stock_quote:
+        sym = stock_quote['symbol']
+        cmp_val = stock_quote['currentMarketPrice']
+        lines.append(f"### 📈 Analysis: {sym} ({stock_quote['exchange']})")
+        lines.append(f"- **Current Market Price (CMP):** ₹{cmp_val:,.2f} ({stock_quote['dayChangePct']} today)")
+        lines.append(f"- **Previous Close:** ₹{stock_quote['previousClose']:,.2f}")
+        if stock_quote.get('fiftyTwoWeekHigh') and stock_quote.get('fiftyTwoWeekLow'):
+            lines.append(f"- **52-Week Range:** ₹{stock_quote['fiftyTwoWeekLow']:,.2f} – ₹{stock_quote['fiftyTwoWeekHigh']:,.2f}")
+        
+        # Check if in user's portfolio
+        match_h = next((h for h in holdings_summary if h.get('symbol', '').upper() == sym.upper()), None)
+        if match_h:
+            lines.append("")
+            lines.append(f"#### 💼 Position in Your Portfolio:")
+            lines.append(f"- **Quantity Held:** {match_h['qty']} shares")
+            lines.append(f"- **Average Buy Price:** ₹{match_h['buyPrice']:,.2f}")
+            lines.append(f"- **Unrealized P&L:** {match_h['gainPct']:+.2f}% (₹{match_h['gain']:+,.2f})")
+            lines.append(f"- **Actionable Insight:** Maintain trailing stop-loss; position is currently {'profitable' if match_h['gain'] >= 0 else 'underwater'}.")
+        else:
+            lines.append("")
+            lines.append("#### 💼 Portfolio Integration View:")
+            lines.append(f"- `{sym}` is **not currently in your portfolio**.")
+            lines.append(f"- Adding `{sym}` at CMP ₹{cmp_val:,.2f} will introduce sector exposure. Ensure single-stock allocation stays below 10-15% of your total net worth (₹{total_val:,.2f}).")
+        
+        lines.append("")
+        lines.append("---")
+        lines.append("*Disclaimer: Market data from live feeds. For academic and portfolio tracking purposes only.*")
+        return "\n".join(lines)
 
-    lines.append(f"- **Total Valuation:** â‚¹{total_val:,.2f}")
+    # 2. If user asked about overall portfolio review / view
+    total_gain_str = f"+₹{total_pnl:,.2f}" if total_pnl >= 0 else f"-₹{abs(total_pnl):,.2f}"
+    sorted_holdings = sorted(holdings_summary, key=lambda x: x.get('gain', 0), reverse=True)
+    top_winner = sorted_holdings[0] if sorted_holdings else None
+    top_loser  = sorted_holdings[-1] if sorted_holdings else None
 
-    lines.append(f"- **Total Capital Invested:** â‚¹{total_inv:,.2f}")
-
-    lines.append(f"- **Unrealized Gain / Loss:** **{total_gain_str} ({total_pnl_pct:+.2f}%)**")
-
-    lines.append(f"- **Total Holdings:** {len(holdings_summary)} active positions")
-
+    lines.append("### 📊 Comprehensive Portfolio Review")
+    lines.append(f"- **Total Net Worth:** ₹{total_val:,.2f}")
+    lines.append(f"- **Invested Capital:** ₹{total_inv:,.2f}")
+    lines.append(f"- **Total Unrealized P&L:** **{total_gain_str} ({total_pnl_pct:+.2f}%)**")
+    lines.append(f"- **Active Positions:** {len(holdings_summary)} instruments")
     lines.append("")
 
-    if "risk" in msg_lower:
-
-        lines.append("### ðŸ›¡ï¸ Risk Profile & Concentration Analysis")
-
-        if len(holdings_summary) <= 3:
-
-            lines.append("âš ï¸ **High Concentration Risk:** You hold 3 or fewer assets. A sharp drop in any single stock will significantly impact total net worth.")
-
-        else:
-
-            lines.append("âœ… **Moderate Diversification:** Your capital is spread across multiple holdings, reducing single-stock volatility.")
-
-        if top_winner:
-
-            winner_weight = (top_winner['value'] / total_val * 100) if total_val > 0 else 0
-
-            lines.append(f"- **Dominant Holding:** `{top_winner['symbol']}` accounts for **{winner_weight:.1f}%** of your total portfolio weight.")
-
+    # Asset class breakdown
+    equity_val = sum(h['value'] for h in holdings_summary if 'mcx' not in (h.get('yahooSymbol') or '').lower() and h.get('assetClass') != 'COMMODITY')
+    comm_val = sum(h['value'] for h in holdings_summary if 'mcx' in (h.get('yahooSymbol') or '').lower() or h.get('assetClass') == 'COMMODITY')
+    if total_val > 0:
+        lines.append("#### ⚖️ Asset Allocation Breakdown:")
+        lines.append(f"- **Equities (NSE/BSE):** ₹{equity_val:,.2f} ({equity_val / total_val * 100:.1f}%)")
+        lines.append(f"- **Commodities (MCX):** ₹{comm_val:,.2f} ({comm_val / total_val * 100:.1f}%)")
         lines.append("")
 
-    elif "recommend" in msg_lower or "suggest" in msg_lower or "buy" in msg_lower:
-
-        lines.append("### ðŸ’¡ Strategic Portfolio Recommendations")
-
-        lines.append("1. **Rebalancing:** Consider locking in partial gains on positions showing returns >50% and rotating into defensive large-caps.")
-
-        lines.append("2. **Asset Diversification:** Balance high-growth mid/small caps with index stability (NIFTY 50 / Gold ETFs).")
-
-        lines.append("3. **Stop-Loss Discipline:** Maintain a trailing stop-loss (e.g. 8-10%) on high-beta tech holdings.")
-
+    if top_winner and top_loser:
+        lines.append("#### 🏆 Performance Highlights:")
+        lines.append(f"- **Top Performer:** `{top_winner['symbol']}` ({top_winner['gainPct']:+.2f}%, P&L: ₹{top_winner['gain']:+,.2f})")
+        lines.append(f"- **Underperformer:** `{top_loser['symbol']}` ({top_loser['gainPct']:+.2f}%, P&L: ₹{top_loser['gain']:+,.2f})")
         lines.append("")
 
+    lines.append("#### 💡 Key Takeaways & Action Plan:")
+    if comm_val > equity_val:
+        lines.append("1. **Commodity Concentration:** Your portfolio has high commodity exposure. Consider balancing with large-cap index funds or defensive equities.")
     else:
+        lines.append("1. **Growth vs Defensive Balance:** Consider maintaining a 10-15% hedge in gold or liquid ETFs to smooth equity drawdown.")
+    lines.append("2. **Stop-Loss Discipline:** Review underperforming holdings down >25% to prevent compounding drawdowns.")
 
-        lines.append("### ðŸ“ˆ Asset Performance Breakdown")
-
-        for h in sorted_holdings[:5]:
-
-            pnl_badge = f"+â‚¹{h['gain']:,.2f} (+{h['gainPct']:.2f}%)" if h['gain'] >= 0 else f"-â‚¹{abs(h['gain']):,.2f} ({h['gainPct']:.2f}%)"
-
-            lines.append(f"- **{h['symbol']}**: Invested â‚¹{h['buyPrice'] * h['qty']:,.2f} â†’ Value â‚¹{h['value']:,.2f} | **{pnl_badge}**")
-
-        lines.append("")
-
+    lines.append("")
     lines.append("---")
-
-    lines.append("*Disclaimer: This analysis is generated for academic and portfolio tracking purposes. Not certified SEBI financial advice.*")
-
+    lines.append("*Disclaimer: Generated for educational & tracking purposes. Not certified SEBI investment advice.*")
     return "\n".join(lines)
 
 @app.route('/api/ask-ai', methods=['POST'])
-
 def ask_ai():
-
     load_env_file()
-
     email = session.get('email')
-
     if not email:
-
         return jsonify({'error': 'Unauthorized'}), 401
 
     data = request.get_json() or {}
-
     message = data.get('message', '').strip()
-
     holdings = data.get('holdings', []) or []
 
     if not message:
-
         return jsonify({'error': 'Message is required'}), 400
 
     groq_key   = os.getenv('GROQ_API_KEY')
-
     gemini_key = os.getenv('GEMINI_API_KEY')
-
     openrouter_key = os.getenv('OPENROUTER_API_KEY')
 
     if groq_key:
-
         groq_key = groq_key.strip().replace('"', '').replace("'", "")
-
         if groq_key.lower() in ('none', 'null', 'false', ''):
-
             groq_key = None
 
     if gemini_key:
-
         gemini_key = gemini_key.strip().replace('"', '').replace("'", "")
-
         if gemini_key.lower() in ('none', 'null', 'false', '') or not gemini_key.startswith('AIza'):
-
             gemini_key = None
 
     if openrouter_key:
-
         openrouter_key = openrouter_key.strip().replace('"', '').replace("'", "")
-
         if openrouter_key.lower() in ('none', 'null', 'false', ''):
-
             openrouter_key = None
 
     # Format holdings context
-
     holdings_summary = []
-
     total_val = 0
-
     total_inv = 0
-
     for h in holdings:
-
         qty = float(h.get('qty', 0) or h.get('shares', 0) or 0)
-
         buy_price = float(h.get('buyPrice', 0) or 0)
-
         price = float(h.get('price', 0) or buy_price)
-
         val = qty * price
-
         inv = qty * buy_price
-
         gain = val - inv
-
         total_val += val
-
         total_inv += inv
-
         holdings_summary.append({
-
             'symbol': h.get('symbol'),
-
             'yahooSymbol': h.get('yahooSymbol') or f"{h.get('symbol')}.NS",
-
             'assetClass': h.get('assetClass') or 'Equity',
-
             'qty': qty,
-
             'buyPrice': buy_price,
-
             'currentPrice': price,
-
             'value': round(val, 2),
-
             'gain': round(gain, 2),
-
             'gainPct': round((gain / inv * 100) if inv > 0 else 0, 2)
-
         })
 
     total_pnl = total_val - total_inv
-
     total_pnl_pct = (total_pnl / total_inv * 100) if total_inv > 0 else 0
 
     portfolio_context = {
-
         'totalNetWorth': round(total_val, 2),
-
         'investedCapital': round(total_inv, 2),
-
         'totalGainLoss': round(total_pnl, 2),
-
         'overallReturnPct': round(total_pnl_pct, 2),
-
         'holdingsCount': len(holdings_summary),
-
         'holdings': holdings_summary
-
     }
 
+    # Extract queried stock and fetch live quote
+    stock_quote = extract_and_fetch_stock_quote(message)
+
     system_prompt = (
-
-        "You are an expert AI Portfolio & Financial Analyst for the Portfolio Tracker application. "
-
-        "Provide direct, high-quality, professional financial analysis, risk evaluation, and diversification advice. "
-
-        "Format your answer in clean GitHub Markdown with clear bullet points, bold numbers, and structured sections. "
-
-        "Always tailor your advice to the user's exact stocks and return metrics. Keep advice realistic and grounded."
-
+        "You are an expert Senior Financial Analyst & Portfolio Advisor for the Portfolio Tracker application. "
+        "Your role is to answer user queries with precise financial facts, real-time market data, and actionable advice.\n\n"
+        "Core Guidelines:\n"
+        "1. SPECIFIC STOCK QUESTIONS (e.g., RAIN, RAIN.NSE, RELIANCE, TCS, INFY, etc.):\n"
+        "   - Identify the exact company (e.g. Rain Industries Ltd, listed on NSE/BSE) and describe its real-world business model.\n"
+        "   - Cite its Current Market Price (CMP), day change, and 52-week range from the live market data provided below.\n"
+        "   - Explicitly note whether the user already owns it in their portfolio. If owned, evaluate their specific position and P&L. If not owned, advise on how it fits into their portfolio diversification.\n\n"
+        "2. PORTFOLIO REVIEW QUESTIONS (e.g., 'view on portfolio', 'review my portfolio', 'is my portfolio good?'):\n"
+        "   - Provide a comprehensive, structured portfolio review: Total Net Worth, Unrealized P&L, asset allocation (Equities vs MCX Commodities), top winners, underperformers, concentration risks, and strategic rebalancing suggestions.\n\n"
+        "3. FORMATTING:\n"
+        "   - Format your response in clean, professional GitHub Markdown with Markdown tables, bullet points, bold numbers, and clean sections. Never hallucinate or give generic boilerplate."
     )
 
+    stock_quote_context = f"\nLive Real-Time Market Data for Queried Stock:\n{json.dumps(stock_quote, indent=2)}\n" if stock_quote else ""
+
     user_prompt = f"""User Portfolio Context:
-
 {json.dumps(portfolio_context, indent=2)}
-
+{stock_quote_context}
 User Question: "{message}"
 
-Please provide a structured, insightful analysis answering the user's question."""
+Please provide your expert financial analysis directly answering this question:"""
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    # 1. Primary: Groq Cloud (Verified Active Models)
-
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    # 1. Primary: Groq Cloud (Verified Active Models & Browser Headers)
     if groq_key:
-
-        groq_models = ["openai/gpt-oss-120b", "groq/compound", "openai/gpt-oss-20b", "groq/compound-mini", "qwen/qwen3.6-27b"]
-
+        groq_models = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-20b", "qwen/qwen3.6-27b"]
         for g_model in groq_models:
-
             try:
-
                 groq_payload = json.dumps({
-
                     "model": g_model,
-
                     "messages": [
-
                         {"role": "system", "content": system_prompt},
-
                         {"role": "user", "content": user_prompt}
-
                     ],
-
-                    "temperature": 0.5,
-
+                    "temperature": 0.4,
                     "max_tokens": 1200
-
                 }).encode('utf-8')
 
                 req = urllib.request.Request(
-
                     "https://api.groq.com/openai/v1/chat/completions",
-
                     data=groq_payload,
-
                     headers={
-
                         "Authorization": f"Bearer {groq_key}",
-
                         "Content-Type": "application/json",
-
-                        "User-Agent": "PortfolioTracker/2.0"
-
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+                        "Accept": "application/json"
                     }
-
-                )
-
-                with urllib.request.urlopen(req, timeout=10) as resp:
-
-                    if resp.status == 200:
-
-                        res_json = json.loads(resp.read().decode('utf-8'))
-
-                        text = res_json['choices'][0]['message']['content']
-
-                        # Strip thinking tags if any
-
-                        text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
-
-                        if text:
-
-                            return jsonify({'reply': text, 'response': text, 'mode': 'ai', 'provider': f'Groq ({g_model})'})
-
-            except Exception as e:
-
-                print(f"Groq API error on model {g_model}: {e}")
-
-                continue
-
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    # 2. Secondary: OpenRouter (DeepSeek R1 / Llama 3 Free)
-
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    if openrouter_key:
-
-        or_models = ["deepseek/deepseek-r1:free", "meta-llama/llama-3.3-70b-instruct:free"]
-
-        for or_model in or_models:
-
-            try:
-
-                or_payload = json.dumps({
-
-                    "model": or_model,
-
-                    "messages": [
-
-                        {"role": "system", "content": system_prompt},
-
-                        {"role": "user", "content": user_prompt}
-
-                    ]
-
-                }).encode('utf-8')
-
-                req = urllib.request.Request(
-
-                    "https://openrouter.ai/api/v1/chat/completions",
-
-                    data=or_payload,
-
-                    headers={
-
-                        "Authorization": f"Bearer {openrouter_key}",
-
-                        "Content-Type": "application/json",
-
-                        "HTTP-Referer": "http://localhost:8080",
-
-                        "X-Title": "Portfolio Tracker"
-
-                    }
-
                 )
 
                 with urllib.request.urlopen(req, timeout=12) as resp:
-
                     if resp.status == 200:
-
                         res_json = json.loads(resp.read().decode('utf-8'))
-
                         text = res_json['choices'][0]['message']['content']
-
                         text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
-
                         if text:
-
-                            return jsonify({'reply': text, 'response': text, 'mode': 'ai', 'provider': f'OpenRouter ({or_model})'})
-
+                            return jsonify({'reply': text, 'response': text, 'mode': 'ai', 'provider': f'Groq ({g_model})'})
             except Exception as e:
+                print(f"Groq API error on model {g_model}: {e}")
+                continue
 
+    # 2. Secondary: OpenRouter
+    if openrouter_key:
+        or_models = ["deepseek/deepseek-r1:free", "meta-llama/llama-3.3-70b-instruct:free"]
+        for or_model in or_models:
+            try:
+                or_payload = json.dumps({
+                    "model": or_model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ]
+                }).encode('utf-8')
+                req = urllib.request.Request(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    data=or_payload,
+                    headers={
+                        "Authorization": f"Bearer {openrouter_key}",
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "http://localhost:8080",
+                        "X-Title": "Portfolio Tracker",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                    }
+                )
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    if resp.status == 200:
+                        res_json = json.loads(resp.read().decode('utf-8'))
+                        text = res_json['choices'][0]['message']['content']
+                        text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+                        if text:
+                            return jsonify({'reply': text, 'response': text, 'mode': 'ai', 'provider': f'OpenRouter ({or_model})'})
+            except Exception as e:
                 print(f"OpenRouter error: {e}")
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    # 3. Tertiary: Google Gemini API (if valid AIza key)
-
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    # 3. Tertiary: Google Gemini API
     if gemini_key:
-
         models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash"]
-
         for model_name in models_to_try:
-
             try:
-
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
-
                 req_data = json.dumps({
-
                     "contents": [{"parts": [{"text": f"{system_prompt}\n\n{user_prompt}"}]}],
-
-                    "generationConfig": {"temperature": 0.5, "maxOutputTokens": 1200}
-
+                    "generationConfig": {"temperature": 0.4, "maxOutputTokens": 1200}
                 }).encode('utf-8')
-
-                req = urllib.request.Request(url, data=req_data, headers={'Content-Type': 'application/json'})
-
+                req = urllib.request.Request(url, data=req_data, headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0'})
                 with urllib.request.urlopen(req, timeout=10) as resp:
-
                     if resp.status == 200:
-
                         result = json.loads(resp.read().decode('utf-8'))
-
                         text = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text')
-
                         if text:
-
                             return jsonify({'reply': text, 'response': text, 'mode': 'ai', 'provider': f'Gemini ({model_name})'})
-
             except Exception as e:
-
                 print(f"Gemini error on {model_name}: {e}")
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    # 4. Fallback: Heuristic Financial Rule & Valuation Engine
-
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    analysis = generate_fallback_analysis(holdings_summary, total_val, total_inv, total_pnl, total_pnl_pct, message)
-
+    # 4. Fallback: Intelligent Heuristic Engine
+    analysis = generate_fallback_analysis(holdings_summary, total_val, total_inv, total_pnl, total_pnl_pct, message, stock_quote)
     return jsonify({'reply': analysis, 'response': analysis, 'mode': 'local', 'provider': 'Portfolio Analytics Engine (Rule-Based)'})
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+# ─────────────────────────────────────────────────────────────────────────────
 # IPO Data Route  - NSE (Live Sub) + Groww (Open/Upcoming/Listed) + IPOWatch (Live GMP)
 
 # Cache: 10 minutes in-memory
