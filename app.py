@@ -16,6 +16,7 @@ import sys
 import socket
 
 import hashlib
+import uuid
 
 import json
 
@@ -149,17 +150,17 @@ def index():
 
 # Serve the PDF-ready Project Report
 
-@app.route('/project-report')
-
-
 @app.route('/final-report')
 @app.route('/final-docs')
 def serve_final_report():
     return send_from_directory(DIRECTORY, 'FINAL_PROJECT_REPORT.html')
 
+@app.route('/project-report')
 def project_report():
-
-    return send_from_directory(DIRECTORY, 'PROJECT_REPORT.html')
+    for name in ['FINAL_PROJECT_REPORT.html', 'project_report.html', 'PROJECT_REPORT.html']:
+        if os.path.exists(os.path.join(DIRECTORY, name)):
+            return send_from_directory(DIRECTORY, name)
+    return "Report not found", 404
 
 # Secure Admin Dashboard for the Owner
 
@@ -936,30 +937,39 @@ def save_holdings():
         supabase.table('holdings').delete().eq('user_email', email).execute()
 
         if holdings:
+            rows = []
+            for h in holdings:
+                sym = (h.get('symbol') or '').strip().upper()
+                exch = (h.get('exchange') or 'NSE').strip().upper()
+                name = (h.get('name') or sym or 'Asset').strip()
+                
+                ysym = h.get('yahooSymbol')
+                if not ysym:
+                    if exch == 'MCX':
+                        ysym = f"{sym}.MCX"
+                    elif exch == 'BSE':
+                        ysym = f"{sym}.BO"
+                    else:
+                        ysym = f"{sym}.NS"
+                
+                aclass = h.get('assetClass')
+                if not aclass:
+                    aclass = 'Commodity' if exch == 'MCX' else 'Equity'
 
-            rows = [{
-
-                'id': h.get('id'),
-
-                'user_email': email,
-
-                'symbol': h.get('symbol'),
-
-                'exchange': h.get('exchange'),
-
-                'name': h.get('name'),
-
-                'yahooSymbol': h.get('yahooSymbol'),
-
-                'assetClass': h.get('assetClass'),
-
-                'qty': float(h.get('qty', 0)),
-
-                'buyPrice': float(h.get('buyPrice', 0)),
-
-                'price': float(h.get('price', 0))
-
-            } for h in holdings]
+                hid = str(h.get('id')).strip() if (h.get('id') and str(h.get('id')).strip()) else f"h-{uuid.uuid4().hex[:12]}"
+                
+                rows.append({
+                    'id': hid,
+                    'user_email': email,
+                    'symbol': sym,
+                    'exchange': exch,
+                    'name': name,
+                    'yahooSymbol': ysym,
+                    'assetClass': aclass,
+                    'qty': float(h.get('qty') or 0),
+                    'buyPrice': float(h.get('buyPrice') or 0),
+                    'price': float(h.get('price') or 0)
+                })
 
             supabase.table('holdings').insert(rows).execute()
 

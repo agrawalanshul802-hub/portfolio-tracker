@@ -16,3 +16,8 @@ google_response_*.html
 Google
 test_user_key.py
 take_screenshots.js
+
+*_backup.*
+*.mp4
+Project Example Format*.pdf
+scratch/
