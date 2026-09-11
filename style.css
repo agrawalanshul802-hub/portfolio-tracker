@@ -6832,3 +6832,767 @@ body {
   opacity: 1 !important;
   transform: translateX(-50%) translateY(0) !important;
 }
+
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE OPTIMIZATION & TOUCH-FRIENDLY FINTECH SUITE
+   Supports screens 320px - 768px (iOS Safari, Android Chrome, Foldables)
+   ========================================================================== */
+
+/* 1. Global Viewport & Horizontal Overflow Prevention */
+html, body {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  -webkit-text-size-adjust: 100% !important;
+}
+
+/* 2. Master Main Content Padding Override for Mobile */
+@media (max-width: 768px) {
+  .main-content,
+  #dashboardScreen .main-content,
+  #dashboardScreen:not([style*="display: none"]) .main-content,
+  .app-layout .main-content {
+    padding: 78px 14px calc(90px + env(safe-area-inset-bottom, 16px)) !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-header {
+    display: flex !important;
+    height: 60px !important;
+    padding: 0 14px !important;
+    background: rgba(10, 14, 23, 0.92) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    z-index: 1000 !important;
+  }
+
+  .mobile-header .brand-name {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+  }
+
+  /* Compact Dashboard Top Bar on Mobile */
+  .dashboard-top-bar {
+    padding: 10px 0 16px !important;
+    margin-bottom: 16px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .top-bar-left {
+    gap: 2px !important;
+  }
+
+  /* Hide redundant menu button inside topbar when fixed mobile header exists */
+  .top-bar-left .topbar-menu-btn {
+    display: none !important;
+  }
+
+  .top-bar-title {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+  }
+
+  .top-bar-subtitle {
+    font-size: 11.5px !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .topbar-alert-btn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    border-radius: 999px !important;
+  }
+
+  .profile-trigger-btn {
+    padding: 4px 10px !important;
+    gap: 6px !important;
+  }
+
+  .profile-trigger-btn .user-email-label {
+    max-width: 100px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 12px !important;
+  }
+
+  .avatar {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content,
+  #dashboardScreen .main-content,
+  #dashboardScreen:not([style*="display: none"]) .main-content,
+  .app-layout .main-content {
+    padding: 72px 10px calc(85px + env(safe-area-inset-bottom, 16px)) !important;
+  }
+}
+
+/* 3. Responsive Stats & Net Worth Hero Card */
+@media (max-width: 768px) {
+  .stats-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .net-worth-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 20px 18px !important;
+    border-radius: 18px !important;
+    gap: 10px !important;
+  }
+
+  .net-worth-header {
+    margin-bottom: 2px !important;
+  }
+
+  .net-worth-header .card-label {
+    font-size: 11px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .net-worth-value {
+    font-size: clamp(26px, 7.5vw, 34px) !important;
+    line-height: 1.1 !important;
+  }
+
+  .net-worth-delta {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 13px !important;
+  }
+
+  .stats-grid-side {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  /* When there are 3 cards, let the last card span full width for balanced layout */
+  .stats-grid-side .stat-card.mini-card:nth-child(3):last-child {
+    grid-column: span 2 !important;
+  }
+
+  .stat-card.mini-card {
+    padding: 14px 16px !important;
+    min-height: unset !important;
+    border-radius: 14px !important;
+  }
+
+  .stat-card.mini-card .card-label {
+    font-size: 10.5px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .stat-card.mini-card .stat-value {
+    font-size: 18px !important;
+  }
+
+  .stat-card.mini-card .sub {
+    font-size: 11px !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* 4. Portfolio Section Selector Bar & Panel Toolbar */
+@media (max-width: 768px) {
+  .portfolio-section-bar {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    gap: 8px !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 14px !important;
+    scrollbar-width: none !important;
+  }
+
+  .portfolio-section-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .section-btn {
+    white-space: nowrap !important;
+    padding: 8px 14px !important;
+    font-size: 12.5px !important;
+    border-radius: 999px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .panel-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+
+  .toolbar-left {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .search-box {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .search-box input {
+    width: 100% !important;
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    padding: 10px 12px 10px 34px !important;
+    height: 40px !important;
+    box-sizing: border-box !important;
+  }
+
+  .filter-group {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+    scrollbar-width: none !important;
+  }
+
+  .filter-group::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .filter-pill {
+    white-space: nowrap !important;
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    min-height: 34px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sort-select {
+    width: 100% !important;
+    font-size: 16px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .holdings-count {
+    align-self: flex-start !important;
+    font-size: 12px !important;
+    color: var(--text-dim) !important;
+  }
+}
+
+/* 5. Mobile Holdings Card Polish */
+@media (max-width: 768px) {
+  .mobile-holdings-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  .m-holding-card {
+    background: rgba(18, 24, 38, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 14px 16px !important;
+    gap: 10px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .m-card-top {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 8px !important;
+  }
+
+  .m-stock-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+  }
+
+  .m-stock-sub {
+    font-size: 11.5px !important;
+    color: var(--text-dim) !important;
+    margin-top: 2px !important;
+  }
+
+  .m-cmp-val {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+  }
+
+  .m-day-pct {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+  }
+
+  .m-card-mid {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    font-size: 12px !important;
+    gap: 10px !important;
+  }
+
+  .m-card-bottom {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+    margin-top: 8px !important;
+    padding-top: 8px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .m-card-bottom button,
+  .m-alert-btn {
+    min-height: 38px !important;
+    padding: 6px 2px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+  }
+}
+
+/* 6. CRITICAL FIX: Analytics & Charts Grid on Mobile */
+@media (max-width: 768px) {
+  .analytics-overview-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .analytics-overview-row .stat-card.mini-card {
+    min-height: unset !important;
+    padding: 14px 16px !important;
+  }
+
+  /* Overrides the rigid minmax(420px, 1fr) desktop rule */
+  .analytics-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .chart-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 16px 14px !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .chart-card h3 {
+    font-size: 14.5px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .chart-container {
+    position: relative !important;
+    width: 100% !important;
+    height: 250px !important;
+    max-height: 270px !important;
+  }
+
+  #allocationChart,
+  #performanceChart {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* 7. AI Investment Analyst Mobile Polish */
+@media (max-width: 768px) {
+  .ai-container {
+    padding: 14px !important;
+    border-radius: 18px !important;
+    min-height: 460px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .ai-header h3 {
+    font-size: 16px !important;
+  }
+
+  .ai-messages {
+    max-height: 340px !important;
+    padding: 8px 4px !important;
+  }
+
+  .ai-message {
+    max-width: 90% !important;
+    font-size: 13.5px !important;
+    padding: 10px 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .ai-suggestions {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding: 8px 0 !important;
+    scrollbar-width: none !important;
+  }
+
+  .ai-suggestions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .suggestion-chip {
+    white-space: nowrap !important;
+    font-size: 12px !important;
+    padding: 7px 12px !important;
+    flex-shrink: 0 !important;
+    border-radius: 999px !important;
+  }
+
+  .ai-input-bar {
+    gap: 8px !important;
+    padding: 6px 8px !important;
+    border-radius: 14px !important;
+  }
+
+  .ai-input-bar input {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    padding: 10px 12px !important;
+  }
+
+  .ai-input-bar button {
+    padding: 10px 16px !important;
+    min-height: 42px !important;
+  }
+}
+
+/* 8. Moneycontrol News Dashboard Mobile View */
+@media (max-width: 768px) {
+  .mc-news-tabs {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+  }
+
+  .mc-news-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mc-tab {
+    white-space: nowrap !important;
+    font-size: 12px !important;
+    padding: 7px 14px !important;
+    flex-shrink: 0 !important;
+    border-radius: 999px !important;
+  }
+
+  .mc-ticker-chips {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+  }
+
+  .mc-ticker-chips::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mc-news-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .mc-hero-card,
+  .mc-sub-card {
+    width: 100% !important;
+    border-radius: 14px !important;
+  }
+
+  .mc-hero-img-wrapper {
+    height: 180px !important;
+  }
+}
+
+/* 9. IPO Intelligence Mobile Optimization */
+@media (max-width: 768px) {
+  .ipo-clean-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .ipo-clean-title h2 {
+    font-size: 18px !important;
+  }
+
+  .ipo-clean-title p {
+    font-size: 12px !important;
+  }
+
+  .ipo-segmented-tabs {
+    display: flex !important;
+    width: 100% !important;
+    gap: 6px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .ipo-seg-btn {
+    flex: 1 !important;
+    text-align: center !important;
+    font-size: 11px !important;
+    padding: 8px 4px !important;
+    min-width: unset !important;
+  }
+
+  .ipo-clean-card {
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .ipo-clean-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 10. Native Bottom-Sheet Modals on Mobile Devices (< 600px) */
+@media (max-width: 600px) {
+  .modal-overlay,
+  .alert-modal-overlay,
+  .ipo-modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+    background: rgba(0, 0, 0, 0.82) !important;
+  }
+
+  .modal,
+  .alert-modal-card,
+  .reports-modal,
+  .account-modal,
+  .ipo-modal-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    margin: 0 !important;
+    border-radius: 24px 24px 0 0 !important;
+    border-bottom: none !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+    animation: modalSlideUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  @keyframes modalSlideUpMobile {
+    from {
+      transform: translateY(100%);
+      opacity: 0.5;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .modal-body {
+    padding: 20px 16px calc(24px + env(safe-area-inset-bottom, 16px)) !important;
+    max-height: calc(92vh - 60px) !important;
+    overflow-y: auto !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .form-field input,
+  .form-field select {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    min-height: 44px !important;
+  }
+
+  .report-actions-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .report-btn {
+    justify-content: center !important;
+    font-size: 12px !important;
+    padding: 8px 10px !important;
+  }
+
+  .report-metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .report-kpi-card {
+    padding: 12px !important;
+  }
+
+  .report-kpi-card .kpi-value {
+    font-size: 16px !important;
+  }
+
+  .report-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .report-table {
+    min-width: 480px !important;
+  }
+}
+
+/* 11. Touch-Optimized Bottom Dock Navigation Bar */
+@media (max-width: 768px) {
+  .dock-outer {
+    bottom: max(14px, env(safe-area-inset-bottom, 14px)) !important;
+    padding: 0 8px !important;
+    z-index: 9999 !important;
+  }
+
+  .dock-panel {
+    gap: 6px !important;
+    padding: 5px 8px !important;
+    max-width: calc(100vw - 16px) !important;
+    border-radius: 18px !important;
+  }
+
+  .dock-item {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .dock-icon svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  /* Prevent sticky hover tooltip on mobile touch */
+  .dock-item .dock-label {
+    display: none !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .dock-panel {
+    gap: 4px !important;
+    padding: 4px 6px !important;
+  }
+
+  .dock-item {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  .dock-icon svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+}
+
+/* 12. Landing Page & Hero Mobile Polish */
+@media (max-width: 768px) {
+  .landing-container {
+    padding: 0 12px 60px !important;
+  }
+
+  .landing-header {
+    padding: 16px 0 !important;
+  }
+
+  .landing-hero {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 16px 0 32px !important;
+    text-align: center !important;
+  }
+
+  .hero-title {
+    font-size: clamp(25px, 8vw, 34px) !important;
+    line-height: 1.22 !important;
+  }
+
+  .hero-subtitle {
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+  }
+
+  .hero-feature-badges {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    justify-content: center !important;
+  }
+
+  .hero-feature-badge {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+  }
+
+  .auth-card {
+    width: 100% !important;
+    max-width: 380px !important;
+    padding: 22px 18px !important;
+    margin: 0 auto !important;
+    border-radius: 20px !important;
+  }
+
+  .auth-field input {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    min-height: 44px !important;
+  }
+
+  .logo-orbit-section {
+    padding: 30px 0 !important;
+    overflow: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  .phone-mockup-frame {
+    max-width: 220px !important;
+    height: 420px !important;
+    margin: 0 auto !important;
+  }
+}
+
