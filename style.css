@@ -7596,3 +7596,325 @@ html, body {
   }
 }
 
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE UI FIX v2 – Login Page, Home Page & Animations
+   ========================================================================== */
+
+/* Entrance Animations */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes orbitLoop {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+/* Apply entrance animations to landing page elements */
+.landing-header { animation: fadeIn 0.6s ease both; }
+.hero-left .badge { animation: fadeSlideUp 0.55s ease both; animation-delay: 0.05s; }
+.hero-title { animation: fadeSlideUp 0.65s ease both; animation-delay: 0.12s; }
+.hero-subtitle { animation: fadeSlideUp 0.65s ease both; animation-delay: 0.2s; }
+.hero-feature-badges { animation: fadeSlideUp 0.6s ease both; animation-delay: 0.28s; }
+.hero-cta { animation: fadeSlideUp 0.6s ease both; animation-delay: 0.35s; }
+.star-border-container { animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.2s; }
+.step-card { animation: fadeSlideUp 0.6s ease both; }
+.step-card:nth-child(1) { animation-delay: 0.05s; }
+.step-card:nth-child(2) { animation-delay: 0.15s; }
+.step-card:nth-child(3) { animation-delay: 0.25s; }
+.service-card-premium { animation: fadeSlideUp 0.65s ease both; }
+.service-card-premium:nth-child(1) { animation-delay: 0.05s; }
+.service-card-premium:nth-child(2) { animation-delay: 0.15s; }
+.service-card-premium:nth-child(3) { animation-delay: 0.25s; }
+
+/* Orbit animation */
+.orbit-node-animated { animation: orbitLoop 35s linear infinite; }
+
+/* Welcome overlay */
+#welcomeOverlay {
+  position: fixed !important; inset: 0 !important; z-index: 99999 !important;
+  background: #000000 !important; display: none;
+  align-items: center !important; justify-content: center !important;
+  opacity: 0; transition: opacity 0.4s ease !important;
+}
+#welcomeText {
+  font-size: clamp(24px, 6vw, 42px) !important; font-weight: 800 !important;
+  color: #FFFFFF !important; text-align: center !important;
+  padding: 0 24px !important; letter-spacing: -0.02em !important;
+}
+
+/* Mobile login page fixes */
+@media (max-width: 768px) {
+  .auth-screen { display: block !important; min-height: 100vh !important; padding: 0 !important; overflow-y: auto !important; overflow-x: hidden !important; }
+  .landing-container { padding: 0 16px 60px !important; max-width: 100% !important; }
+  .landing-header { flex-direction: row !important; justify-content: space-between !important; align-items: center !important; padding: 14px 0 !important; margin-bottom: 8px !important; gap: 10px !important; flex-wrap: nowrap !important; }
+  .landing-header .brand-name { font-size: 15px !important; white-space: nowrap !important; }
+  .landing-header .brand img { width: 28px !important; height: 28px !important; }
+  .landing-header .nav-links .btn { font-size: 12px !important; padding: 7px 14px !important; white-space: nowrap !important; }
+  .landing-hero { display: flex !important; flex-direction: column !important; gap: 28px !important; padding: 16px 0 32px !important; text-align: center !important; align-items: center !important; }
+  .hero-left { align-items: center !important; width: 100% !important; }
+  .hero-right { width: 100% !important; justify-content: center !important; display: flex !important; }
+  .star-border-container { width: 100% !important; max-width: 400px !important; margin: 0 auto !important; border-radius: 20px !important; overflow: hidden !important; box-sizing: border-box !important; }
+  .inner-content { border-radius: 18px !important; }
+  .auth-card { padding: 24px 20px !important; width: 100% !important; box-sizing: border-box !important; }
+  .auth-card input, .auth-field input { font-size: 16px !important; min-height: 46px !important; border-radius: 10px !important; }
+  .auth-submit { min-height: 46px !important; font-size: 15px !important; }
+  .logo-orbit-section { overflow: hidden !important; padding: 20px 0 !important; max-width: 100vw !important; }
+  .orbit-showcase-container { width: 100% !important; overflow: hidden !important; }
+  .landing-clarity { display: flex !important; flex-direction: column !important; gap: 20px !important; padding: 20px 16px !important; margin: 32px 0 !important; border-radius: 18px !important; }
+  .clarity-left, .clarity-mockup { width: 100% !important; }
+  .feature-tabs { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+  .feature-tab-btn { padding: 12px 14px !important; border-radius: 10px !important; }
+  .feature-tab-btn h3 { font-size: 14px !important; }
+  .feature-tab-btn p { font-size: 12px !important; }
+  #showcaseImage { width: 100% !important; height: auto !important; border-radius: 10px !important; }
+  .landing-steps { padding: 32px 0 !important; }
+  .steps-container { flex-direction: column !important; align-items: center !important; gap: 24px !important; margin-top: 20px !important; }
+  .step-card { max-width: 100% !important; width: 100% !important; text-align: center !important; padding: 0 8px !important; }
+  .step-number-circle { margin: 0 auto 12px !important; }
+  .landing-services { padding: 32px 0 !important; }
+  .services-grid-three { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .service-card-premium { padding: 20px 18px !important; border-radius: 16px !important; }
+  .landing-hero, .landing-steps, .landing-services, .logo-orbit-section, .landing-clarity, #live-showcase-section, #get-started-section, #services-section { max-width: 100% !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+  .section-title h2 { font-size: 22px !important; line-height: 1.3 !important; }
+  .section-title p { font-size: 13px !important; }
+  .net-worth-card { animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.05s; }
+  .mobile-header { animation: fadeIn 0.4s ease both; }
+  .dock-outer { animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 0.3s; }
+  .m-holding-card { animation: fadeSlideUp 0.45s ease both; }
+}
+
+@media (max-width: 480px) {
+  .auth-card { padding: 20px 16px !important; }
+  .hero-title { font-size: clamp(24px, 7.5vw, 32px) !important; line-height: 1.22 !important; }
+  .hero-subtitle { font-size: 13px !important; }
+  .hero-feature-badge { font-size: 10.5px !important; padding: 4px 10px !important; }
+  .hero-cta .btn { width: 100% !important; justify-content: center !important; font-size: 14px !important; padding: 12px 20px !important; }
+  .landing-clarity { padding: 16px !important; margin: 24px 0 !important; }
+}
+
+@media (max-width: 360px) {
+  .landing-header .nav-links .btn { font-size: 11px !important; padding: 6px 10px !important; }
+  .landing-header .brand-name { font-size: 13px !important; }
+  .auth-card { padding: 18px 14px !important; }
+}
+
+/* ==========================================================================
+   MOBILE UI FIX v3 – Additional Fixes
+   ========================================================================== */
+
+/* Landing clarity desktop layout (ensures grid when no inline style) */
+.landing-clarity {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  align-items: stretch;
+}
+
+/* Scroll-reveal base (elements start invisible, JS/intersection observer reveals) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Feature tab buttons: better mobile active state */
+@media (max-width: 768px) {
+  .feature-tab-btn.active {
+    background: rgba(139, 92, 246, 0.1) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
+  }
+
+  /* clarity-left inline flex override */
+  .clarity-left {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  /* clarity-mockup */
+  .clarity-mockup {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Feature tabs: full width scrollable on very small screens */
+  .feature-tabs {
+    width: 100% !important;
+  }
+
+  /* Badge in clarity section */
+  .clarity-badge {
+    display: inline-block !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Orbit center logo sizing */
+  .orbit-center-logo-img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  /* Section badge */
+  .badge {
+    font-size: 10.5px !important;
+    padding: 5px 12px !important;
+  }
+}
+
+/* Dashboard mobile: smooth panel transitions */
+@media (max-width: 768px) {
+  .tab-panel {
+    animation: fadeIn 0.3s ease both;
+  }
+
+  /* Stats row on home section */
+  .stats-row {
+    width: 100% !important;
+  }
+
+  /* Prevent nav sidebar from flashing on mobile */
+  .sidebar {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Modal inputs: prevent zoom */
+  .modal input,
+  .modal select,
+  .modal textarea {
+    font-size: 16px !important;
+  }
+
+  /* Bottom dock: ensure it stays above safe-area */
+  .dock-outer {
+    padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+  }
+
+  /* Chart tooltip: ensure it does not overflow screen */
+  .chartjs-tooltip {
+    max-width: 200px !important;
+    font-size: 11px !important;
+  }
+
+  /* Commodities table mobile */
+  .commodities-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Alert modal full-width on mobile */
+  .alert-modal-card {
+    max-width: calc(100vw - 24px) !important;
+    margin: 0 12px !important;
+  }
+
+  /* Alert target input: prevent zoom */
+  .alert-target-input {
+    font-size: 16px !important;
+  }
+}
+
+/* IPO table mobile */
+@media (max-width: 768px) {
+  .ipo-clean-table {
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+}
+
+/* Fix auth note text on mobile */
+@media (max-width: 768px) {
+  .auth-note {
+    font-size: 11px !important;
+    line-height: 1.5 !important;
+    margin-top: 14px !important;
+    padding: 8px !important;
+  }
+
+  .auth-switch {
+    font-size: 13px !important;
+    margin-top: 14px !important;
+  }
+
+  .auth-tabs {
+    margin-bottom: 16px !important;
+  }
+
+  .auth-tab {
+    font-size: 14px !important;
+    padding: 8px 16px !important;
+  }
+
+  .auth-brand .t {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+  }
+
+  /* Auth error message */
+  .auth-error {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    border-radius: 10px !important;
+    margin-bottom: 14px !important;
+  }
+}
+
+/* Landing hero CTA button: full width on mobile */
+@media (max-width: 480px) {
+  .hero-cta {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .hero-cta .btn {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* Ensure smooth scroll on mobile for "Create Account" CTA */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent text selection on dock items (touch UX) */
+.dock-item {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Improve touch targets for nav items */
+@media (max-width: 768px) {
+  .nav-item {
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+}

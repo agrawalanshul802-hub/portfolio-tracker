@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -483,8 +483,7 @@
       </section>
 
       <!-- Inside Look / Feature Overview Section -->
-      <section class="landing-clarity" id="live-showcase-section"
-        style="grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: stretch; margin: 80px 0;">
+      <section class="landing-clarity" id="live-showcase-section" style="margin: 80px 0;">
         <div class="clarity-left" style="display: flex; flex-direction: column; justify-content: center;">
           <span class="clarity-badge" style="margin-bottom: 16px;">🔥 Inside Look</span>
           <h2 style="margin-bottom: 12px;">Explore the Active Platform Features</h2>
@@ -674,9 +673,8 @@
       </section>
     </div>
     <!-- Welcome Overlay for login transition -->
-    <div id="welcomeOverlay"
-      style="position:fixed; inset:0; background:#000000; z-index:99999; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:opacity 0.4s ease;">
-      <div id="welcomeText" style="font-size: 32px; font-weight: 700; color: #FFF; font-family: 'Inter', sans-serif;">
+    <div id="welcomeOverlay">
+      <div id="welcomeText">
       </div>
     </div>
   </div>
@@ -3963,7 +3961,8 @@
         const auth = document.getElementById('authScreen');
         const dash = document.getElementById('dashboardScreen');
         if (auth) {
-          auth.style.display = 'flex';
+          // Use 'block' on mobile (<=768px) so CSS media queries can control layout
+          auth.style.display = window.innerWidth <= 768 ? 'block' : 'flex';
           auth.classList.remove('hidden');
         }
         if (dash) {
@@ -5080,6 +5079,9 @@
             warpAmount: 0.3
           });
         } catch (e) { console.warn('DarkVeil init:', e); }
+        // Mobile scroll-reveal and tap feedback
+        try { initScrollReveal(); } catch(e) { console.warn('ScrollReveal:', e); }
+        try { initMobileTapFeedback(); } catch(e) { console.warn('TapFeedback:', e); }
         try {
           initScrollFloat('#get-started-section .section-title h2', {
             animationDuration: 1.2,
@@ -5096,6 +5098,57 @@
             stagger: 0.02
           });
         } catch (e) { console.warn('ScrollFloat init:', e); }
+      }
+
+
+      /* ── Scroll-Reveal for Landing Sections ── */
+      function initScrollReveal() {
+        const targets = document.querySelectorAll(
+          '.step-card, .service-card-premium, .landing-clarity, .orbit-node, .clarity-badge, .feature-tab-btn'
+        );
+        if (!targets.length) return;
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              // Optionally unobserve after first reveal
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.12,
+          rootMargin: '0px 0px -40px 0px'
+        });
+
+        targets.forEach((el) => {
+          el.classList.add('reveal-on-scroll');
+          observer.observe(el);
+        });
+      }
+
+      /* ── Window resize: fix authScreen display mode ── */
+      window.addEventListener('resize', () => {
+        const auth = document.getElementById('authScreen');
+        if (auth && auth.style.display !== 'none') {
+          auth.style.display = window.innerWidth <= 768 ? 'block' : 'flex';
+        }
+      });
+
+      /* ── Mobile: Add smooth tap feedback to dock items ── */
+      function initMobileTapFeedback() {
+        const dockItems = document.querySelectorAll('.dock-item');
+        dockItems.forEach(item => {
+          item.addEventListener('touchstart', () => {
+            item.style.transform = 'scale(0.92)';
+            item.style.transition = 'transform 0.1s ease';
+          }, { passive: true });
+          item.addEventListener('touchend', () => {
+            setTimeout(() => {
+              item.style.transform = '';
+            }, 120);
+          }, { passive: true });
+        });
       }
 
       window.loadIpoData = async function (force = false) {
