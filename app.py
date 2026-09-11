@@ -2840,6 +2840,14 @@ def get_ipo_detail():
 
 # Support serving static files (images, CSS, JS, etc.) as catch-all
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(DIRECTORY, 'logo_icon.png', mimetype='image/png')
+
+@app.route('/robots.txt')
+def robots():
+    return "User-agent: *\nAllow: /\n", 200, {'Content-Type': 'text/plain'}
+
 @app.route('/<path:path>')
 
 def static_files(path):
