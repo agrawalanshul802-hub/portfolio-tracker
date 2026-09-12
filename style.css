@@ -8850,3 +8850,592 @@ html {
     font-size: 10px;
   }
 }
+
+
+/* =========================================================
+   IPO PAN CARD & ALLOTMENT TRACKER ENHANCEMENTS
+   ========================================================= */
+.ipo-pan-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.ipo-pan-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: 16px;
+  padding: 14px 20px;
+  box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+  flex: 1;
+  min-width: 320px;
+}
+
+.ipo-pan-icon-box {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ipo-pan-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.ipo-pan-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.ipo-pan-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a78bfa;
+  background: rgba(139, 92, 246, 0.15);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.ipo-pan-number-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ipo-pan-number {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.14em;
+}
+
+.ipo-pan-eye-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ipo-pan-eye-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ipo-pan-subtext {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.ipo-pan-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ipo-kpi-ribbon {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ipo-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 10px 16px;
+  flex: 1;
+  min-width: 130px;
+}
+
+.ipo-kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.ipo-kpi-icon.applied {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.ipo-kpi-icon.allotted {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ipo-kpi-icon.awaiting {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.ipo-kpi-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.ipo-kpi-lbl {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Status Chips on IPO Cards */
+.ipo-allot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+
+.ipo-allot-chip.allotted {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.ipo-allot-chip.not-allotted {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.ipo-allot-chip.applied {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.ipo-clean-btn.allotted-btn {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3));
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #34d399;
+  font-weight: 700;
+}
+
+.ipo-clean-btn.mark-applied-btn {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.ipo-clean-btn.mark-applied-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  color: #fff;
+}
+
+/* Pan & Allotment Modals */
+.pan-modal-dialog, .ipo-allot-dialog {
+  max-width: 480px;
+  width: 92%;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pan-modal-header, .ipo-allot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.pan-modal-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pan-modal-close {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #94a3b8;
+  font-size: 15px;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pan-modal-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pan-form-body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pan-security-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.pan-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 22px;
+  background: rgba(15, 23, 42, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Allotment Dialog specifics */
+.ipo-allot-body {
+  padding: 20px;
+}
+
+.ipo-allot-status-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 16px;
+}
+
+.allot-status-icon {
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.allot-status-heading {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.allot-status-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.ipo-allot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.allot-grid-item {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.allot-grid-label {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.allot-grid-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.allot-pan-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.ipo-registrar-launch-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 18px;
+  border-radius: 12px;
+}
+
+.allot-tracker-card {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.allot-action-btns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.allot-choice-btn {
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.allot-choice-btn.success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.allot-choice-btn.success:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
+}
+
+.allot-choice-btn.danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.allot-choice-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+}
+
+.allot-choice-btn.warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.allot-choice-btn.warning:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+}
+
+@media (max-width: 600px) {
+  .ipo-pan-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ipo-pan-card {
+    min-width: 0;
+    width: 100%;
+    padding: 12px 14px;
+  }
+  .ipo-kpi-ribbon {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .ipo-kpi-card {
+    min-width: 0;
+    padding: 8px 10px;
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  .ipo-kpi-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    margin: 0 auto;
+  }
+  .ipo-allot-dialog, .pan-modal-dialog {
+    width: 96%;
+    max-height: 92vh;
+    border-radius: 18px;
+  }
+  .allot-action-btns {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* Banner pill and info classes */
+.ipo-pan-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ipo-pan-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ipo-pan-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ipo-pan-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+.ipo-pan-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.1em;
+}
+.ipo-pan-eye {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 3px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.ipo-pan-eye:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+.ipo-link-pan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+.ipo-kpi-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ipo-kpi-pill:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(30, 41, 59, 0.7);
+}
+.ipo-kpi-pill.positive {
+  border-color: rgba(16, 185, 129, 0.25);
+}
+.ipo-kpi-pill.positive .ipo-kpi-val {
+  color: #34d399;
+}
+.ipo-kpi-pill.warning {
+  border-color: rgba(245, 158, 11, 0.25);
+}
+.ipo-kpi-pill.warning .ipo-kpi-val {
+  color: #fbbf24;
+}
+.ipo-kpi-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.ipo-kpi-lbl {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+

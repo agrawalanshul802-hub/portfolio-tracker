@@ -1146,7 +1146,7 @@
           <div class="ipo-clean-header">
             <div class="ipo-clean-title">
               <h2>IPO Tracker &amp; Allotment</h2>
-              <p>Live open issues, upcoming pipeline, Grey Market Premium (GMP) &amp; allotment status.</p>
+              <p>Live open issues, upcoming pipeline, Grey Market Premium (GMP) &amp; automated allotment status.</p>
             </div>
             <button class="btn btn-outline btn-sm" id="ipoRefreshBtn" onclick="loadIpoData(true)">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -1156,6 +1156,48 @@
               </svg>
               Refresh
             </button>
+          </div>
+
+          <!-- PAN Card & Allotment Manager Banner -->
+          <div class="ipo-pan-banner">
+            <div class="ipo-pan-card">
+              <div class="ipo-pan-info">
+                <div class="ipo-pan-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="15" x2="11" y2="15"/></svg>
+                </div>
+                <div class="ipo-pan-text-wrap">
+                  <div class="ipo-pan-label">Linked Investor PAN (Supabase Synced)</div>
+                  <div class="ipo-pan-number-wrap">
+                    <span class="ipo-pan-val" id="ipoPanDisplay">Not Linked</span>
+                    <button type="button" class="ipo-pan-eye" id="ipoPanEyeBtn" title="Show/Hide PAN" style="display:none;" onclick="togglePanMask()">
+                      <svg class="pan-eye-open" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg class="pan-eye-closed" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="ipo-pan-actions">
+                <button class="btn btn-outline btn-sm ipo-link-pan-btn" id="editPanBtn" onclick="openPanModal()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <span id="editPanBtnText">Link PAN</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="ipo-kpi-ribbon">
+              <div class="ipo-kpi-pill" onclick="switchIpoSection('myApps')">
+                <span class="ipo-kpi-val" id="kpiAppliedCount">0</span>
+                <span class="ipo-kpi-lbl">Applied</span>
+              </div>
+              <div class="ipo-kpi-pill positive" onclick="switchIpoSection('myApps')">
+                <span class="ipo-kpi-val" id="kpiAllottedCount">0</span>
+                <span class="ipo-kpi-lbl">Allotted 🎉</span>
+              </div>
+              <div class="ipo-kpi-pill warning" onclick="switchIpoSection('myApps')">
+                <span class="ipo-kpi-val" id="kpiAwaitingCount">0</span>
+                <span class="ipo-kpi-lbl">Awaiting</span>
+              </div>
+            </div>
           </div>
 
           <!-- Segmented Tabs -->
@@ -1168,6 +1210,9 @@
             </button>
             <button class="ipo-seg-btn" onclick="switchIpoSection('listed')">
               Recently Listed <span id="listedCount" class="ipo-seg-count">0</span>
+            </button>
+            <button class="ipo-seg-btn" onclick="switchIpoSection('myApps')">
+              My Applications <span id="myAppsCount" class="ipo-seg-count">0</span>
             </button>
           </div>
 
@@ -1204,6 +1249,16 @@
             <div id="ipoListListed" class="ipo-list-wrap"></div>
             <div id="ipoListedEmpty" class="ipo-empty-clean" style="display:none;">
               No recently listed IPOs found.
+            </div>
+          </div>
+
+          <!-- My Applications List -->
+          <div id="ipoSectionMyApps" class="ipo-section">
+            <div id="ipoListMyApps" class="ipo-list-wrap"></div>
+            <div id="ipoMyAppsEmpty" class="ipo-empty-clean" style="display:none;">
+              <div style="font-size:32px;margin-bottom:8px;">📋</div>
+              <h4>No IPO Applications Tracked Yet</h4>
+              <p>Browse Open or Recently Listed IPOs and click <b>+ Track / Allotment</b> to record your bid.</p>
             </div>
           </div>
 
@@ -1734,6 +1789,139 @@
         <button type="button" class="alert-btn-submit" id="goToSetAlertBtn" style="margin-top: 16px;">
           + SET NEW ALERT
         </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- =========================================================
+       PAN CARD MODAL (Supabase Synced & Bank-Grade Scoped)
+       ========================================================= -->
+  <div class="modal-overlay" id="panModalOverlay" style="display:none;">
+    <div class="modal-content pan-modal-dialog">
+      <div class="pan-modal-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="pan-modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="15" x2="11" y2="15"/></svg>
+          </div>
+          <div>
+            <h3 style="margin:0;font-size:17px;font-weight:700;color:#fff;">Link Investor PAN</h3>
+            <p style="margin:0;font-size:12px;color:var(--text-dim);">For automatic IPO allotment lookup &amp; tracking</p>
+          </div>
+        </div>
+        <button class="pan-modal-close" onclick="closePanModal()">✕</button>
+      </div>
+
+      <form id="panForm" onsubmit="handleSavePan(event)">
+        <div class="pan-form-body">
+          <div class="form-field">
+            <label style="font-size:12px;font-weight:600;color:#cbd5e1;">PAN Card Number</label>
+            <input type="text" id="panInput" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase;font-family:monospace;letter-spacing:0.12em;font-size:15px;font-weight:700;" required>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Must be a valid 10-character Indian PAN (5 letters, 4 digits, 1 letter)</div>
+          </div>
+
+          <div class="pan-security-note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>Zero-Leak Privacy:</strong> Your PAN is synced to your private Supabase account. It is strictly accessible only to your authenticated session.</span>
+          </div>
+        </div>
+
+        <div class="pan-modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closePanModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="savePanSubmitBtn">Save &amp; Sync PAN</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       IPO ALLOTMENT & APPLICATION MODAL
+       ========================================================= -->
+  <div class="modal-overlay" id="ipoAllotmentModalOverlay" style="display:none;">
+    <div class="modal-content ipo-allot-dialog">
+      <div class="ipo-allot-header">
+        <div>
+          <span class="ipo-type-pill" id="allotModalType">Mainboard IPO</span>
+          <h3 id="allotModalTitle" style="margin:4px 0 0;font-size:18px;font-weight:800;color:#fff;">Company Name</h3>
+        </div>
+        <button class="pan-modal-close" onclick="closeAllotmentModal()">✕</button>
+      </div>
+
+      <div class="ipo-allot-body">
+        <!-- Status Banner Card -->
+        <div class="ipo-allot-status-box" id="allotStatusBox">
+          <div class="allot-status-icon" id="allotStatusIcon">⏳</div>
+          <div class="allot-status-text">
+            <div class="allot-status-heading" id="allotStatusHeading">Allotment Status</div>
+            <div class="allot-status-desc" id="allotStatusDesc">Checking application record...</div>
+          </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="ipo-allot-grid">
+          <div class="allot-grid-item">
+            <span class="allot-grid-label">Official Registrar</span>
+            <span class="allot-grid-val" id="allotRegistrarName">Link Intime</span>
+          </div>
+          <div class="allot-grid-item">
+            <span class="allot-grid-label">Allotment Date</span>
+            <span class="allot-grid-val" id="allotDateVal">TBA</span>
+          </div>
+          <div class="allot-grid-item">
+            <span class="allot-grid-label">Issue Price / Lot</span>
+            <span class="allot-grid-val" id="allotPriceLotVal">₹-</span>
+          </div>
+          <div class="allot-grid-item">
+            <span class="allot-grid-label">Live GMP Premium</span>
+            <span class="allot-grid-val" id="allotGmpVal">-</span>
+          </div>
+        </div>
+
+        <!-- Linked PAN Info & Copy Box -->
+        <div class="allot-pan-strip">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:12px;color:#94a3b8;">Registered PAN:</span>
+            <strong id="allotPanDisplay" style="font-family:monospace;letter-spacing:0.08em;color:#fff;font-size:13.5px;">Not Linked</strong>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="copyPanBtn" onclick="copyPanToClipboard()">
+            📋 Copy PAN
+          </button>
+        </div>
+
+        <!-- Registrar 1-Click Button -->
+        <div style="margin:16px 0;">
+          <button type="button" class="btn btn-primary ipo-registrar-launch-btn" id="launchRegistrarBtn" onclick="launchRegistrarCheck()">
+            <span>Check Allotment on Registrar</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </button>
+          <div style="font-size:11px;color:#64748b;text-align:center;margin-top:6px;">
+            ⚡ Clicking automatically copies your PAN and opens the official registrar portal
+          </div>
+        </div>
+
+        <!-- Application Tracking & Outcome Recorder -->
+        <div class="allot-tracker-card">
+          <div style="font-size:12.5px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">Update My Result:</div>
+          
+          <div class="allot-action-btns">
+            <button type="button" class="allot-choice-btn success" onclick="setApplicationOutcome('ALLOTTED')">
+              🎉 Mark Allotted
+            </button>
+            <button type="button" class="allot-choice-btn danger" onclick="setApplicationOutcome('NOT_ALLOTTED')">
+              ❌ Not Allotted
+            </button>
+            <button type="button" class="allot-choice-btn warning" onclick="setApplicationOutcome('APPLIED')">
+              🟡 Mark Applied
+            </button>
+          </div>
+
+          <div id="allotGainEstimate" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);font-size:12px;color:#34D399;"></div>
+
+          <div style="margin-top:12px;text-align:right;">
+            <button type="button" id="untrackAppBtn" style="background:none;border:none;color:#ef4444;font-size:11px;cursor:pointer;display:none;" onclick="handleDeleteApplication()">
+              🗑 Remove Application Tracking
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -5405,28 +5593,477 @@
         });
       }
 
+            // =========================================================
+      //  IPO PAN CARD & ALLOTMENT TRACKER STATE & HANDLERS
+      // =========================================================
+      let _userPan = null;
+      let _isPanMasked = true;
+      let _ipoApplications = [];
+      let _currentAllotModalData = null;
+      window._cachedIpoData = null;
+
+      window.openPanModal = function () {
+        const modal = document.getElementById('panModalOverlay');
+        if (!modal) return;
+        const input = document.getElementById('panInput');
+        if (input) input.value = _userPan || '';
+        modal.style.display = 'flex';
+        setTimeout(() => { if (input) input.focus(); }, 50);
+      };
+
+      window.closePanModal = function () {
+        const modal = document.getElementById('panModalOverlay');
+        if (modal) modal.style.display = 'none';
+      };
+
+      window.togglePanMask = function () {
+        _isPanMasked = !_isPanMasked;
+        updatePanDisplay();
+      };
+
+      function updatePanDisplay() {
+        const el = document.getElementById('ipoPanDisplay');
+        const eyeBtn = document.getElementById('ipoPanEyeBtn');
+        const editBtnText = document.getElementById('editPanBtnText');
+        const allotPanDisplay = document.getElementById('allotPanDisplay');
+
+        if (!_userPan) {
+          if (el) el.textContent = 'Not Linked';
+          if (eyeBtn) eyeBtn.style.display = 'none';
+          if (editBtnText) editBtnText.textContent = 'Link PAN';
+          if (allotPanDisplay) allotPanDisplay.textContent = 'Not Linked';
+          return;
+        }
+
+        const masked = _userPan.slice(0, 5) + '••••' + _userPan.slice(9);
+        const displayText = _isPanMasked ? masked : _userPan;
+
+        if (el) el.textContent = displayText;
+        if (eyeBtn) {
+          eyeBtn.style.display = 'inline-flex';
+          const openIcon = eyeBtn.querySelector('.pan-eye-open');
+          const closedIcon = eyeBtn.querySelector('.pan-eye-closed');
+          if (openIcon && closedIcon) {
+            openIcon.style.display = _isPanMasked ? 'block' : 'none';
+            closedIcon.style.display = _isPanMasked ? 'none' : 'block';
+          }
+        }
+        if (editBtnText) editBtnText.textContent = 'Edit PAN';
+        if (allotPanDisplay) allotPanDisplay.textContent = displayText;
+      }
+
+      window.fetchUserPan = async function () {
+        try {
+          const res = await fetch('/api/user/pan');
+          if (!res.ok) return;
+          const json = await res.json();
+          if (json.success && json.pan) {
+            _userPan = json.pan;
+          } else {
+            _userPan = null;
+          }
+          updatePanDisplay();
+        } catch (err) {
+          console.error('fetchUserPan error:', err);
+        }
+      };
+
+      window.handleSavePan = async function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const input = document.getElementById('panInput');
+        const submitBtn = document.getElementById('savePanSubmitBtn');
+        if (!input) return;
+        const panVal = input.value.trim().toUpperCase();
+
+        const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (!panRegex.test(panVal)) {
+          toast('Invalid PAN! Format must be 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F)');
+          return;
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Saving...';
+        }
+
+        try {
+          const res = await fetch('/api/user/pan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pan: panVal })
+          });
+          const json = await res.json();
+          if (!res.ok || !json.success) {
+            throw new Error(json.error || 'Failed to save PAN');
+          }
+
+          _userPan = panVal;
+          updatePanDisplay();
+          closePanModal();
+          toast('PAN linked & synced with Supabase! 🔒');
+
+          // Refresh applications and reload display
+          await fetchIpoApplications();
+        } catch (err) {
+          toast('Error: ' + err.message);
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save & Sync PAN';
+          }
+        }
+      };
+
+      window.fetchIpoApplications = async function () {
+        try {
+          const res = await fetch('/api/ipo/applications');
+          if (!res.ok) return;
+          const json = await res.json();
+          if (json.success && Array.isArray(json.applications)) {
+            _ipoApplications = json.applications;
+            updateIpoKpis();
+            renderMyIpoApplications();
+            // Re-render lists if data exists to sync status chips
+            if (window._cachedIpoData) {
+              if (window._cachedIpoData.open) renderIpoList('open', window._cachedIpoData.open);
+              if (window._cachedIpoData.upcoming) renderIpoList('upcoming', window._cachedIpoData.upcoming);
+              if (window._cachedIpoData.listed) renderIpoList('listed', window._cachedIpoData.listed);
+            }
+          }
+        } catch (err) {
+          console.error('fetchIpoApplications error:', err);
+        }
+      };
+
+      function updateIpoKpis() {
+        const total = _ipoApplications.length;
+        const allotted = _ipoApplications.filter(a => a.status === 'ALLOTTED').length;
+        const awaiting = _ipoApplications.filter(a => a.status === 'APPLIED').length;
+
+        const kTotal = document.getElementById('kpiAppliedCount');
+        const kAllot = document.getElementById('kpiAllottedCount');
+        const kAwait = document.getElementById('kpiAwaitingCount');
+        const myCount = document.getElementById('myAppsCount');
+
+        if (kTotal) kTotal.textContent = total;
+        if (kAllot) kAllot.textContent = allotted;
+        if (kAwait) kAwait.textContent = awaiting;
+        if (myCount) myCount.textContent = total;
+      }
+
+      window.renderMyIpoApplications = function () {
+        const wrap = document.getElementById('ipoListMyApps');
+        const empty = document.getElementById('ipoMyAppsEmpty');
+        if (!wrap) return;
+
+        if (!_ipoApplications || _ipoApplications.length === 0) {
+          wrap.innerHTML = '';
+          if (empty) empty.style.display = 'block';
+          return;
+        }
+        if (empty) empty.style.display = 'none';
+
+        wrap.innerHTML = _ipoApplications.map(app => {
+          const st = app.status || 'APPLIED';
+          let chipHtml = '';
+          let actionBtnHtml = '';
+
+          const appNameEsc = encodeURIComponent(app.ipo_name || '');
+          const appSymbol = app.ipo_symbol || '';
+          const allotUrl = app.allotment_url || '';
+
+          if (st === 'ALLOTTED') {
+            const shs = app.shares_allotted ? `${app.shares_allotted} shs` : 'Allotted';
+            chipHtml = `<span class="ipo-allot-chip allotted">🟢 ${shs} Allotted 🎉</span>`;
+            actionBtnHtml = `<button class="ipo-clean-btn allotted-btn" onclick="openAllotmentModal('${appNameEsc}', '${appSymbol}', '${allotUrl}')">Allotment Details ✨</button>`;
+          } else if (st === 'NOT_ALLOTTED') {
+            chipHtml = `<span class="ipo-allot-chip not-allotted">🔴 Not Allotted (Refunded)</span>`;
+            actionBtnHtml = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${appNameEsc}', '${appSymbol}', '${allotUrl}')">Re-check 🔄</button>`;
+          } else {
+            chipHtml = `<span class="ipo-allot-chip applied">🟡 Applied • Awaiting</span>`;
+            actionBtnHtml = `<button class="ipo-clean-btn primary" onclick="openAllotmentModal('${appNameEsc}', '${appSymbol}', '${allotUrl}')">Check Allotment ⚡</button>`;
+          }
+
+          const appliedDate = app.created_at ? new Date(app.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Recently';
+
+          return `
+            <div class="ipo-row-card" data-symbol="${appSymbol}" data-name="${appNameEsc}">
+              <div class="ipo-col-company">
+                <div class="ipo-clean-logo">${(app.ipo_name || 'I')[0]}</div>
+                <div class="ipo-company-meta">
+                  <h4 class="ipo-company-name">${app.ipo_name}</h4>
+                  <div class="ipo-company-sub">
+                    ${chipHtml}
+                    <span style="font-size:11.5px;color:#94a3b8;">Tracked: ${appliedDate}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ipo-col-stat">
+                <span class="ipo-stat-label">Application Details</span>
+                <span class="ipo-stat-val">${app.lots || 1} Lot${(app.lots || 1) > 1 ? 's' : ''}</span>
+                <span class="ipo-stat-sub">${app.bid_price ? 'Bid: ' + app.bid_price : 'Cut-off Price'}</span>
+              </div>
+
+              <div class="ipo-col-stat">
+                <span class="ipo-stat-label">Status</span>
+                <span class="ipo-stat-val" style="font-size:13px;font-weight:700;">
+                  ${st === 'ALLOTTED' ? '🎉 Shares in Demat' : (st === 'NOT_ALLOTTED' ? 'Refund Processed' : 'Awaiting Result')}
+                </span>
+              </div>
+
+              <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;">
+                ${actionBtnHtml}
+                <button class="btn btn-outline btn-sm" style="padding:6px 10px;color:#ef4444;border-color:rgba(239,68,68,0.25);" title="Remove Tracking" onclick="handleDeleteApplication('${app.id}')">
+                  🗑
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      };
+
+      window.openAllotmentModal = function (ipoNameEsc, ipoSymbol, allotmentUrl, lotSize, priceBand, gmp) {
+        const ipoName = decodeURIComponent(ipoNameEsc || '');
+        const modal = document.getElementById('ipoAllotmentModalOverlay');
+        if (!modal) return;
+
+        // Match application
+        const app = _ipoApplications.find(a => 
+          (a.ipo_name && a.ipo_name.toLowerCase() === ipoName.toLowerCase()) ||
+          (ipoSymbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipoSymbol.toUpperCase())
+        );
+
+        _currentAllotModalData = {
+          ipoName,
+          ipoSymbol: ipoSymbol || (app ? app.ipo_symbol : ''),
+          allotmentUrl: allotmentUrl || (app && app.allotment_url) || 'https://linkintime.co.in/initial_offer/public-issues.html',
+          lotSize: lotSize || (app ? app.lots : 1),
+          priceBand: priceBand || (app ? app.bid_price : '-'),
+          gmp: gmp || 0,
+          appId: app ? app.id : null,
+          currentStatus: app ? app.status : 'APPLIED'
+        };
+
+        const titleEl = document.getElementById('allotModalTitle');
+        if (titleEl) titleEl.textContent = ipoName;
+
+        const regEl = document.getElementById('allotRegistrarName');
+        if (regEl) {
+          let regName = 'Link Intime / KFintech';
+          const u = (_currentAllotModalData.allotmentUrl || '').toLowerCase();
+          if (u.includes('kfintech')) regName = 'KFintech';
+          else if (u.includes('linkintime')) regName = 'Link Intime';
+          else if (u.includes('bigshare')) regName = 'Bigshare Services';
+          else if (u.includes('bseindia')) regName = 'BSE Official';
+          regEl.textContent = regName;
+        }
+
+        const priceLotEl = document.getElementById('allotPriceLotVal');
+        if (priceLotEl) priceLotEl.textContent = priceBand || (app ? app.bid_price : '-');
+
+        const gmpEl = document.getElementById('allotGmpVal');
+        if (gmpEl) {
+          gmpEl.textContent = (gmp && gmp > 0) ? `+₹${gmp}/share` : 'Live market TBA';
+        }
+
+        const dateEl = document.getElementById('allotDateVal');
+        if (dateEl) {
+          dateEl.textContent = (app && app.allotment_date) ? app.allotment_date : 'Post Bidding Closure';
+        }
+
+        // Status banner inside modal
+        const stIcon = document.getElementById('allotStatusIcon');
+        const stHeading = document.getElementById('allotStatusHeading');
+        const stDesc = document.getElementById('allotStatusDesc');
+        const gainEst = document.getElementById('allotGainEstimate');
+        const untrackBtn = document.getElementById('untrackAppBtn');
+
+        if (untrackBtn) {
+          untrackBtn.style.display = app ? 'inline-block' : 'none';
+        }
+
+        const currentSt = app ? app.status : 'NOT_APPLIED';
+        if (currentSt === 'ALLOTTED') {
+          if (stIcon) stIcon.textContent = '🎉';
+          if (stHeading) stHeading.textContent = 'Allotment Confirmed!';
+          if (stDesc) stDesc.textContent = `Congratulations! You received shares for ${ipoName}. Check Demat account for credit.`;
+          if (gainEst) {
+            gainEst.style.display = 'block';
+            const lotN = parseInt(lotSize) || 1;
+            const profit = gmp > 0 ? `Estimated Listing Gain: +₹${(gmp * lotN).toLocaleString('en-IN')}` : 'Listing soon on NSE / BSE';
+            gainEst.textContent = `🟢 ${profit}`;
+          }
+        } else if (currentSt === 'NOT_ALLOTTED') {
+          if (stIcon) stIcon.textContent = '❌';
+          if (stHeading) stHeading.textContent = 'Not Allotted';
+          if (stDesc) stDesc.textContent = 'Your application was not selected in the allotment lottery. UPI funds unblocked.';
+          if (gainEst) gainEst.style.display = 'none';
+        } else if (currentSt === 'APPLIED') {
+          if (stIcon) stIcon.textContent = '⏳';
+          if (stHeading) stHeading.textContent = 'Application Tracked • Awaiting Allotment';
+          if (stDesc) stDesc.textContent = 'Click below to verify status on the registrar portal using your linked PAN.';
+          if (gainEst) gainEst.style.display = 'none';
+        } else {
+          if (stIcon) stIcon.textContent = '📋';
+          if (stHeading) stHeading.textContent = 'Application Not Yet Tracked';
+          if (stDesc) stDesc.textContent = 'Mark as applied to track status or click below to check registrar allotment directly.';
+          if (gainEst) gainEst.style.display = 'none';
+        }
+
+        updatePanDisplay();
+        modal.style.display = 'flex';
+      };
+
+      window.closeAllotmentModal = function () {
+        const modal = document.getElementById('ipoAllotmentModalOverlay');
+        if (modal) modal.style.display = 'none';
+        _currentAllotModalData = null;
+      };
+
+      window.copyPanToClipboard = function () {
+        if (!_userPan) {
+          toast('No PAN linked yet! Please link your PAN first.');
+          openPanModal();
+          return;
+        }
+        navigator.clipboard.writeText(_userPan).then(() => {
+          toast('📋 PAN copied to clipboard! Ready to paste.');
+        }).catch(() => {
+          toast('PAN: ' + _userPan);
+        });
+      };
+
+      window.launchRegistrarCheck = function () {
+        if (!_currentAllotModalData) return;
+        if (_userPan) {
+          try {
+            navigator.clipboard.writeText(_userPan);
+            toast('📋 PAN automatically copied to clipboard!');
+          } catch (e) {}
+        }
+        const url = _currentAllotModalData.allotmentUrl || 'https://linkintime.co.in/initial_offer/public-issues.html';
+        window.open(url, '_blank', 'noopener,noreferrer');
+      };
+
+      window.setApplicationOutcome = async function (status) {
+        if (!_currentAllotModalData) return;
+        const ipoName = _currentAllotModalData.ipoName;
+        const ipoSymbol = _currentAllotModalData.ipoSymbol;
+
+        if (!_userPan && status === 'APPLIED') {
+          toast('Please link your PAN first to track applications 🔒');
+          openPanModal();
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/ipo/allotment-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ipo_name: ipoName,
+              ipo_symbol: ipoSymbol,
+              status: status,
+              allotment_url: _currentAllotModalData.allotmentUrl
+            })
+          });
+          const json = await res.json();
+          if (!res.ok || !json.success) {
+            throw new Error(json.error || 'Failed to update status');
+          }
+
+          toast(`Updated ${ipoName} status: ${status === 'ALLOTTED' ? 'Allotted 🎉' : (status === 'NOT_ALLOTTED' ? 'Not Allotted' : 'Applied 📋')}`);
+          closeAllotmentModal();
+          await fetchIpoApplications();
+        } catch (err) {
+          toast('Error updating status: ' + err.message);
+        }
+      };
+
+      window.quickMarkApplied = async function (ipoNameEsc, ipoSymbol, lotSize, priceBand, allotmentUrl) {
+        const ipoName = decodeURIComponent(ipoNameEsc);
+        if (!_userPan) {
+          toast('Please link your PAN card first to track IPO applications! 🔒');
+          openPanModal();
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/ipo/apply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ipo_name: ipoName,
+              ipo_symbol: ipoSymbol,
+              lots: 1,
+              bid_price: priceBand || '-',
+              allotment_url: allotmentUrl || ''
+            })
+          });
+          const json = await res.json();
+          if (!res.ok || !json.success) {
+            throw new Error(json.error || 'Failed to track IPO');
+          }
+
+          toast(`Tracking ${ipoName} application! 📋`);
+          await fetchIpoApplications();
+        } catch (err) {
+          toast('Error tracking IPO: ' + err.message);
+        }
+      };
+
+      window.handleDeleteApplication = async function (appId) {
+        const idToDelete = appId || (_currentAllotModalData && _currentAllotModalData.appId);
+        if (!idToDelete) return;
+
+        if (!confirm('Are you sure you want to stop tracking this IPO application?')) return;
+
+        try {
+          const res = await fetch(`/api/ipo/applications/${idToDelete}`, { method: 'DELETE' });
+          const json = await res.json();
+          if (!res.ok || !json.success) {
+            throw new Error(json.error || 'Failed to delete');
+          }
+          toast('Application removed from tracker.');
+          closeAllotmentModal();
+          await fetchIpoApplications();
+        } catch (err) {
+          toast('Error: ' + err.message);
+        }
+      };
+
+      // Close modal on backdrop click
+      window.addEventListener('click', function (e) {
+        const panModal = document.getElementById('panModalOverlay');
+        const allotModal = document.getElementById('ipoAllotmentModalOverlay');
+        if (e.target === panModal) closePanModal();
+        if (e.target === allotModal) closeAllotmentModal();
+      });
+
       window.loadIpoData = async function (force = false) {
         const loading = document.getElementById('ipoLoading');
         const errBox  = document.getElementById('ipoError');
         const lastUpd = document.getElementById('ipoLastUpdated');
 
-        // If already loaded and not forcing refresh, just ensure UI is clean
         if (_ipoLoaded && !force) {
           if (loading) loading.style.display = 'none';
           if (errBox)  errBox.style.display  = 'none';
           return;
         }
 
-        // Show spinner
         if (loading) loading.style.display = 'flex';
         if (errBox)  errBox.style.display  = 'none';
         if (lastUpd) lastUpd.style.display  = 'none';
 
         try {
+          // Fetch user's linked PAN and tracked applications in parallel with live IPOs
+          fetchUserPan();
+          fetchIpoApplications();
+
           const url = '/api/ipos' + (force ? '?refresh=1' : '');
           const res  = await fetch(url);
 
-          // Handle 401 - session not ready yet, retry after 2 seconds
           if (res.status === 401) {
             console.warn('IPO: session not ready, retrying in 2s...');
             if (loading) loading.style.display = 'none';
@@ -5440,6 +6077,7 @@
           if (json.error) throw new Error(json.error);
 
           const data = json.data || { open: [], upcoming: [], listed: [] };
+          window._cachedIpoData = data;
           const openList     = data.open     || [];
           const upcomingList = data.upcoming || [];
           const listedList   = data.listed   || [];
@@ -5505,6 +6143,20 @@
           const isSme = (ipo.type || ipo.exchange || '').toUpperCase().includes('SME');
           const typeText = isSme ? 'SME' : 'Mainboard';
 
+          // Check if user has an application record for this IPO
+          const app = _ipoApplications.find(a => 
+            (ipo.symbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipo.symbol.toUpperCase()) ||
+            (ipo.name && a.ipo_name && (a.ipo_name.toLowerCase().includes(ipo.name.toLowerCase()) || ipo.name.toLowerCase().includes(a.ipo_name.toLowerCase())))
+          );
+
+          let statusChip = '';
+          const nameEsc = encodeURIComponent(ipo.name || '');
+          const ipoSymbol = ipo.symbol || '';
+          const allotUrl = ipo.allotment_url || '';
+          const lotSize = parseInt(ipo.lot_size) || 1;
+          const priceBand = ipo.price_band || (ipo.issue_price ? '₹' + ipo.issue_price : '-');
+          const gmpVal = ipo.gmp || 0;
+
           // GMP representation
           let gmpHtml = '';
           if (ipo.gmp != null && ipo.gmp > 0) {
@@ -5545,25 +6197,30 @@
 
           // Context-Aware Action Badge / Button
           let actionElement = '';
-          if (isListed) {
-            // Closed / Finalized IPOs -> Check Allotment is active on registrar
-            actionElement = `<a href="${ipo.allotment_url}" target="_blank" rel="noopener" class="ipo-clean-btn">
-              Check Allotment &rarr;
-            </a>`;
+          if (app) {
+            if (app.status === 'ALLOTTED') {
+              const shs = app.shares_allotted ? `${app.shares_allotted} shs` : 'Allotted';
+              statusChip = `<span class="ipo-allot-chip allotted">🟢 ${shs} Allotted</span>`;
+              actionElement = `<button class="ipo-clean-btn allotted-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Allotment Details ✨</button>`;
+            } else if (app.status === 'NOT_ALLOTTED') {
+              statusChip = `<span class="ipo-allot-chip not-allotted">🔴 Not Allotted</span>`;
+              actionElement = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Again 🔄</button>`;
+            } else {
+              statusChip = `<span class="ipo-allot-chip applied">🟡 Applied</span>`;
+              actionElement = `<button class="ipo-clean-btn primary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Allotment ⚡</button>`;
+            }
+          } else if (isListed) {
+            actionElement = `<button class="ipo-clean-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Allotment ⚡</button>`;
           } else if (isOpen) {
-            // Live Open IPO -> Bidding is currently open; allotment happens post-closing
-            actionElement = `<span class="ipo-bidding-chip">
-              <span class="bidding-dot"></span> Bidding Open
-            </span>`;
+            actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
           } else {
-            // Upcoming IPO -> Link to SEBI DRHP document or Upcoming badge
             actionElement = ipo.document_url
               ? `<a href="${ipo.document_url}" target="_blank" rel="noopener" class="ipo-clean-btn secondary">View DRHP 📄</a>`
               : `<span class="ipo-status-pill-sub">Opening Soon</span>`;
           }
 
           return `
-            <div class="ipo-row-card" data-search-id="${ipo.search_id || ipo.searchId || ''}" data-symbol="${ipo.symbol || ''}" data-name="${encodeURIComponent(ipo.name || '')}">
+            <div class="ipo-row-card" data-search-id="${ipo.search_id || ipo.searchId || ''}" data-symbol="${ipo.symbol || ''}" data-name="${nameEsc}">
               <!-- Col 1: Logo & Company -->
               <div class="ipo-col-company">
                 ${logo}
@@ -5572,11 +6229,11 @@
                   <div class="ipo-company-sub">
                     <span class="ipo-type-pill">${typeText}</span>
                     <span>${dateRange}</span>
+                    ${statusChip}
                   </div>
                 </div>
               </div>
 
-              <!-- Mobile Stats Group (Wraps into clean 2-col box on phones) -->
               <!-- Col 2: Price Band / Issue Price -->
               <div class="ipo-col-stat">
                 <span class="ipo-stat-label">Price Band</span>
@@ -5613,13 +6270,11 @@
           const capSec = section.charAt(0).toUpperCase() + section.slice(1);
           const targetId = 'ipoSection' + capSec;
 
-          // Update tab button active states
           document.querySelectorAll('.ipo-seg-btn').forEach(function(btn) {
             const fn = btn.getAttribute('onclick') || '';
             btn.classList.toggle('active', fn.indexOf("'" + section + "'") !== -1);
           });
 
-          // Show/hide content sections
           document.querySelectorAll('.ipo-section').forEach(function(s) {
             if (s.id === targetId) {
               s.classList.add('active');
@@ -5627,6 +6282,10 @@
               s.classList.remove('active');
             }
           });
+
+          if (section === 'myApps') {
+            renderMyIpoApplications();
+          }
         } catch (err) {
           console.error('switchIpoSection error:', err);
         }

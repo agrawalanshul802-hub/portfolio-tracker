@@ -3040,6 +3040,169 @@ def get_ipo_detail():
 
     return jsonify({'error': 'Detailed info not available for this IPO'}), 404
 
+# -------------------------------------------------------------
+# USER PAN & IPO APPLICATION ALLOTMENT TRACKER APIS (SUPABASE)
+# -------------------------------------------------------------
+
+PAN_REGEX = re.compile(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$')
+
+@app.route('/api/user/pan', methods=['GET', 'POST'])
+def handle_user_pan():
+    load_env_file()
+    email = session.get('email')
+    if not email:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    clean_email = email.strip().lower()
+    
+    if request.method == 'GET':
+        pan = None
+        if supabase:
+            try:
+                res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
+                if res.data and len(res.data) > 0:
+                    pan = res.data[0].get('pan_card')
+            except Exception as e:
+                print(f"[Supabase PAN Error] {e}")
+        return jsonify({'success': True, 'pan': pan or ''})
+    
+    # POST: Save / Update PAN
+    data = request.get_json(silent=True) or {}
+    raw_pan = (data.get('pan') or '').strip().upper()
+    
+    if raw_pan and not PAN_REGEX.match(raw_pan):
+        return jsonify({'error': 'Invalid PAN format. Must be 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F)'}), 400
+    
+    if supabase:
+        try:
+            supabase.table('users').update({'pan_card': raw_pan or None}).eq('email', clean_email).execute()
+        except Exception as e:
+            print(f"[Supabase PAN Save Error] {e}")
+            return jsonify({'error': f'Failed to update PAN in database: {str(e)}'}), 500
+            
+    return jsonify({'success': True, 'pan': raw_pan})
+
+@app.route('/api/ipo/applications', methods=['GET'])
+def get_ipo_applications():
+    load_env_file()
+    email = session.get('email')
+    if not email:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    clean_email = email.strip().lower()
+    applications = []
+    if supabase:
+        try:
+            res = supabase.table('ipo_applications').select('*').eq('user_email', clean_email).order('created_at', desc=True).execute()
+            applications = res.data or []
+        except Exception as e:
+            print(f"[Supabase IPO Apps Error] {e}")
+    return jsonify({'success': True, 'applications': applications})
+
+@app.route('/api/ipo/apply', methods=['POST'])
+def save_ipo_application():
+    load_env_file()
+    email = session.get('email')
+    if not email:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    clean_email = email.strip().lower()
+    data = request.get_json(silent=True) or {}
+    ipo_name = (data.get('ipo_name') or '').strip()
+    if not ipo_name:
+        return jsonify({'error': 'IPO name is required'}), 400
+        
+    pan = (data.get('pan_card') or '').strip().upper()
+    lots = int(data.get('lots') or 1)
+    bid_price = float(data.get('bid_price') or 0.0)
+    status = (data.get('status') or 'APPLIED').strip().upper() # APPLIED, ALLOTTED, NOT_ALLOTTED
+    allotment_date = data.get('allotment_date') or ''
+    allotment_url = data.get('allotment_url') or 'https://linkintime.co.in/MIPO/Ipoallotment.html'
+    ipo_symbol = data.get('ipo_symbol') or ''
+    shares_allotted = int(data.get('shares_allotted') or 0)
+    
+    row = {
+        'user_email': clean_email,
+        'ipo_name': ipo_name,
+        'ipo_symbol': ipo_symbol,
+        'pan_card': pan,
+        'lots': lots,
+        'bid_price': bid_price,
+        'status': status,
+        'allotment_date': allotment_date,
+        'allotment_url': allotment_url,
+        'shares_allotted': shares_allotted
+    }
+    
+    if supabase:
+        try:
+            # Check if user already tracked this IPO; if yes, update it
+            existing = supabase.table('ipo_applications').select('id').eq('user_email', clean_email).eq('ipo_name', ipo_name).execute()
+            if existing.data and len(existing.data) > 0:
+                app_id = existing.data[0]['id']
+                res = supabase.table('ipo_applications').update(row).eq('id', app_id).execute()
+                saved_row = res.data[0] if res.data else row
+            else:
+                res = supabase.table('ipo_applications').insert(row).execute()
+                saved_row = res.data[0] if res.data else row
+            return jsonify({'success': True, 'application': saved_row})
+        except Exception as e:
+            print(f"[Supabase IPO Apply Error] {e}")
+            return jsonify({'error': f'Failed to save application: {str(e)}'}), 500
+
+    return jsonify({'success': True, 'application': row})
+
+@app.route('/api/ipo/allotment-status', methods=['POST'])
+def update_allotment_status():
+    load_env_file()
+    email = session.get('email')
+    if not email:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    clean_email = email.strip().lower()
+    data = request.get_json(silent=True) or {}
+    app_id = data.get('id')
+    ipo_name = data.get('ipo_name')
+    status = (data.get('status') or 'APPLIED').strip().upper()
+    shares_allotted = int(data.get('shares_allotted') or 0)
+    
+    if not app_id and not ipo_name:
+        return jsonify({'error': 'Application ID or IPO name required'}), 400
+        
+    if supabase:
+        try:
+            query = supabase.table('ipo_applications').update({
+                'status': status,
+                'shares_allotted': shares_allotted
+            }).eq('user_email', clean_email)
+            
+            if app_id:
+                query = query.eq('id', app_id)
+            else:
+                query = query.eq('ipo_name', ipo_name)
+                
+            res = query.execute()
+            return jsonify({'success': True, 'data': res.data})
+        except Exception as e:
+            return jsonify({'error': f'Failed to update allotment status: {str(e)}'}), 500
+            
+    return jsonify({'success': True})
+
+@app.route('/api/ipo/applications/<int:app_id>', methods=['DELETE'])
+def delete_ipo_application(app_id):
+    load_env_file()
+    email = session.get('email')
+    if not email:
+        return jsonify({'error': 'Unauthorized'}), 401
+    clean_email = email.strip().lower()
+    if supabase:
+        try:
+            supabase.table('ipo_applications').delete().eq('id', app_id).eq('user_email', clean_email).execute()
+            return jsonify({'success': True})
+        except Exception as e:
+            return jsonify({'error': f'Failed to delete: {str(e)}'}), 500
+    return jsonify({'success': True})
+
 # Support serving static files (images, CSS, JS, etc.) as catch-all
 
 @app.route('/favicon.ico')
