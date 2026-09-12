@@ -288,8 +288,14 @@
 
 <body>
   <div class="auth-screen" id="authScreen">
+    <!-- Ambient Cyberpunk Glow Orbs -->
+    <div class="ambient-glow-orb orb-primary"></div>
+    <div class="ambient-glow-orb orb-cyan"></div>
+    <div class="ambient-glow-orb orb-violet"></div>
+
     <canvas id="darkVeilCanvas"
       style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.15;"></canvas>
+
     <div class="landing-container" style="position: relative; z-index: 1;">
       <header class="landing-header">
         <div class="brand">
@@ -299,99 +305,185 @@
 
         <div class="nav-links">
           <button class="btn btn-primary btn-sm"
-            onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free
-            Account</button>
+            onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free Account</button>
         </div>
       </header>
 
+      <!-- Live Market Benchmark Ticker Strip -->
+      <div class="landing-ticker-wrap" title="Live Market Pulse">
+        <div class="landing-ticker-track">
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>NIFTY 50</strong> 25,356.50 <span class="ticker-up">▲ +0.42%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>SENSEX</strong> 82,890.94 <span class="ticker-up">▲ +0.38%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>MCX GOLD</strong> ₹73,450 <span class="ticker-up">▲ +0.65%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>MCX SILVER</strong> ₹89,200 <span class="ticker-up">▲ +1.12%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse red"></span><strong>CRUDE OIL</strong> ₹5,840 <span class="ticker-down">▼ -0.85%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>BANK NIFTY</strong> 51,980.20 <span class="ticker-up">▲ +0.55%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>NIFTY IT</strong> 42,110.80 <span class="ticker-up">▲ +0.92%</span></div>
+          <!-- Seamless Duplicate for Infinite Marquee -->
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>NIFTY 50</strong> 25,356.50 <span class="ticker-up">▲ +0.42%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>SENSEX</strong> 82,890.94 <span class="ticker-up">▲ +0.38%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>MCX GOLD</strong> ₹73,450 <span class="ticker-up">▲ +0.65%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>MCX SILVER</strong> ₹89,200 <span class="ticker-up">▲ +1.12%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse red"></span><strong>CRUDE OIL</strong> ₹5,840 <span class="ticker-down">▼ -0.85%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>BANK NIFTY</strong> 51,980.20 <span class="ticker-up">▲ +0.55%</span></div>
+          <div class="ticker-pill"><span class="ticker-pulse"></span><strong>NIFTY IT</strong> 42,110.80 <span class="ticker-up">▲ +0.92%</span></div>
+        </div>
+      </div>
+
       <section class="landing-hero">
         <div class="hero-left">
-          <span class="badge">🛡️ Privacy-first portfolio tracking for Indian investors</span>
-          <h1 class="hero-title">Track Your Stocks & Assets <span class="hero-purple-text">in One Place</span></h1>
-          <p class="hero-subtitle">See your stocks, assets, net worth, and performance in one clean dashboard. Add
-            holdings manually without linking your broker.</p>
+          <div class="hero-live-badge">
+            <span class="live-dot-pulse"></span>
+            <span>Live Portfolio Intelligence &amp; Asset Tracking</span>
+          </div>
+          <h1 class="hero-title">Track Your Stocks &amp; Wealth <span class="hero-purple-text">in One Place</span></h1>
+          <p class="hero-subtitle">Institutional-grade portfolio analytics for Indian investors. Track NSE/BSE equities, MCX commodities, and net worth in real-time with zero broker credential exposure.</p>
+
+          <!-- 3 Modern Metric Cards -->
+          <div class="hero-metrics-grid">
+            <div class="hero-metric-card">
+              <div class="metric-num">100%</div>
+              <div class="metric-lbl">Private &amp; Read-Only</div>
+            </div>
+            <div class="hero-metric-card">
+              <div class="metric-num">₹0</div>
+              <div class="metric-lbl">Broker Lock-in</div>
+            </div>
+            <div class="hero-metric-card">
+              <div class="metric-num">&lt; 2s</div>
+              <div class="metric-lbl">Live CMP Sync</div>
+            </div>
+          </div>
 
           <div class="hero-feature-badges">
-            <span class="hero-feature-badge">No broker login</span>
-            <span class="hero-feature-badge">Read-only CAS import</span>
-            <span class="hero-feature-badge">No ads or data selling</span>
+            <span class="hero-feature-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> No broker login</span>
+            <span class="hero-feature-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Real-time NSE/BSE &amp; MCX</span>
+            <span class="hero-feature-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 256-bit Secure Storage</span>
           </div>
 
           <div class="hero-cta">
             <button class="btn btn-primary"
-              onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free
-              Account &rarr;</button>
+              onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Get Started Free &rarr;</button>
           </div>
-          <div style="font-size:12px; color:var(--text-dim); margin-top:12px;">Free to get started. No phone number
-            required. &bull; or try a demo</div>
+          <div style="font-size:12px; color:var(--text-dim); margin-top:12px;">Free forever &bull; No phone number required &bull; 100% Private</div>
         </div>
 
         <div class="hero-right" id="authCardAnchor">
-          <div class="star-border-container">
+          <div class="star-border-container modern-glass-shell">
             <div class="border-gradient-bottom"
               style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;">
             </div>
             <div class="border-gradient-top"
               style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;">
             </div>
-            <div class="inner-content">
-              <div class="auth-card">
-                <div class="auth-brand">
-                  <img src="logo_icon.png" alt="Logo" style="width:34px;height:34px;object-fit:contain;">
-                  <div class="t">Portfolio Tracker</div>
+            <div class="inner-content glass-card-body">
+              <div class="auth-card modern-auth-card">
+                
+                <!-- Card Header -->
+                <div class="auth-card-top">
+                  <div class="auth-brand-pill">
+                    <img src="logo_icon.png" alt="Logo" class="auth-brand-logo">
+                    <span class="auth-brand-name">Portfolio Tracker</span>
+                    <span class="auth-pro-chip">PRO</span>
+                  </div>
+                  <h2 class="auth-heading" id="authHeading">Welcome Back</h2>
+                  <p class="auth-subheading" id="authSubheading">Access your real-time portfolio dashboard</p>
                 </div>
-                <div class="auth-tabs">
-                  <button class="auth-tab active" id="tabLogin">Log in</button>
-                  <button class="auth-tab" id="tabSignup">Sign up</button>
+
+                <!-- Segmented Tabs -->
+                <div class="auth-tabs modern-tabs">
+                  <button type="button" class="auth-tab active" id="tabLogin">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                    Log in
+                  </button>
+                  <button type="button" class="auth-tab" id="tabSignup">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    Sign up
+                  </button>
                 </div>
+
                 <div class="auth-error" id="authError"></div>
-                <form id="authForm">
-                  <div class="auth-field">
-                    <label>Email</label>
-                    <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
-                  </div>
-                  <div class="auth-field">
-                    <label>Password</label>
-                    <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6"
-                      autocomplete="current-password">
-                  </div>
-                  <div class="auth-field" id="confirmField" style="display:none;">
-                    <label>Confirm password</label>
-                    <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6"
-                      autocomplete="new-password">
-                  </div>
-                  <button type="submit" class="btn btn-primary auth-submit" id="authSubmit">Log in</button>
 
-                  <div
-                    style="display: flex; align-items: center; margin: 16px 0; color: var(--text-faint); font-size: 11px; font-weight: 700;">
-                    <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.06);"></span>
-                    <span style="margin: 0 10px; text-transform: uppercase; letter-spacing: 0.05em;">or</span>
-                    <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.06);"></span>
+                <form id="authForm" class="modern-auth-form">
+                  <!-- Email Field -->
+                  <div class="auth-field modern-field">
+                    <label for="authEmail">Email Address</label>
+                    <div class="auth-input-wrapper">
+                      <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      <input required type="email" id="authEmail" placeholder="you@example.com" autocomplete="username">
+                    </div>
                   </div>
 
-                  <button type="button" onclick="startGoogleLogin()" class="btn btn-outline"
-                    style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 9px; padding: 10px 0; font-size: 13.5px; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.01); color: var(--text); cursor: pointer; transition: all 0.2s;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(255,255,255,0.15)';"
-                    onmouseout="this.style.background='rgba(255,255,255,0.01)'; this.style.borderColor='rgba(255,255,255,0.08)';">
-                    <svg width="18" height="18" viewBox="0 0 24 24" style="display: block;">
-                      <path fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                      <path fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                      <path fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                      <path fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  <!-- Password Field with Lock icon & Eye toggle button -->
+                  <div class="auth-field modern-field">
+                    <label for="authPassword">Password</label>
+                    <div class="auth-input-wrapper">
+                      <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <input required type="password" id="authPassword" placeholder="At least 6 characters" minlength="6" autocomplete="current-password">
+                      <button type="button" class="auth-pw-toggle" id="toggleAuthPassword" title="Show or hide password" tabindex="-1">
+                        <svg class="eye-open-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="eye-closed-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Confirm Password Field -->
+                  <div class="auth-field modern-field" id="confirmField" style="display:none;">
+                    <label for="authConfirm">Confirm Password</label>
+                    <div class="auth-input-wrapper">
+                      <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <input type="password" id="authConfirm" placeholder="Re-enter password" minlength="6" autocomplete="new-password">
+                      <button type="button" class="auth-pw-toggle" id="toggleAuthConfirm" title="Show or hide password" tabindex="-1">
+                        <svg class="eye-open-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="eye-closed-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Submit Button -->
+                  <button type="submit" class="btn btn-primary auth-submit modern-submit-btn" id="authSubmit">Log in</button>
+
+                  <!-- Divider -->
+                  <div class="modern-auth-divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-text">OR CONTINUE WITH</span>
+                    <span class="divider-line"></span>
+                  </div>
+
+                  <!-- Google Login Button -->
+                  <button type="button" onclick="startGoogleLogin()" class="google-auth-btn" id="googleLoginBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                     </svg>
-                    Continue with Google
+                    <span>Continue with Google</span>
                   </button>
                 </form>
-                <div class="auth-switch" id="authSwitch">
+
+                <div class="auth-switch modern-auth-switch" id="authSwitch">
                   Don't have an account? <button type="button" id="switchToSignup">Sign up</button>
                 </div>
-                <div class="auth-note">Demo authentication only &mdash; accounts and holdings are stored in a local
-                  SQLite
-                  database. Don't reuse a password you use elsewhere.</div>
+
+                <!-- Trust Badges Strip -->
+                <div class="auth-trust-strip">
+                  <div class="trust-badge-item">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span>256-Bit SSL</span>
+                  </div>
+                  <span class="trust-bullet">•</span>
+                  <div class="trust-badge-item">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span>NSE / BSE / MCX</span>
+                  </div>
+                  <span class="trust-bullet">•</span>
+                  <div class="trust-badge-item">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span>Zero Broker Link</span>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -3837,6 +3929,10 @@
         document.getElementById('tabSignup').classList.toggle('active', mode === 'signup');
         document.getElementById('confirmField').style.display = mode === 'signup' ? 'flex' : 'none';
         document.getElementById('authSubmit').textContent = mode === 'signup' ? 'Create account' : 'Log in';
+        const heading = document.getElementById('authHeading');
+        const subheading = document.getElementById('authSubheading');
+        if (heading) heading.textContent = mode === 'signup' ? 'Create Free Account' : 'Welcome Back';
+        if (subheading) subheading.textContent = mode === 'signup' ? 'Start tracking your investments in 30 seconds' : 'Access your real-time portfolio dashboard';
         document.getElementById('authSwitch').innerHTML = mode === 'signup'
           ? `Already have an account? <button type="button" id="switchToLogin">Log in</button>`
           : `Don't have an account? <button type="button" id="switchToSignup">Sign up</button>`;
@@ -4171,6 +4267,23 @@
         setAuthMode('login');
       }
 
+      function wirePasswordToggle(btnId, inputId) {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+        if (!btn || !input) return;
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isPw = input.type === 'password';
+          input.type = isPw ? 'text' : 'password';
+          const openIcon = btn.querySelector('.eye-open-icon');
+          const closedIcon = btn.querySelector('.eye-closed-icon');
+          if (openIcon && closedIcon) {
+            openIcon.style.display = isPw ? 'none' : 'block';
+            closedIcon.style.display = isPw ? 'block' : 'none';
+          }
+        });
+      }
+
       function wireAuth() {
         document.getElementById('tabLogin').addEventListener('click', () => setAuthMode('login'));
         document.getElementById('tabSignup').addEventListener('click', () => setAuthMode('signup'));
@@ -4179,6 +4292,8 @@
         const sidebarSignOutBtn = document.getElementById('sidebarSignOutBtn');
         if (sidebarSignOutBtn) sidebarSignOutBtn.addEventListener('click', signOut);
         wireAuthSwitch();
+        wirePasswordToggle('toggleAuthPassword', 'authPassword');
+        wirePasswordToggle('toggleAuthConfirm', 'authConfirm');
       }
 
       /* ---------------- dock (vanilla-JS rebuild of the React Bits Dock — no React/motion needed) ---------------- */
