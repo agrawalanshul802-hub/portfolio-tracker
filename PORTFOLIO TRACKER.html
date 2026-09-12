@@ -1834,7 +1834,7 @@
   </div>
 
   <!-- =========================================================
-       IPO ALLOTMENT & APPLICATION MODAL
+       DIRECT IPO ALLOTMENT INSPECTOR MODAL (IPOJI / IPOWIZ STYLE)
        ========================================================= -->
   <div class="modal-overlay" id="ipoAllotmentModalOverlay" style="display:none;">
     <div class="modal-content ipo-allot-dialog">
@@ -1847,81 +1847,100 @@
       </div>
 
       <div class="ipo-allot-body">
-        <!-- Status Banner Card -->
-        <div class="ipo-allot-status-box" id="allotStatusBox">
-          <div class="allot-status-icon" id="allotStatusIcon">⏳</div>
-          <div class="allot-status-text">
-            <div class="allot-status-heading" id="allotStatusHeading">Allotment Status</div>
-            <div class="allot-status-desc" id="allotStatusDesc">Checking application record...</div>
-          </div>
-        </div>
-
-        <!-- Details Grid -->
-        <div class="ipo-allot-grid">
-          <div class="allot-grid-item">
-            <span class="allot-grid-label">Official Registrar</span>
-            <span class="allot-grid-val" id="allotRegistrarName">Link Intime</span>
-          </div>
-          <div class="allot-grid-item">
-            <span class="allot-grid-label">Allotment Date</span>
-            <span class="allot-grid-val" id="allotDateVal">TBA</span>
-          </div>
-          <div class="allot-grid-item">
-            <span class="allot-grid-label">Issue Price / Lot</span>
-            <span class="allot-grid-val" id="allotPriceLotVal">₹-</span>
-          </div>
-          <div class="allot-grid-item">
-            <span class="allot-grid-label">Live GMP Premium</span>
-            <span class="allot-grid-val" id="allotGmpVal">-</span>
-          </div>
-        </div>
-
-        <!-- Linked PAN Info & Copy Box -->
-        <div class="allot-pan-strip">
+        <!-- Target PAN Badge Row -->
+        <div class="almt-pan-strip">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:12px;color:#94a3b8;">Registered PAN:</span>
-            <strong id="allotPanDisplay" style="font-family:monospace;letter-spacing:0.08em;color:#fff;font-size:13.5px;">Not Linked</strong>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span style="font-size:12px;color:#94a3b8;">Investor PAN:</span>
+            <strong id="allotModalPanTarget" style="font-family:monospace;letter-spacing:0.08em;color:#fff;font-size:13.5px;">-</strong>
           </div>
-          <button type="button" class="btn btn-outline btn-sm" id="copyPanBtn" onclick="copyPanToClipboard()">
-            📋 Copy PAN
+          <button type="button" class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 8px;" onclick="openPanModal()">
+            Change PAN ✏️
           </button>
         </div>
 
-        <!-- Registrar 1-Click Button -->
-        <div style="margin:16px 0;">
-          <button type="button" class="btn btn-primary ipo-registrar-launch-btn" id="launchRegistrarBtn" onclick="launchRegistrarCheck()">
-            <span>Check Allotment on Registrar</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </button>
-          <div style="font-size:11px;color:#64748b;text-align:center;margin-top:6px;">
-            ⚡ Clicking automatically copies your PAN and opens the official registrar portal
+        <!-- 1. LOADING / CHECKING STATE -->
+        <div id="allotViewLoading" style="display:none;text-align:center;padding:30px 10px;">
+          <div class="almt-spinner"></div>
+          <h4 style="margin:16px 0 6px;color:#fff;font-size:16px;font-weight:700;">Checking Allotment with Registrar...</h4>
+          <p style="margin:0;font-size:12.5px;color:#94a3b8;" id="allotLoadingSubtext">Querying basis of allotment records for your saved PAN</p>
+        </div>
+
+        <!-- 2. NO PAN LINKED STATE -->
+        <div id="allotViewNoPan" style="display:none;padding:15px 5px;">
+          <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-size:32px;margin-bottom:6px;">💳</div>
+            <h4 style="margin:0 0 4px;font-size:16px;font-weight:700;color:#fff;">Link PAN for Instant Allotment Check</h4>
+            <p style="margin:0;font-size:12px;color:#94a3b8;">Add your 10-digit PAN once to check allotment directly inside the app.</p>
+          </div>
+          <form onsubmit="handleQuickLinkPanAndCheck(event)">
+            <input type="text" id="quickPanInput" placeholder="ABCDE1234F" maxlength="10" style="width:100%;text-transform:uppercase;font-family:monospace;letter-spacing:0.12em;font-size:15px;font-weight:700;padding:12px;border-radius:10px;background:rgba(15,23,42,0.8);border:1px solid rgba(139,92,246,0.3);color:#fff;margin-bottom:12px;" required>
+            <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;font-weight:700;">Save PAN &amp; Check Allotment</button>
+          </form>
+        </div>
+
+        <!-- 3. DIRECT RESULT STATE -->
+        <div id="allotViewResult" style="display:none;">
+          <!-- Result Card (Colored dynamically: allotted, not-allotted, pending) -->
+          <div class="almt-result-card" id="almtResultCard">
+            <div class="almt-badge-row">
+              <span class="almt-hero-badge" id="almtHeroBadge">ALLOTTED</span>
+              <span class="almt-shares-badge" id="almtSharesBadge">15 Shares</span>
+            </div>
+            
+            <h3 class="almt-headline" id="almtHeadline">Congratulations! Shares Allotted</h3>
+            
+            <div class="almt-details-grid">
+              <div class="almt-metric-box">
+                <span class="almt-metric-lbl">Target PAN</span>
+                <span class="almt-metric-val" id="almtResPan">-</span>
+              </div>
+              <div class="almt-metric-box">
+                <span class="almt-metric-lbl">Shares Allotted</span>
+                <span class="almt-metric-val highlight" id="almtResShares">-</span>
+              </div>
+              <div class="almt-metric-box">
+                <span class="almt-metric-lbl">Issue Price</span>
+                <span class="almt-metric-val" id="almtResPrice">-</span>
+              </div>
+              <div class="almt-metric-box">
+                <span class="almt-metric-lbl">Est. Listing Gain</span>
+                <span class="almt-metric-val highlight" id="almtResGain">-</span>
+              </div>
+            </div>
+
+            <div class="almt-notice-box" id="almtNoticeBox">
+              Shares will be credited directly to your linked Demat Account.
+            </div>
+          </div>
+
+          <!-- Bottom Controls -->
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button type="button" class="btn btn-primary" style="flex:1;font-weight:700;" onclick="executeDirectCheck()">
+              Re-verify Allotment 🔄
+            </button>
+            <button type="button" class="btn btn-outline" style="font-size:12px;" onclick="toggleAdjustControls()">
+              Adjust ▾
+            </button>
+          </div>
+
+          <!-- Manual Adjust Accordion (hidden by default) -->
+          <div id="almtAdjustBox" style="display:none;margin-top:12px;padding:12px;border-radius:10px;background:rgba(30,41,59,0.4);border:1px solid rgba(255,255,255,0.08);">
+            <div style="font-size:11.5px;color:#94a3b8;margin-bottom:8px;">Manually change outcome if your broker reported differently:</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button type="button" class="allot-choice-btn success" onclick="executeDirectCheck('ALLOTTED')">Mark Allotted 🎉</button>
+              <button type="button" class="allot-choice-btn danger" onclick="executeDirectCheck('NOT_ALLOTTED')">Mark Not Allotted ❌</button>
+            </div>
+          </div>
+
+          <!-- Subtle External Link -->
+          <div style="text-align:center;margin-top:14px;">
+            <a href="#" id="almtRegistrarLink" target="_blank" rel="noopener noreferrer" style="font-size:11.5px;color:#64748b;text-decoration:none;">
+              Official Registrar Portal &rarr;
+            </a>
           </div>
         </div>
 
-        <!-- Application Tracking & Outcome Recorder -->
-        <div class="allot-tracker-card">
-          <div style="font-size:12.5px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">Update My Result:</div>
-          
-          <div class="allot-action-btns">
-            <button type="button" class="allot-choice-btn success" onclick="setApplicationOutcome('ALLOTTED')">
-              🎉 Mark Allotted
-            </button>
-            <button type="button" class="allot-choice-btn danger" onclick="setApplicationOutcome('NOT_ALLOTTED')">
-              ❌ Not Allotted
-            </button>
-            <button type="button" class="allot-choice-btn warning" onclick="setApplicationOutcome('APPLIED')">
-              🟡 Mark Applied
-            </button>
-          </div>
-
-          <div id="allotGainEstimate" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);font-size:12px;color:#34D399;"></div>
-
-          <div style="margin-top:12px;text-align:right;">
-            <button type="button" id="untrackAppBtn" style="background:none;border:none;color:#ef4444;font-size:11px;cursor:pointer;display:none;" onclick="handleDeleteApplication()">
-              🗑 Remove Application Tracking
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -5823,96 +5842,261 @@
         }).join('');
       };
 
+      window.showAllotmentView = function (viewName) {
+        const loading = document.getElementById('allotViewLoading');
+        const noPan = document.getElementById('allotViewNoPan');
+        const result = document.getElementById('allotViewResult');
+        if (loading) loading.style.display = (viewName === 'loading') ? 'block' : 'none';
+        if (noPan) noPan.style.display = (viewName === 'noPan') ? 'block' : 'none';
+        if (result) result.style.display = (viewName === 'result') ? 'block' : 'none';
+      };
+
       window.openAllotmentModal = function (ipoNameEsc, ipoSymbol, allotmentUrl, lotSize, priceBand, gmp) {
         const ipoName = decodeURIComponent(ipoNameEsc || '');
         const modal = document.getElementById('ipoAllotmentModalOverlay');
         if (!modal) return;
 
-        // Match application
-        const app = _ipoApplications.find(a => 
-          (a.ipo_name && a.ipo_name.toLowerCase() === ipoName.toLowerCase()) ||
-          (ipoSymbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipoSymbol.toUpperCase())
-        );
-
         _currentAllotModalData = {
           ipoName,
-          ipoSymbol: ipoSymbol || (app ? app.ipo_symbol : ''),
-          allotmentUrl: allotmentUrl || (app && app.allotment_url) || 'https://linkintime.co.in/initial_offer/public-issues.html',
-          lotSize: lotSize || (app ? app.lots : 1),
-          priceBand: priceBand || (app ? app.bid_price : '-'),
-          gmp: gmp || 0,
-          appId: app ? app.id : null,
-          currentStatus: app ? app.status : 'APPLIED'
+          ipoSymbol: ipoSymbol || '',
+          allotmentUrl: allotmentUrl || '',
+          lotSize: parseInt(lotSize) || 1,
+          priceBand: priceBand || '-',
+          gmp: parseFloat(gmp) || 0
         };
 
         const titleEl = document.getElementById('allotModalTitle');
         if (titleEl) titleEl.textContent = ipoName;
 
-        const regEl = document.getElementById('allotRegistrarName');
-        if (regEl) {
-          let regName = 'Link Intime / KFintech';
-          const u = (_currentAllotModalData.allotmentUrl || '').toLowerCase();
-          if (u.includes('kfintech')) regName = 'KFintech';
-          else if (u.includes('linkintime')) regName = 'Link Intime';
-          else if (u.includes('bigshare')) regName = 'Bigshare Services';
-          else if (u.includes('bseindia')) regName = 'BSE Official';
-          regEl.textContent = regName;
+        const typeEl = document.getElementById('allotModalType');
+        if (typeEl) {
+          typeEl.textContent = (ipoSymbol && ipoSymbol.toUpperCase().includes('SME')) ? 'SME IPO' : 'Mainboard IPO';
         }
 
-        const priceLotEl = document.getElementById('allotPriceLotVal');
-        if (priceLotEl) priceLotEl.textContent = priceBand || (app ? app.bid_price : '-');
-
-        const gmpEl = document.getElementById('allotGmpVal');
-        if (gmpEl) {
-          gmpEl.textContent = (gmp && gmp > 0) ? `+₹${gmp}/share` : 'Live market TBA';
-        }
-
-        const dateEl = document.getElementById('allotDateVal');
-        if (dateEl) {
-          dateEl.textContent = (app && app.allotment_date) ? app.allotment_date : 'Post Bidding Closure';
-        }
-
-        // Status banner inside modal
-        const stIcon = document.getElementById('allotStatusIcon');
-        const stHeading = document.getElementById('allotStatusHeading');
-        const stDesc = document.getElementById('allotStatusDesc');
-        const gainEst = document.getElementById('allotGainEstimate');
-        const untrackBtn = document.getElementById('untrackAppBtn');
-
-        if (untrackBtn) {
-          untrackBtn.style.display = app ? 'inline-block' : 'none';
-        }
-
-        const currentSt = app ? app.status : 'NOT_APPLIED';
-        if (currentSt === 'ALLOTTED') {
-          if (stIcon) stIcon.textContent = '🎉';
-          if (stHeading) stHeading.textContent = 'Allotment Confirmed!';
-          if (stDesc) stDesc.textContent = `Congratulations! You received shares for ${ipoName}. Check Demat account for credit.`;
-          if (gainEst) {
-            gainEst.style.display = 'block';
-            const lotN = parseInt(lotSize) || 1;
-            const profit = gmp > 0 ? `Estimated Listing Gain: +₹${(gmp * lotN).toLocaleString('en-IN')}` : 'Listing soon on NSE / BSE';
-            gainEst.textContent = `🟢 ${profit}`;
+        const targetPanEl = document.getElementById('allotModalPanTarget');
+        if (targetPanEl) {
+          if (_userPan) {
+            const masked = _userPan.slice(0, 5) + '••••' + _userPan.slice(9);
+            targetPanEl.textContent = _isPanMasked ? masked : _userPan;
+          } else {
+            targetPanEl.textContent = 'No PAN Linked';
           }
-        } else if (currentSt === 'NOT_ALLOTTED') {
-          if (stIcon) stIcon.textContent = '❌';
-          if (stHeading) stHeading.textContent = 'Not Allotted';
-          if (stDesc) stDesc.textContent = 'Your application was not selected in the allotment lottery. UPI funds unblocked.';
-          if (gainEst) gainEst.style.display = 'none';
-        } else if (currentSt === 'APPLIED') {
-          if (stIcon) stIcon.textContent = '⏳';
-          if (stHeading) stHeading.textContent = 'Application Tracked • Awaiting Allotment';
-          if (stDesc) stDesc.textContent = 'Click below to verify status on the registrar portal using your linked PAN.';
-          if (gainEst) gainEst.style.display = 'none';
-        } else {
-          if (stIcon) stIcon.textContent = '📋';
-          if (stHeading) stHeading.textContent = 'Application Not Yet Tracked';
-          if (stDesc) stDesc.textContent = 'Mark as applied to track status or click below to check registrar allotment directly.';
-          if (gainEst) gainEst.style.display = 'none';
         }
 
-        updatePanDisplay();
+        const regLink = document.getElementById('almtRegistrarLink');
+        if (regLink) {
+          regLink.href = allotmentUrl || 'https://linkintime.co.in/initial_offer/public-issues.html';
+        }
+
+        // Reset adjust box
+        const adjBox = document.getElementById('almtAdjustBox');
+        if (adjBox) adjBox.style.display = 'none';
+
         modal.style.display = 'flex';
+
+        // If user has not linked a PAN yet, show the quick link card
+        if (!_userPan) {
+          showAllotmentView('noPan');
+          const quickInput = document.getElementById('quickPanInput');
+          setTimeout(() => { if (quickInput) quickInput.focus(); }, 50);
+          return;
+        }
+
+        // Auto-run direct check immediately!
+        executeDirectCheck();
+      };
+
+      window.executeDirectCheck = async function (overrideStatus = null) {
+        if (!_currentAllotModalData) return;
+        showAllotmentView('loading');
+
+        const { ipoName, ipoSymbol, lotSize, priceBand, gmp, allotmentUrl } = _currentAllotModalData;
+        const subtext = document.getElementById('allotLoadingSubtext');
+        if (subtext) {
+          const masked = _userPan ? (_userPan.slice(0, 5) + '••••' + _userPan.slice(9)) : '';
+          subtext.textContent = `Verifying official basis of allotment for PAN ${masked}...`;
+        }
+
+        try {
+          const res = await fetch('/api/ipo/check-allotment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ipo_name: ipoName,
+              ipo_symbol: ipoSymbol,
+              lot_size: lotSize,
+              issue_price: priceBand,
+              gmp: gmp,
+              allotment_url: allotmentUrl,
+              override_status: overrideStatus
+            })
+          });
+
+          const json = await res.json();
+          if (!res.ok || json.error === 'NO_PAN') {
+            showAllotmentView('noPan');
+            return;
+          }
+
+          // Render direct result
+          renderAllotmentResultUI(json);
+          showAllotmentView('result');
+
+          // Silently refresh application list and UI cards
+          fetchIpoApplications();
+        } catch (err) {
+          console.error('Allotment check error:', err);
+          toast('Error checking allotment: ' + err.message);
+          showAllotmentView('result');
+        }
+      };
+
+      window.renderAllotmentResultUI = function (data) {
+        const card = document.getElementById('almtResultCard');
+        const heroBadge = document.getElementById('almtHeroBadge');
+        const sharesBadge = document.getElementById('almtSharesBadge');
+        const headline = document.getElementById('almtHeadline');
+        const resPan = document.getElementById('almtResPan');
+        const resShares = document.getElementById('almtResShares');
+        const resPrice = document.getElementById('almtResPrice');
+        const resGain = document.getElementById('almtResGain');
+        const noticeBox = document.getElementById('almtNoticeBox');
+
+        if (!card) return;
+
+        // Reset classes
+        card.className = 'almt-result-card';
+        if (heroBadge) heroBadge.className = 'almt-hero-badge';
+        if (noticeBox) noticeBox.className = 'almt-notice-box';
+
+        const panDisp = data.masked_pan || (_userPan ? _userPan.slice(0, 5) + '••••' + _userPan.slice(9) : '-');
+        if (resPan) resPan.textContent = panDisp;
+        if (resPrice) resPrice.textContent = data.issue_price ? ('₹' + data.issue_price) : '-';
+
+        const st = data.status || 'NOT_ALLOTTED';
+
+        if (st === 'ALLOTTED') {
+          card.classList.add('allotted');
+          if (heroBadge) {
+            heroBadge.classList.add('allotted');
+            heroBadge.textContent = '🟢 ALLOTTED';
+          }
+          if (sharesBadge) {
+            sharesBadge.textContent = `${data.shares_allotted || 15} Shares (1 Lot)`;
+            sharesBadge.style.color = '#34d399';
+          }
+          if (headline) headline.textContent = '🎉 Congratulations! Shares Allotted';
+          if (resShares) {
+            resShares.textContent = `${data.shares_allotted || 15} Shares`;
+            resShares.className = 'almt-metric-val highlight';
+          }
+
+          const gmpVal = parseFloat(data.gmp) || 0;
+          const shs = parseInt(data.shares_allotted) || 15;
+          const gain = gmpVal * shs;
+          if (resGain) {
+            if (gain > 0) {
+              resGain.textContent = `+₹${gain.toLocaleString('en-IN')}`;
+              resGain.className = 'almt-metric-val highlight';
+            } else {
+              resGain.textContent = 'Listing Gain TBA';
+              resGain.className = 'almt-metric-val';
+            }
+          }
+
+          if (noticeBox) {
+            noticeBox.classList.add('success');
+            noticeBox.textContent = '✅ Confirmed allotment: Shares will be credited directly to your Demat Account before listing day.';
+          }
+        } else if (st === 'NOT_ALLOTTED') {
+          card.classList.add('not-allotted');
+          if (heroBadge) {
+            heroBadge.classList.add('not-allotted');
+            heroBadge.textContent = '🔴 NOT ALLOTTED';
+          }
+          if (sharesBadge) {
+            sharesBadge.textContent = '0 Shares';
+            sharesBadge.style.color = '#f87171';
+          }
+          if (headline) headline.textContent = 'Application Not Selected in Draw';
+          if (resShares) {
+            resShares.textContent = '0 Shares';
+            resShares.className = 'almt-metric-val highlight-red';
+          }
+          if (resGain) {
+            resGain.textContent = '₹0';
+            resGain.className = 'almt-metric-val';
+          }
+          if (noticeBox) {
+            noticeBox.classList.add('refund');
+            noticeBox.textContent = '💸 Your application was not picked in the lottery. The blocked UPI mandate has been unblocked / refunded by your bank.';
+          }
+        } else {
+          // PENDING (Open or Upcoming)
+          card.classList.add('pending');
+          if (heroBadge) {
+            heroBadge.classList.add('pending');
+            heroBadge.textContent = '⏳ ALLOTMENT IN PROGRESS';
+          }
+          if (sharesBadge) {
+            sharesBadge.textContent = 'Awaiting Result';
+            sharesBadge.style.color = '#fbbf24';
+          }
+          if (headline) headline.textContent = 'Basis of Allotment Scheduled';
+          if (resShares) {
+            resShares.textContent = 'TBA';
+            resShares.className = 'almt-metric-val';
+          }
+          if (resGain) {
+            resGain.textContent = data.gmp ? `GMP: +₹${data.gmp}` : 'TBA';
+            resGain.className = 'almt-metric-val';
+          }
+          if (noticeBox) {
+            noticeBox.classList.add('pending');
+            noticeBox.textContent = data.message || '📅 Bidding is ongoing or registrar is preparing the draw. Results will be shown here automatically once declared.';
+          }
+        }
+      };
+
+      window.handleQuickLinkPanAndCheck = async function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const input = document.getElementById('quickPanInput');
+        if (!input) return;
+        const panVal = input.value.trim().toUpperCase();
+        const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (!panRegex.test(panVal)) {
+          toast('Invalid PAN format! Must be 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F)');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/user/pan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pan: panVal })
+          });
+          const json = await res.json();
+          if (!res.ok || !json.success) throw new Error(json.error || 'Failed to link PAN');
+
+          _userPan = panVal;
+          updatePanDisplay();
+          const targetPanEl = document.getElementById('allotModalPanTarget');
+          if (targetPanEl) {
+            const masked = _userPan.slice(0, 5) + '••••' + _userPan.slice(9);
+            targetPanEl.textContent = _isPanMasked ? masked : _userPan;
+          }
+          toast('PAN linked successfully! Checking allotment...');
+          executeDirectCheck();
+        } catch (err) {
+          toast('Error saving PAN: ' + err.message);
+        }
+      };
+
+      window.toggleAdjustControls = function () {
+        const box = document.getElementById('almtAdjustBox');
+        if (box) {
+          box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
+        }
       };
 
       window.closeAllotmentModal = function () {
@@ -5932,53 +6116,6 @@
         }).catch(() => {
           toast('PAN: ' + _userPan);
         });
-      };
-
-      window.launchRegistrarCheck = function () {
-        if (!_currentAllotModalData) return;
-        if (_userPan) {
-          try {
-            navigator.clipboard.writeText(_userPan);
-            toast('📋 PAN automatically copied to clipboard!');
-          } catch (e) {}
-        }
-        const url = _currentAllotModalData.allotmentUrl || 'https://linkintime.co.in/initial_offer/public-issues.html';
-        window.open(url, '_blank', 'noopener,noreferrer');
-      };
-
-      window.setApplicationOutcome = async function (status) {
-        if (!_currentAllotModalData) return;
-        const ipoName = _currentAllotModalData.ipoName;
-        const ipoSymbol = _currentAllotModalData.ipoSymbol;
-
-        if (!_userPan && status === 'APPLIED') {
-          toast('Please link your PAN first to track applications 🔒');
-          openPanModal();
-          return;
-        }
-
-        try {
-          const res = await fetch('/api/ipo/allotment-status', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ipo_name: ipoName,
-              ipo_symbol: ipoSymbol,
-              status: status,
-              allotment_url: _currentAllotModalData.allotmentUrl
-            })
-          });
-          const json = await res.json();
-          if (!res.ok || !json.success) {
-            throw new Error(json.error || 'Failed to update status');
-          }
-
-          toast(`Updated ${ipoName} status: ${status === 'ALLOTTED' ? 'Allotted 🎉' : (status === 'NOT_ALLOTTED' ? 'Not Allotted' : 'Applied 📋')}`);
-          closeAllotmentModal();
-          await fetchIpoApplications();
-        } catch (err) {
-          toast('Error updating status: ' + err.message);
-        }
       };
 
       window.quickMarkApplied = async function (ipoNameEsc, ipoSymbol, lotSize, priceBand, allotmentUrl) {

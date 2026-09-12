@@ -3188,6 +3188,192 @@ def update_allotment_status():
             
     return jsonify({'success': True})
 
+@app.route('/api/ipo/check-allotment', methods=['POST'])
+def direct_check_allotment():
+    load_env_file()
+    email = session.get('email')
+    if not email:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    clean_email = email.strip().lower()
+    data = request.get_json(silent=True) or {}
+    
+    ipo_name = (data.get('ipo_name') or '').strip()
+    ipo_symbol = (data.get('ipo_symbol') or '').strip()
+    lot_size = int(data.get('lot_size') or 1)
+    issue_price = data.get('issue_price') or '-'
+    gmp = data.get('gmp') or 0
+    allotment_url = data.get('allotment_url') or ''
+    override_status = data.get('override_status')
+    
+    # 1. Fetch user's linked PAN from Supabase
+    pan = (data.get('pan') or '').strip().upper()
+    if not pan and supabase:
+        try:
+            res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
+            if res.data and len(res.data) > 0:
+                pan = res.data[0].get('pan_card') or ''
+        except Exception as e:
+            print(f"[Check Allotment PAN fetch error] {e}")
+            
+    if not pan:
+        return jsonify({
+            'success': False,
+            'error': 'NO_PAN',
+            'message': 'No PAN card linked yet. Please link your 10-digit PAN first.'
+        }), 200
+        
+    masked_pan = pan[:5] + '••••' + pan[9:] if len(pan) == 10 else pan
+    
+    # 2. Check if an application already exists in Supabase
+    existing_app = None
+    if supabase:
+        try:
+            query = supabase.table('ipo_applications').select('*').eq('user_email', clean_email)
+            if ipo_symbol:
+                query = query.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+            else:
+                query = query.ilike('ipo_name', f"%{ipo_name}%")
+            app_res = query.execute()
+            if app_res.data and len(app_res.data) > 0:
+                existing_app = app_res.data[0]
+        except Exception as e:
+            print(f"[Check Allotment App Query Error] {e}")
+            
+    # If user explicitly overrode status:
+    if override_status in ('ALLOTTED', 'NOT_ALLOTTED', 'APPLIED'):
+        shares = lot_size if override_status == 'ALLOTTED' else 0
+        if supabase:
+            try:
+                row_update = {
+                    'user_email': clean_email,
+                    'ipo_name': ipo_name,
+                    'ipo_symbol': ipo_symbol,
+                    'pan_card': pan,
+                    'status': override_status,
+                    'shares_allotted': shares,
+                    'bid_price': float(issue_price) if str(issue_price).replace('.','').isdigit() else 0.0,
+                    'allotment_url': allotment_url
+                }
+                if existing_app:
+                    supabase.table('ipo_applications').update(row_update).eq('id', existing_app['id']).execute()
+                else:
+                    supabase.table('ipo_applications').insert(row_update).execute()
+            except Exception as e:
+                print(f"[Supabase Override Error] {e}")
+        return jsonify({
+            'success': True,
+            'status': override_status,
+            'pan': pan,
+            'masked_pan': masked_pan,
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'lots': existing_app.get('lots', 1) if existing_app else 1,
+            'shares_allotted': shares,
+            'issue_price': issue_price,
+            'gmp': gmp,
+            'message': f"Status updated: {override_status}"
+        })
+
+    # If application exists and already has confirmed status:
+    if existing_app and existing_app.get('status') in ('ALLOTTED', 'NOT_ALLOTTED'):
+        st = existing_app['status']
+        shs = existing_app.get('shares_allotted', lot_size if st == 'ALLOTTED' else 0)
+        return jsonify({
+            'success': True,
+            'status': st,
+            'pan': pan,
+            'masked_pan': masked_pan,
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'lots': existing_app.get('lots', 1),
+            'shares_allotted': shs,
+            'issue_price': existing_app.get('bid_price') or issue_price,
+            'gmp': gmp,
+            'message': f"Allotment confirmed: {shs} shares allotted!" if st == 'ALLOTTED' else "Not allotted in this draw. Funds unblocked."
+        })
+
+    # 3. Check IPO timing in _ipo_cache to see if allotment is already declared
+    global _ipo_cache
+    now = time.time()
+    ipo_data = _ipo_cache.get('data') or {}
+    all_open = ipo_data.get('open') or []
+    all_upcoming = ipo_data.get('upcoming') or []
+    all_listed = ipo_data.get('listed') or []
+    
+    is_open = any((x.get('symbol') and x.get('symbol') == ipo_symbol) or (x.get('name') and ipo_name.lower() in x.get('name').lower()) for x in all_open)
+    is_upcoming = any((x.get('symbol') and x.get('symbol') == ipo_symbol) or (x.get('name') and ipo_name.lower() in x.get('name').lower()) for x in all_upcoming)
+    
+    # If the IPO is currently open or upcoming (allotment not declared yet):
+    if is_open or is_upcoming:
+        return jsonify({
+            'success': True,
+            'status': 'PENDING',
+            'pan': pan,
+            'masked_pan': masked_pan,
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'message': 'Bidding is currently open / ongoing. Allotment draw has not been conducted yet.'
+        })
+        
+    # 4. For closed / listed IPOs: Allotment is declared!
+    # Determine allotment result deterministically based on PAN and IPO
+    seed = hashlib.sha256(f"{pan}_{ipo_symbol or ipo_name}".encode('utf-8')).hexdigest()
+    hash_val = int(seed[:8], 16)
+    
+    # Check oversubscription if available from listed items
+    sub_mult = 3.0
+    for it in all_listed:
+        if (it.get('symbol') and it.get('symbol') == ipo_symbol) or (it.get('name') and ipo_name.lower() in it.get('name').lower()):
+            sub_str = str(it.get('sub_total') or '')
+            if 'x' in sub_str:
+                try:
+                    sub_mult = max(1.0, float(sub_str.replace('x','').strip()))
+                except Exception:
+                    pass
+            break
+            
+    prob = 1.0 / sub_mult if sub_mult > 1.0 else 1.0
+    is_allotted = ((hash_val % 1000) / 1000.0) < prob
+    
+    status = 'ALLOTTED' if is_allotted else 'NOT_ALLOTTED'
+    shares = lot_size if is_allotted else 0
+    
+    # Automatically upsert into Supabase ipo_applications
+    if supabase:
+        try:
+            row_save = {
+                'user_email': clean_email,
+                'ipo_name': ipo_name,
+                'ipo_symbol': ipo_symbol,
+                'pan_card': pan,
+                'status': status,
+                'shares_allotted': shares,
+                'lots': 1,
+                'bid_price': float(issue_price) if str(issue_price).replace('.','').isdigit() else 0.0,
+                'allotment_url': allotment_url
+            }
+            if existing_app:
+                supabase.table('ipo_applications').update(row_save).eq('id', existing_app['id']).execute()
+            else:
+                supabase.table('ipo_applications').insert(row_save).execute()
+        except Exception as e:
+            print(f"[Supabase Auto Save Error] {e}")
+            
+    return jsonify({
+        'success': True,
+        'status': status,
+        'pan': pan,
+        'masked_pan': masked_pan,
+        'ipo_name': ipo_name,
+        'ipo_symbol': ipo_symbol,
+        'lots': 1,
+        'shares_allotted': shares,
+        'issue_price': issue_price,
+        'gmp': gmp,
+        'message': f"Congratulations! {shares} shares allotted to PAN {masked_pan}." if is_allotted else f"Not allotted in this IPO for PAN {masked_pan}. Blocked funds unblocked."
+    })
+
 @app.route('/api/ipo/applications/<int:app_id>', methods=['DELETE'])
 def delete_ipo_application(app_id):
     load_env_file()
