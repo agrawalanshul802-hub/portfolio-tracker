@@ -3046,7 +3046,7 @@ def get_ipo_detail():
 
 PAN_REGEX = re.compile(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$')
 
-@app.route('/api/user/pan', methods=['GET', 'POST'])
+@app.route('/api/user/pan', methods=['GET', 'POST', 'DELETE'])
 def handle_user_pan():
     load_env_file()
     email = session.get('email')
@@ -3065,6 +3065,15 @@ def handle_user_pan():
             except Exception as e:
                 print(f"[Supabase PAN Error] {e}")
         return jsonify({'success': True, 'pan': pan or ''})
+        
+    if request.method == 'DELETE':
+        if supabase:
+            try:
+                supabase.table('users').update({'pan_card': None}).eq('email', clean_email).execute()
+            except Exception as e:
+                print(f"[Supabase PAN Delete Error] {e}")
+                return jsonify({'error': f'Failed to delete PAN: {str(e)}'}), 500
+        return jsonify({'success': True, 'pan': '', 'message': 'PAN deleted successfully'})
     
     # POST: Save / Update PAN
     data = request.get_json(silent=True) or {}
