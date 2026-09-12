@@ -21,3 +21,11 @@ take_screenshots.js
 *.mp4
 Project Example Format*.pdf
 scratch/
+welcomed_users.json
+*_preview.png
+*_preview.html
+dashboard_verified.png
+mcx_candlestick_preview.png
+klinecharts.min.js
+lightweight-charts.js
+portfolio_infographic*.html

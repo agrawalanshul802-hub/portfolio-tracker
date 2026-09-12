@@ -7918,3 +7918,347 @@ html {
     align-items: center !important;
   }
 }
+
+
+/* =============================================================
+   MOBILE UI OVERHAUL v2 - Complete Redesign
+   ============================================================= */
+
+/* -- Mobile Header: Simplified Actions -- */
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mob-hdr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #c8d0e4;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
+}
+
+.mob-hdr-btn:active {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(0.95);
+}
+
+.mob-hdr-add {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%) !important;
+  border-color: #7C3AED !important;
+  color: #fff !important;
+  padding: 7px 12px !important;
+}
+
+.mob-hdr-account {
+  padding: 7px !important;
+  min-width: 34px;
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.mob-hdr-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #EF4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 1.5px solid #0a0e17;
+}
+
+/* -- Mobile Bottom Navigation Bar -- */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(10, 14, 23, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.5);
+  align-items: stretch;
+  justify-content: space-around;
+  min-height: 56px;
+}
+
+.mob-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: rgba(148, 163, 184, 0.65);
+  font-family: inherit;
+  cursor: pointer;
+  padding: 8px 2px;
+  transition: color 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  min-height: 54px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mob-nav-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 22px;
+}
+
+.mob-nav-icon svg {
+  transition: stroke 0.18s ease;
+}
+
+.mob-nav-item.active {
+  color: #8B5CF6;
+}
+
+.mob-nav-item.active .mob-nav-icon svg {
+  stroke: #8B5CF6;
+}
+
+.mob-nav-item.active .mob-nav-label {
+  color: #8B5CF6;
+  font-weight: 700;
+}
+
+.mob-nav-item:active {
+  opacity: 0.7;
+}
+
+.mob-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 2px;
+  border-radius: 0 0 3px 3px;
+  background: #8B5CF6;
+}
+
+.mob-nav-label {
+  font-size: 9.5px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.mob-nav-badge {
+  position: absolute;
+  top: -2px;
+  right: -5px;
+  background: #22C55E;
+  color: #0a1a0f;
+  font-size: 8px;
+  font-weight: 800;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 1.5px solid #0a0e17;
+}
+
+/* Show bottom nav only on mobile (<=900px) */
+@media (max-width: 900px) {
+  .mobile-bottom-nav {
+    display: flex !important;
+  }
+
+  /* Dock is desktop-only; hide on mobile */
+  .dock-outer {
+    display: none !important;
+  }
+
+  /* Dashboard top-bar is redundant on mobile (actions are in mobile header + bottom nav) */
+  .dashboard-top-bar {
+    display: none !important;
+  }
+
+  /* Account for bottom nav height in main content padding */
+  .main-content,
+  #dashboardScreen .main-content,
+  .app-layout .main-content {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 8px)) !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* -- Mobile Card Action Buttons: Full Overhaul -- */
+@media (max-width: 768px) {
+  .m-card-bottom {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 5px !important;
+    padding-top: 10px !important;
+    margin-top: 2px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .m-card-bottom::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .m-action-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    color: #c8d0e4 !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    padding: 5px 9px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    transition: all 0.15s ease !important;
+    font-family: inherit !important;
+    -webkit-tap-highlight-color: transparent !important;
+    min-height: 30px !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  .m-action-btn:active {
+    transform: scale(0.93) !important;
+  }
+
+  .m-chart-btn {
+    color: #A78BFA !important;
+    border-color: rgba(139, 92, 246, 0.22) !important;
+    background: rgba(139, 92, 246, 0.07) !important;
+  }
+
+  .m-alert-btn {
+    color: #34D399 !important;
+    border-color: rgba(52, 211, 153, 0.22) !important;
+    background: rgba(52, 211, 153, 0.05) !important;
+  }
+
+  .m-sell-btn {
+    color: #FBBF24 !important;
+    border-color: rgba(251, 191, 36, 0.22) !important;
+    background: rgba(251, 191, 36, 0.05) !important;
+  }
+
+  .m-edit-btn {
+    color: #60A5FA !important;
+    border-color: rgba(96, 165, 250, 0.22) !important;
+    background: rgba(96, 165, 250, 0.05) !important;
+  }
+
+  .m-del-btn {
+    color: #F87171 !important;
+    border-color: rgba(248, 113, 113, 0.18) !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    padding: 5px 7px !important;
+    min-width: 28px !important;
+  }
+
+  .m-del-btn:active {
+    background: rgba(239, 68, 68, 0.15) !important;
+  }
+
+  /* Section tabs short labels on mobile */
+  #secBtnStocks > span:first-child {
+    font-size: 0 !important;
+    line-height: 0 !important;
+  }
+
+  #secBtnStocks > span:first-child::before {
+    content: '\U0001f4c8 Stocks';
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  #secBtnMcx > span:first-child {
+    font-size: 0 !important;
+    line-height: 0 !important;
+  }
+
+  #secBtnMcx > span:first-child::before {
+    content: '\U0001fa99 MCX';
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  /* Compact panel toolbar: search + sort on same row */
+  .panel-toolbar {
+    padding: 10px 12px 8px !important;
+    gap: 8px !important;
+  }
+
+  .toolbar-left {
+    gap: 8px !important;
+  }
+
+  /* Allow sort-select to sit inline next to search */
+  .sort-select {
+    width: auto !important;
+    max-width: 140px !important;
+    font-size: 14px !important;
+    height: 38px !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Filter pills row */
+  .filter-group {
+    gap: 6px !important;
+    padding-bottom: 2px !important;
+  }
+
+  /* Holdings count below toolbar */
+  .holdings-count {
+    font-size: 11.5px !important;
+    color: var(--text-dim) !important;
+  }
+}

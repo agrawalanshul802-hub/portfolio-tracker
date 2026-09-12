@@ -395,7 +395,7 @@ def auth_sync():
         session.permanent = True
 
         session['email'] = email
-        send_welcome_email_async(email)
+        # Session sync endpoint - NEVER send onboarding welcome emails on sync/refresh
         return jsonify({'success': True, 'email': email})
 
     except Exception as e:
@@ -532,11 +532,78 @@ def generate_welcome_email_html(to_email, user_name=None):
 </body>
 </html>"""
 
-def send_welcome_email_async(to_email, user_name=None):
-    """Dispatches the welcome email in a background daemon thread so HTTP response is instant."""
+WELCOMED_USERS_FILE = os.path.join(DIRECTORY, 'welcomed_users.json')
+_welcomed_users_lock = threading.Lock()
+
+def _load_welcomed_users():
+    """Loads the set of emails that have already received an onboarding welcome message."""
+    try:
+        if os.path.exists(WELCOMED_USERS_FILE):
+            with open(WELCOMED_USERS_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    return set(e.strip().lower() for e in data if e)
+    except Exception as e:
+        print(f"[Welcome Email] Cache load notice: {e}")
+    return set()
+
+def _save_welcomed_user(email):
+    clean_email = email.strip().lower()
+    with _welcomed_users_lock:
+        users = _load_welcomed_users()
+        users.add(clean_email)
+        try:
+            with open(WELCOMED_USERS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(sorted(list(users)), f, indent=2)
+        except Exception as e:
+            print(f"[Welcome Email] Cache save notice: {e}")
+
+def has_user_received_welcome_email(email):
+    if not email:
+        return True
+    clean_email = email.strip().lower()
+    with _welcomed_users_lock:
+        users = _load_welcomed_users()
+        return clean_email in users
+
+def mark_user_welcomed(email):
+    _save_welcomed_user(email)
+
+def _init_welcomed_users():
+    """Initializes the registry and ensures existing users in Supabase are marked so they never get duplicate emails."""
+    try:
+        users = _load_welcomed_users()
+        if 'supabase' in globals() and supabase:
+            try:
+                res = supabase.table('users').select('email').execute()
+                if res.data:
+                    changed = False
+                    for row in res.data:
+                        em = (row.get('email') or '').strip().lower()
+                        if em and em not in users:
+                            users.add(em)
+                            changed = True
+                    if changed:
+                        with open(WELCOMED_USERS_FILE, 'w', encoding='utf-8') as f:
+                            json.dump(sorted(list(users)), f, indent=2)
+                        print(f"[Welcome Email] Registry synchronized: {len(users)} user(s) onboarded.")
+            except Exception as se:
+                print(f"[Welcome Email] Sync notice: {se}")
+    except Exception as e:
+        print(f"[Welcome Email] Init notice: {e}")
+
+def send_welcome_email_async(to_email, user_name=None, force=False):
+    """Dispatches the welcome email in a background daemon thread so HTTP response is instant.
+    Guarantees that each email address receives the onboarding welcome email AT MOST ONCE."""
     if not to_email:
         return
-    threading.Thread(target=_send_welcome_email_worker, args=(to_email, user_name), daemon=True).start()
+    clean_email = to_email.strip().lower()
+    if not force and has_user_received_welcome_email(clean_email):
+        print(f"[Welcome Email] Greeting email already delivered to {clean_email}. Skipping duplicate dispatch.")
+        return
+    # Mark as welcomed immediately so concurrent requests don't duplicate
+    mark_user_welcomed(clean_email)
+    threading.Thread(target=_send_welcome_email_worker, args=(clean_email, user_name), daemon=True).start()
 
 def _send_welcome_email_worker(to_email, user_name=None):
     """Background worker that handles SMTP transmission safely."""
@@ -612,6 +679,7 @@ def register():
         supabase.table('users').insert({'email': email, 'password_hash': pw_hash}).execute()
 
         session['email'] = email
+        # Onboarding registration: send welcome email ONCE for newly created account
         send_welcome_email_async(email)
         return jsonify({'success': True, 'email': email})
 
@@ -646,7 +714,7 @@ def login():
             return jsonify({'error': 'Incorrect email or password'}), 400
 
         session['email'] = email
-        send_welcome_email_async(email)
+        # Routine login - do NOT resend onboarding welcome emails to existing users
         return jsonify({'success': True, 'email': email})
 
     except Exception as e:
@@ -850,7 +918,9 @@ def google_callback():
             supabase.table('users').insert({'email': email, 'password_hash': placeholder_hash}).execute()
 
         user_name = info_body.get('name') or info_body.get('given_name')
-        send_welcome_email_async(email, user_name=user_name)
+        if not res.data:
+            # Send welcome email ONLY to brand new accounts, never on repeat Google logins
+            send_welcome_email_async(email, user_name=user_name)
 
     except Exception as e:
 
@@ -1106,6 +1176,138 @@ def get_live_prices():
         'count': len(results),
         'cached': len(symbols) - len(missing_symbols)
     })
+
+# REST API: Historical Chart Data for Indian Equities (NSE/BSE) & MCX Commodities
+CHART_HISTORY_CACHE = {}
+CHART_CACHE_TTL_SEC = 300  # 5 minutes in-memory cache
+
+@app.route('/api/chart-history', methods=['GET'])
+def get_chart_history():
+    symbol = request.args.get('symbol', '').strip().upper()
+    exchange = request.args.get('exchange', 'NSE').strip().upper()
+    range_val = request.args.get('range', '1mo').strip().lower()
+
+    if not symbol:
+        return jsonify({'error': 'Missing symbol parameter'}), 400
+
+    range_map = {
+        '1w': ('5d', '15m'),
+        '5d': ('5d', '15m'),
+        '1m': ('1mo', '1d'),
+        '1mo': ('1mo', '1d'),
+        '3m': ('3mo', '1d'),
+        '3mo': ('3mo', '1d'),
+        '6m': ('6mo', '1d'),
+        '6mo': ('6mo', '1d'),
+        '1y': ('1y', '1d'),
+        '5y': ('5y', '1wk'),
+        'all': ('max', '1mo')
+    }
+
+    y_range, y_interval = range_map.get(range_val, ('1mo', '1d'))
+    cache_key = f"{symbol}_{exchange}_{y_range}_{y_interval}"
+    now = time.time()
+    cached = CHART_HISTORY_CACHE.get(cache_key)
+    if cached and (now - cached[0] < CHART_CACHE_TTL_SEC):
+        return jsonify(cached[1])
+
+    # Commodity handling (MCX)
+    commodity_configs = {
+        'GOLD': {'yahoo': 'GC=F', 'mult': 16.55},
+        'SILVER': {'yahoo': 'SI=F', 'mult': 1277.0},
+        'CRUDEOIL': {'yahoo': 'CL=F', 'mult': 70.0},
+        'NATURALGAS': {'yahoo': 'NG=F', 'mult': 66.0},
+        'COPPER': {'yahoo': 'HG=F', 'mult': 183.0}
+    }
+
+    clean_sym = symbol.replace('.MCX', '').replace('MCX:', '').replace('.NS', '').replace('.BO', '').strip()
+    mult = 1.0
+
+    if exchange == 'MCX' or clean_sym in commodity_configs:
+        cfg = commodity_configs.get(clean_sym)
+        if cfg:
+            yahoo_sym = cfg['yahoo']
+            mult = cfg.get('mult', 1.0)
+        else:
+            yahoo_sym = f"{clean_sym}.MCX"
+    elif exchange in ['BSE', 'BO'] or symbol.endswith('.BO'):
+        yahoo_sym = f"{clean_sym}.BO"
+    else:
+        yahoo_sym = f"{clean_sym}.NS"
+
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{yahoo_sym}?range={y_range}&interval={y_interval}"
+    req = urllib.request.Request(
+        url,
+        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=6.0) as res:
+            data = json.loads(res.read().decode('utf-8'))
+            chart_res = data.get('chart', {}).get('result', [])
+            if not chart_res:
+                return jsonify({'error': 'No chart data returned from provider'}), 404
+
+            result = chart_res[0]
+            timestamps = result.get('timestamp', [])
+            indicators = result.get('indicators', {})
+            quotes = indicators.get('quote', [{}])[0] if indicators.get('quote') else {}
+
+            closes = quotes.get('close', [])
+            opens = quotes.get('open', [])
+            highs = quotes.get('high', [])
+            lows = quotes.get('low', [])
+            volumes = quotes.get('volume', [])
+
+            points = []
+            for i, ts in enumerate(timestamps):
+                c = closes[i] if i < len(closes) else None
+                if c is not None and not (c != c):
+                    o = opens[i] if i < len(opens) and opens[i] is not None else c
+                    h = highs[i] if i < len(highs) and highs[i] is not None else c
+                    l = lows[i] if i < len(lows) and lows[i] is not None else c
+                    v = volumes[i] if i < len(volumes) and volumes[i] is not None else 0
+                    points.append({
+                        'time': ts,
+                        'close': round(c * mult, 2),
+                        'open': round(o * mult, 2),
+                        'high': round(h * mult, 2),
+                        'low': round(l * mult, 2),
+                        'volume': int(v)
+                    })
+
+            if not points:
+                return jsonify({'error': 'No valid price points found'}), 404
+
+            first_p = points[0]['close']
+            last_p = points[-1]['close']
+            period_change = round(last_p - first_p, 2)
+            period_pct = round((period_change / first_p * 100) if first_p else 0, 2)
+
+            all_highs = [p['high'] for p in points]
+            all_lows = [p['low'] for p in points]
+            high_p = max(all_highs) if all_highs else last_p
+            low_p = min(all_lows) if all_lows else last_p
+
+            res_payload = {
+                'success': True,
+                'symbol': symbol,
+                'exchange': exchange,
+                'yahooSymbol': yahoo_sym,
+                'range': range_val,
+                'currentPrice': last_p,
+                'periodChange': period_change,
+                'periodPct': period_pct,
+                'periodHigh': high_p,
+                'periodLow': low_p,
+                'points': points
+            }
+
+            CHART_HISTORY_CACHE[cache_key] = (now, res_payload)
+            return jsonify(res_payload)
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch chart data: {str(e)}'}), 500
+
 
 @app.route('/proxy/<path:target>')
 def proxy(target):
@@ -2877,7 +3079,7 @@ def test_welcome_email():
     if not email:
         return jsonify({'error': 'Email parameter is required'}), 400
     name = request.args.get('name') or (request.get_json(silent=True) or {}).get('name')
-    send_welcome_email_async(email, user_name=name)
+    send_welcome_email_async(email, user_name=name, force=True)
     load_env_file()
     has_smtp = bool(os.getenv('SMTP_EMAIL') and os.getenv('SMTP_PASSWORD'))
     return jsonify({
@@ -2887,6 +3089,8 @@ def test_welcome_email():
         'message': f"Welcome email triggered for {email}. Status: {'Sent via live SMTP' if has_smtp else 'Generated (SMTP credentials not yet configured in env)'}",
         'preview_url': f"/api/welcome-email-preview?email={urllib.parse.quote(email)}"
     })
+
+_init_welcomed_users()
 
 if __name__ == '__main__':
 

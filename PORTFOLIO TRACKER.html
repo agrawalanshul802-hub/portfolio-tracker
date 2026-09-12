@@ -673,7 +673,7 @@
       </section>
     </div>
     <!-- Welcome Overlay for login transition -->
-    <div id="welcomeOverlay">
+    <div id="welcomeOverlay" style="display: none; opacity: 0;">
       <div id="welcomeText">
       </div>
     </div>
@@ -754,20 +754,24 @@
     </aside>
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-    <!-- Mobile Header -->
+        <!-- Mobile Header -->
     <header class="mobile-header">
       <div class="brand">
-        <img src="logo_icon.png" alt="Logo" style="width:30px;height:30px;object-fit:contain;">
+        <img src="logo_icon.png" alt="Logo" style="width:28px;height:28px;object-fit:contain;">
         <span class="brand-name">Portfolio Tracker</span>
       </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <button class="btn btn-outline btn-sm" id="mobileAlertsBtn"
-          style="padding: 6px 10px; font-size: 13px; border-radius: 8px; position:relative;" title="Price Alerts">
-          🔔 <span class="alert-badge-count" id="mAlertBadge" style="display:none; font-size:10px; padding:0 5px;">0</span>
+      <div class="mobile-header-actions">
+        <button class="mob-hdr-btn" id="mobileAlertsBtn" title="Price Alerts" aria-label="Price Alerts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="mob-hdr-badge" id="mAlertBadge" style="display:none;">0</span>
         </button>
-        <button class="btn btn-primary btn-sm" id="mobileAddHoldingBtn"
-          style="padding: 6px 12px; font-size: 12px; font-weight: 600; border-radius: 8px;">+ Add</button>
-        <button class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+        <button class="mob-hdr-btn mob-hdr-add" id="mobileAddHoldingBtn" title="Add Holding" aria-label="Add Holding">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Add</span>
+        </button>
+        <button class="mob-hdr-btn mob-hdr-account" id="mobileAccountBtn" title="Account" aria-label="Account">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
       </div>
     </header>
 
@@ -1185,6 +1189,81 @@
         </div>
       </div>
 
+      <!-- =========================================================
+           MOBILE BOTTOM NAVIGATION BAR
+           ========================================================= -->
+      <nav class="mobile-bottom-nav" id="mobileBottomNav" role="navigation" aria-label="Main navigation">
+        <button class="mob-nav-item active" id="mobNavPortfolio" data-tab="portfolio" aria-label="Portfolio">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </span>
+          <span class="mob-nav-label">Portfolio</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavAnalytics" data-tab="analytics" aria-label="Analytics">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span class="mob-nav-label">Analytics</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavAi" data-tab="ai" aria-label="AI Analyst">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><circle cx="8.5" cy="13.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="13.5" r="1.5" fill="currentColor"/></svg>
+          </span>
+          <span class="mob-nav-label">AI</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavNews" data-tab="news" aria-label="News">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9v4h3V4z"/><path d="M7 12h10M7 16h10M7 8h2"/></svg>
+          </span>
+          <span class="mob-nav-label">News</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavIpo" data-tab="ipo" aria-label="IPO">
+          <span class="mob-nav-icon" style="position:relative;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span class="mob-nav-badge" id="mobNavIpoBadge" style="display:none;"></span>
+          </span>
+          <span class="mob-nav-label">IPO</span>
+        </button>
+      </nav>
+
+
+
+      <!-- =========================================================
+           MOBILE BOTTOM NAVIGATION BAR
+           ========================================================= -->
+      <nav class="mobile-bottom-nav" id="mobileBottomNav" role="navigation" aria-label="Main navigation">
+        <button class="mob-nav-item active" id="mobNavPortfolio" data-tab="portfolio" aria-label="Portfolio">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </span>
+          <span class="mob-nav-label">Portfolio</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavAnalytics" data-tab="analytics" aria-label="Analytics">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span class="mob-nav-label">Analytics</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavAi" data-tab="ai" aria-label="AI Analyst">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><circle cx="8.5" cy="13.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="13.5" r="1.5" fill="currentColor"/></svg>
+          </span>
+          <span class="mob-nav-label">AI</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavNews" data-tab="news" aria-label="News">
+          <span class="mob-nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9v4h3V4z"/><path d="M7 12h10M7 16h10M7 8h2"/></svg>
+          </span>
+          <span class="mob-nav-label">News</span>
+        </button>
+        <button class="mob-nav-item" id="mobNavIpo" data-tab="ipo" aria-label="IPO">
+          <span class="mob-nav-icon" style="position:relative;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span class="mob-nav-badge" id="mobNavIpoBadge" style="display:none;"></span>
+          </span>
+          <span class="mob-nav-label">IPO</span>
+        </button>
+      </nav>
 
       <!-- =========================================================
            PRINT & PDF PORTFOLIO STATEMENT CONTAINER
@@ -2286,6 +2365,7 @@
                   <td><span class="gain-text ${h.isProfit ? 'pos' : 'neg'}">${h.gain >= 0 ? '+' : '-'}${fmtINR(Math.abs(h.gain))}</span></td>
                   <td>
                     <div class="row-actions">
+                       <button class="link-btn chart-link" data-chart="${h.id}" title="View Live Chart">📈 Chart</button>
                       <button class="link-btn alert-link" data-alert="${h.id}" title="Set Price Alert">🔔 Alert</button>
                       <button class="link-btn sell-link" data-sell="${h.id}" title="Record Sale">↗ Sell</button>
                       <button class="link-btn edit-link" data-edit="${h.id}" title="Edit Holding">✎ Edit</button>
@@ -2327,11 +2407,26 @@
                 </div>
               </div>
 
-              <div class="m-card-bottom">
-                <button class="m-alert-btn" data-alert="${h.id}" title="Set Price Alert">🔔 Alert</button>
-                <button data-sell="${h.id}">Sell</button>
-                <button data-edit="${h.id}">Edit</button>
-                <button class="danger" data-del="${h.id}">Delete</button>
+                            <div class="m-card-bottom">
+                <button class="m-action-btn m-chart-btn" data-chart="${h.id}" title="View Live Chart">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                  Chart
+                </button>
+                <button class="m-action-btn m-alert-btn" data-alert="${h.id}" title="Set Price Alert">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  Alert
+                </button>
+                <button class="m-action-btn m-sell-btn" data-sell="${h.id}" title="Record Sale">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                  Sell
+                </button>
+                <button class="m-action-btn m-edit-btn" data-edit="${h.id}" title="Edit Holding">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </button>
+                <button class="m-action-btn m-del-btn" data-del="${h.id}" title="Delete Holding">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                </button>
               </div>
             </div>
           `).join('')}
@@ -2860,6 +2955,14 @@
         const dock = document.getElementById('dockOuter');
         if (dock) {
           dock.style.display = (tabId === 'portfolio') ? 'flex' : 'none';
+        }
+
+        // Sync mobile bottom nav active state
+        const mbn = document.getElementById('mobileBottomNav');
+        if (mbn) {
+          mbn.querySelectorAll('.mob-nav-item').forEach(b => {
+            b.classList.toggle('active', b.dataset.tab === tabId);
+          });
         }
 
         if (tabId === 'analytics') {
@@ -3556,6 +3659,25 @@
         const mobAdd = document.getElementById('mobileAddHoldingBtn');
         if (mobAdd) mobAdd.addEventListener('click', () => openModal('add'));
 
+        // Mobile account button (replaces hamburger)
+        const mobAccount = document.getElementById('mobileAccountBtn');
+        if (mobAccount) mobAccount.addEventListener('click', () => {
+          const el = document.getElementById('accountLink');
+          if (el) el.click();
+        });
+
+        // Mobile Bottom Navigation Bar wiring
+        const mobileBottomNav = document.getElementById('mobileBottomNav');
+        if (mobileBottomNav) {
+          mobileBottomNav.addEventListener('click', (e) => {
+            const btn = e.target.closest('.mob-nav-item');
+            if (!btn || !btn.dataset.tab) return;
+            switchTab(btn.dataset.tab);
+          });
+        }
+
+
+
 
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
@@ -3616,6 +3738,7 @@
             if (overlay && overlay.classList.contains('open')) closeModal();
             closeReportsModal();
             closeAccountModal();
+            if (typeof closeChartModal === 'function') closeChartModal();
           }
         });
 
@@ -3650,6 +3773,8 @@
         document.getElementById('refreshBtn').addEventListener('click', refreshPrices);
 
         document.getElementById('tableWrap').addEventListener('click', e => {
+          const chartBtn = e.target.closest('[data-chart]');
+          if (chartBtn) { openChartModal(chartBtn.dataset.chart); return; }
           const alertBtn = e.target.closest('[data-alert]');
           if (alertBtn) { openAlertModal(alertBtn.dataset.alert); return; }
           const editBtn = e.target.closest('[data-edit]');
@@ -3918,6 +4043,18 @@
       }
 
       async function showFullscreenWelcomeTransition(email, welcomePhrase) {
+        // Prevent repeated greeting transitions if already displayed in this session
+        if (sessionStorage.getItem('portfolio_welcome_shown') === 'true') {
+          const submitBtn = document.getElementById('authSubmit');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = authMode === 'signup' ? 'Create account' : 'Log in';
+          }
+          await enterDashboard(email);
+          return;
+        }
+        sessionStorage.setItem('portfolio_welcome_shown', 'true');
+
         const overlay = document.getElementById('welcomeOverlay');
         const welcomeText = document.getElementById('welcomeText');
         const username = email.split('@')[0];
@@ -3985,6 +4122,7 @@
       }
 
       async function enterDashboard(email) {
+        sessionStorage.setItem('portfolio_welcome_shown', 'true');
         currentUser = { email };
         try {
           localStorage.setItem('portfolio_user_email', email);
@@ -4019,6 +4157,7 @@
       }
 
       async function signOut() {
+        sessionStorage.removeItem('portfolio_welcome_shown');
         _ipoLoaded = false;
         try {
           localStorage.removeItem('portfolio_user_email');
@@ -5898,5 +6037,73 @@
     </div>
   </div>
 
+<!-- CHART_DIRECT_TRADINGVIEW -->
+<style>
+.link-btn.chart-link {
+  color: #A78BFA !important;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.link-btn.chart-link:hover {
+  color: #c4b5fd !important;
+  text-decoration: none;
+}
+.m-chart-btn {
+  background: rgba(167, 139, 250, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  color: #A78BFA;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-chart-btn:hover {
+  background: rgba(167, 139, 250, 0.22);
+  color: #fff;
+  border-color: rgba(167, 139, 250, 0.5);
+}
+</style>
+
+<script>
+  function buildTvWebUrl(symbol, exchange) {
+    var ex = (exchange || 'NSE').toUpperCase().trim();
+    var sym = (symbol || '').toUpperCase().trim();
+    sym = sym.replace(/\.NS$/, '').replace(/\.BO$/, '');
+    if (ex === 'MCX') {
+      if (sym === 'GOLD' || sym.indexOf('GOLD') === 0) return 'https://in.tradingview.com/chart/?symbol=MCX:GOLD1!';
+      if (sym === 'SILVER' || sym.indexOf('SILVER') === 0) return 'https://in.tradingview.com/chart/?symbol=MCX:SILVER1!';
+      if (sym === 'CRUDEOIL' || sym.indexOf('CRUDE') >= 0) return 'https://in.tradingview.com/chart/?symbol=MCX:CRUDEOIL1!';
+      if (sym === 'COPPER') return 'https://in.tradingview.com/chart/?symbol=MCX:COPPER1!';
+      if (sym === 'ALUMINIUM') return 'https://in.tradingview.com/chart/?symbol=MCX:ALUMINIUM1!';
+      if (sym === 'ZINC') return 'https://in.tradingview.com/chart/?symbol=MCX:ZINC1!';
+      if (sym === 'LEAD') return 'https://in.tradingview.com/chart/?symbol=MCX:LEAD1!';
+      if (sym === 'NICKEL') return 'https://in.tradingview.com/chart/?symbol=MCX:NICKEL1!';
+      if (sym.indexOf('GAS') >= 0) return 'https://in.tradingview.com/chart/?symbol=MCX:NATURALGAS1!';
+      return 'https://in.tradingview.com/chart/?symbol=MCX:' + sym + '1!';
+    }
+    if (ex === 'BSE' || ex === 'BO') return 'https://in.tradingview.com/chart/?symbol=BSE:' + sym;
+    return 'https://in.tradingview.com/chart/?symbol=NSE:' + sym;
+  }
+
+  function openChartModal(holdingId) {
+    var holdings = (window.state && window.state.holdings) || [];
+    var h = null;
+    for (var i = 0; i < holdings.length; i++) {
+      if (String(holdings[i].id) === String(holdingId)) { h = holdings[i]; break; }
+    }
+    if (!h) return;
+    var tvUrl = buildTvWebUrl(h.symbol, h.exchange);
+    window.open(tvUrl, '_blank', 'noopener,noreferrer');
+  }
+  window.openChartModal = openChartModal;
+  window.closeChartModal = function() {};
+</script>
 </body>
 </html>
