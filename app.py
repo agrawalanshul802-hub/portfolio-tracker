@@ -734,207 +734,166 @@ def logout():
     return jsonify({'success': True})
 
 # REST API: Google OAuth 2.0 Login Redirect
-
 @app.route('/api/login/google')
-
 def google_login():
-
     host = request.host
+    scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
 
+    # Standardize localhost to 127.0.0.1 for desktop testing (registered in Google Cloud Console)
     if 'localhost' in host:
-
         new_host = host.replace('localhost', '127.0.0.1')
-
-        scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
-
         return redirect(f"{scheme}://{new_host}/api/login/google")
 
     client_id = os.getenv('GOOGLE_CLIENT_ID')
-
     if not client_id:
-
         return "GOOGLE_CLIENT_ID is not configured in your environment.", 400
 
-    
+    hostname = host.split(':')[0]
+    import ipaddress
+    is_private_ip = False
+    try:
+        ip = ipaddress.ip_address(hostname)
+        if ip.is_private and not ip.is_loopback:
+            is_private_ip = True
+    except ValueError:
+        is_private_ip = False
 
-    state = hashlib.sha256(os.urandom(1024)).hexdigest()
+    # Google Cloud OAuth 2.0 strictly rejects private RFC 1918 IPs (192.168.x.x, 10.x.x.x, etc.)
+    # When accessed from a mobile device on local Wi-Fi, bridge the OAuth callback via the registered Render domain,
+    # embedding the mobile LAN origin in the state parameter so the callback bounces the user back to their phone.
+    if is_private_ip:
+        origin_url = f"{scheme}://{host}"
+        state_data = {
+            'token': hashlib.sha256(os.urandom(1024)).hexdigest()[:16],
+            'origin': origin_url
+        }
+        import base64
+        state = base64.urlsafe_b64encode(json.dumps(state_data).encode('utf-8')).decode('utf-8')
+        redirect_uri = "https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback"
+    else:
+        state = hashlib.sha256(os.urandom(1024)).hexdigest()
+        redirect_uri = f"{scheme}://{host}/api/login/google/callback"
 
     session['oauth_state'] = state
 
-    
-
-    scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
-
-    host = request.host
-
-    if 'localhost' in host:
-
-        host = host.replace('localhost', '127.0.0.1')
-
-    redirect_uri = f"{scheme}://{host}/api/login/google/callback"
-
-    
-
     params = {
-
         'client_id': client_id,
-
         'redirect_uri': redirect_uri,
-
         'response_type': 'code',
-
         'scope': 'openid email profile',
-
         'state': state,
-
         'prompt': 'select_account'
-
     }
 
-    
-
     auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
-
     return redirect(auth_url)
 
 # REST API: Google OAuth 2.0 Callback
-
 @app.route('/api/login/google/callback')
-
 def google_callback():
-
     code = request.args.get('code')
-
+    state_param = request.args.get('state', '')
     if not code:
-
         return redirect('/?error=no_auth_code')
 
-    
-
     client_id = os.getenv('GOOGLE_CLIENT_ID')
-
     client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
-
     if not client_id or not client_secret:
-
         return "Google credentials not fully configured in your environment.", 400
 
-        
+    # Determine if request was bridged from a mobile LAN device via state parameter
+    return_origin = None
+    if state_param:
+        import base64
+        allowed_pattern = r'^https?://(?:192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|127\.0\.0\.1|localhost|portfolio-tracker-1-n2qq\.onrender\.com)(?::\d+)?$'
+        try:
+            decoded_bytes = base64.urlsafe_b64decode(state_param.encode('utf-8'))
+            state_data = json.loads(decoded_bytes.decode('utf-8'))
+            if isinstance(state_data, dict) and 'origin' in state_data:
+                cand = state_data['origin'].rstrip('/')
+                if re.match(allowed_pattern, cand):
+                    return_origin = cand
+        except Exception:
+            try:
+                state_data = json.loads(urllib.parse.unquote(state_param))
+                if isinstance(state_data, dict) and 'origin' in state_data:
+                    cand = state_data['origin'].rstrip('/')
+                    if re.match(allowed_pattern, cand):
+                        return_origin = cand
+            except Exception:
+                pass
 
-    scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
+    # The redirect_uri sent to Google token exchange must match what was sent during the authorization request
+    if return_origin:
+        redirect_uri = "https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback"
+    else:
+        scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
+        host = request.host
+        if 'localhost' in host:
+            host = host.replace('localhost', '127.0.0.1')
+        redirect_uri = f"{scheme}://{host}/api/login/google/callback"
 
-    host = request.host
-
-    if 'localhost' in host:
-
-        host = host.replace('localhost', '127.0.0.1')
-
-    redirect_uri = f"{scheme}://{host}/api/login/google/callback"
-
-    
+    target_base = return_origin if return_origin else ""
 
     # Exchange authorization code for token
-
     token_url = "https://oauth2.googleapis.com/token"
-
     token_data = urllib.parse.urlencode({
-
         'code': code,
-
         'client_id': client_id,
-
         'client_secret': client_secret,
-
         'redirect_uri': redirect_uri,
-
         'grant_type': 'authorization_code'
-
     }).encode('utf-8')
 
-    
-
     req = urllib.request.Request(
-
         token_url,
-
         data=token_data,
-
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
-
     )
 
-    
-
     try:
-
         with urllib.request.urlopen(req) as res:
-
             res_body = json.loads(res.read().decode('utf-8'))
-
             access_token = res_body.get('access_token')
-
     except Exception as e:
-
-        return f"Token exchange failed: {str(e)}", 500
-
-        
+        error_msg = f"Token exchange failed: {str(e)}"
+        return redirect(f"{target_base}/?error={urllib.parse.quote(error_msg)}")
 
     # Get user info
-
     userinfo_url = f"https://www.googleapis.com/oauth2/v3/userinfo?access_token={access_token}"
-
     req_info = urllib.request.Request(userinfo_url)
-
     try:
-
         with urllib.request.urlopen(req_info) as res_info:
-
             info_body = json.loads(res_info.read().decode('utf-8'))
-
             email = info_body.get('email', '').strip().lower()
-
     except Exception as e:
-
-        return f"Fetching user info failed: {str(e)}", 500
-
-        
+        error_msg = f"Fetching user info failed: {str(e)}"
+        return redirect(f"{target_base}/?error={urllib.parse.quote(error_msg)}")
 
     if not email:
-
-        return "Failed to retrieve email address from Google.", 400
-
-        
+        error_msg = "Failed to retrieve email address from Google."
+        return redirect(f"{target_base}/?error={urllib.parse.quote(error_msg)}")
 
     # Check if user exists, otherwise create
-
     try:
-
         import uuid
-
         res = supabase.table('users').select('email').eq('email', email).execute()
-
         if not res.data:
-
             placeholder_hash = "oauth-google:" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()
-
             supabase.table('users').insert({'email': email, 'password_hash': placeholder_hash}).execute()
 
         user_name = info_body.get('name') or info_body.get('given_name')
         if not res.data:
             # Send welcome email ONLY to brand new accounts, never on repeat Google logins
             send_welcome_email_async(email, user_name=user_name)
-
     except Exception as e:
-
-        return f"Database error: {str(e)}", 500
-
-        
+        print(f"Supabase user sync notice: {e}")
 
     session.permanent = True
-
     session['email'] = email
 
-    return redirect(f"/?login_email={urllib.parse.quote(email)}")
+    return redirect(f"{target_base}/?login_email={urllib.parse.quote(email)}")
+
 
 # REST API: Get Holdings (Supports session and explicit email parameter)
 

@@ -460,6 +460,14 @@
                     </svg>
                     <span>Continue with Google</span>
                   </button>
+
+                  <!-- 1-Tap Quick Demo Login -->
+                  <button type="button" class="quick-demo-btn" id="quickDemoBtn" onclick="quickDemoLogin()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    <span>Instant Demo Access (1-Tap)</span>
+                  </button>
                 </form>
 
                 <div class="auth-switch modern-auth-switch" id="authSwitch">
@@ -4533,6 +4541,20 @@
         wireAuthSwitch();
         wirePasswordToggle('toggleAuthPassword', 'authPassword');
         wirePasswordToggle('toggleAuthConfirm', 'authConfirm');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        if (googleLoginBtn) {
+          googleLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            startGoogleLogin();
+          });
+        }
+        const quickDemoBtn = document.getElementById('quickDemoBtn');
+        if (quickDemoBtn) {
+          quickDemoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            quickDemoLogin();
+          });
+        }
       }
 
       /* ---------------- dock (vanilla-JS rebuild of the React Bits Dock — no React/motion needed) ---------------- */
@@ -4773,6 +4795,18 @@
       window.switchShowcaseTab = switchShowcaseTab;
 
       function startGoogleLogin() {
+        const btn = document.getElementById('googleLoginBtn');
+        if (btn) {
+          btn.innerHTML = `
+            <svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="#4285F4"/>
+            </svg>
+            <span>Connecting to Google...</span>
+          `;
+          btn.style.opacity = '0.85';
+          btn.style.pointerEvents = 'none';
+        }
         if (window.location.protocol === 'file:') {
           window.location.href = 'http://127.0.0.1:8080/api/login/google';
         } else {
@@ -4780,6 +4814,28 @@
         }
       }
       window.startGoogleLogin = startGoogleLogin;
+
+      function quickDemoLogin() {
+        const emailInput = document.getElementById('authEmail');
+        const passInput = document.getElementById('authPassword');
+        if (emailInput && passInput) {
+          emailInput.value = 'test@example.com';
+          passInput.value = 'password123';
+          if (typeof setAuthMode === 'function') {
+            setAuthMode('login');
+          }
+          const form = document.getElementById('authForm');
+          if (form) {
+            if (typeof handleAuthSubmit === 'function') {
+              const fakeEvt = new Event('submit', { cancelable: true });
+              form.dispatchEvent(fakeEvt);
+            } else {
+              form.submit();
+            }
+          }
+        }
+      }
+      window.quickDemoLogin = quickDemoLogin;
 
       /* ---------------- OrbitImages Vanilla Component (React Bits port) ---------------- */
       function initOrbitImages() {
@@ -5510,8 +5566,17 @@
         // 3. PRIORITY AUTHENTICATION CHECK
         let authenticatedEmail = null;
 
-        // Check A: OAuth Callback URL Parameter (?login_email=...)
+        // Check A: OAuth Callback URL Parameter (?login_email=... or ?error=...)
         const urlParams = new URLSearchParams(window.location.search);
+        const oauthError = urlParams.get('error');
+        if (oauthError) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setTimeout(() => {
+            if (typeof showToast === 'function') {
+              showToast('Authentication: ' + decodeURIComponent(oauthError), 'info');
+            }
+          }, 400);
+        }
         const oauthEmail = urlParams.get('login_email');
         if (oauthEmail) {
           window.history.replaceState({}, document.title, window.location.pathname);
