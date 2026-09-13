@@ -2627,82 +2627,54 @@ def _merge_gmp(ipos_flat, gmp_map):
     return ipos_flat
 
 @app.route('/api/ipos', methods=['GET'])
-
 def get_ipos():
-
     load_env_file()
-
-    email = session.get('email') or request.args.get('email')
-
-    if not email:
-
-        return jsonify({'error': 'Unauthorized'}), 401
-
     global _ipo_cache
-
     now   = time.time()
-
     force = request.args.get('refresh') == '1'
 
     if not force and _ipo_cache['data'] and (now - _ipo_cache['ts']) < _IPO_CACHE_TTL:
-
         return jsonify({'data': _ipo_cache['data'], 'cached': True, 'age_seconds': int(now - _ipo_cache['ts'])})
 
-    # Fetch live data
+    try:
+        # Fetch live data
+        nse_open                           = _scrape_nse_open()
+        groww_open, groww_upcoming, listed = _scrape_groww_all()
+        gmp_map                            = _scrape_gmp()
 
-    nse_open                           = _scrape_nse_open()
+        # Merge NSE live subscriptions where symbol matches
+        nse_by_symbol = {x['symbol']: x for x in nse_open if x.get('symbol')}
+        for ipo in groww_open:
+            sym = ipo.get('symbol', '')
+            if sym in nse_by_symbol:
+                ipo['sub_total']  = nse_by_symbol[sym].get('sub_total', ipo['sub_total'])
+                ipo['open_date']  = nse_by_symbol[sym].get('open_date', ipo['open_date'])
+                ipo['close_date'] = nse_by_symbol[sym].get('close_date', ipo['close_date'])
 
-    groww_open, groww_upcoming, listed = _scrape_groww_all()
+        # Add any NSE IPO not present in Groww
+        groww_syms = {x['symbol'] for x in groww_open if x.get('symbol')}
+        for ipo in nse_open:
+            if ipo.get('symbol') and ipo['symbol'] not in groww_syms:
+                groww_open.append(ipo)
 
-    gmp_map                            = _scrape_gmp()
+        # Attach GMP data
+        all_open     = _merge_gmp(groww_open, gmp_map)
+        all_upcoming = _merge_gmp(groww_upcoming[:30], gmp_map)
 
-    # Merge NSE live subscriptions where symbol matches
+        merged = {
+            'open':     all_open,
+            'upcoming': all_upcoming,
+            'listed':   listed,
+        }
 
-    nse_by_symbol = {x['symbol']: x for x in nse_open if x.get('symbol')}
-
-    for ipo in groww_open:
-
-        sym = ipo.get('symbol', '')
-
-        if sym in nse_by_symbol:
-
-            ipo['sub_total']  = nse_by_symbol[sym].get('sub_total', ipo['sub_total'])
-
-            ipo['open_date']  = nse_by_symbol[sym].get('open_date', ipo['open_date'])
-
-            ipo['close_date'] = nse_by_symbol[sym].get('close_date', ipo['close_date'])
-
-    # Add any NSE IPO not present in Groww
-
-    groww_syms = {x['symbol'] for x in groww_open if x.get('symbol')}
-
-    for ipo in nse_open:
-
-        if ipo.get('symbol') and ipo['symbol'] not in groww_syms:
-
-            groww_open.append(ipo)
-
-    # Attach GMP data
-
-    all_open     = _merge_gmp(groww_open, gmp_map)
-
-    all_upcoming = _merge_gmp(groww_upcoming[:30], gmp_map)
-
-    merged = {
-
-        'open':     all_open,
-
-        'upcoming': all_upcoming,
-
-        'listed':   listed,
-
-    }
-
-    _ipo_cache['data'] = merged
-
-    _ipo_cache['ts']   = now
-
-    return jsonify({'data': merged, 'cached': False, 'age_seconds': 0})
+        _ipo_cache['data'] = merged
+        _ipo_cache['ts']   = now
+        return jsonify({'data': merged, 'cached': False, 'age_seconds': 0})
+    except Exception as e:
+        logger.error(f"Error fetching live IPOs: {e}")
+        if _ipo_cache['data']:
+            return jsonify({'data': _ipo_cache['data'], 'cached': True, 'warning': str(e), 'age_seconds': int(now - _ipo_cache['ts'])})
+        return jsonify({'data': {'open': [], 'upcoming': [], 'listed': []}, 'cached': False, 'error': str(e)}), 200
 
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 

@@ -5881,6 +5881,7 @@
           console.warn('fetchUserPans notice:', e);
         }
       };
+      window.fetchUserPan = function() { if (typeof window.fetchUserPans === 'function') return window.fetchUserPans(); };
 
       window.fetchIpoApplications = async function () {
         const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
@@ -6293,21 +6294,24 @@
 
         try {
           // Fetch user's linked PAN and tracked applications in parallel with live IPOs
-          fetchUserPan();
-          fetchIpoApplications();
+          if (typeof fetchUserPans === 'function') fetchUserPans();
+          if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
 
           const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || '';
           const url = '/api/ipos?' + (userEmail ? `email=${encodeURIComponent(userEmail)}&` : '') + (force ? 'refresh=1' : '');
           const res  = await fetch(url);
 
-          if (res.status === 401) {
-            console.warn('IPO: session not ready, retrying in 2s...');
-            if (loading) loading.style.display = 'none';
-            setTimeout(() => { window.loadIpoData(force); }, 2000);
-            return;
+          if (!res.ok) {
+            if (window._cachedIpoData && window._cachedIpoData.open) {
+              console.warn('IPO fetch failed (' + res.status + '), falling back to cached in-memory data');
+              const data = window._cachedIpoData;
+              renderIpoList('open',     data.open     || []);
+              renderIpoList('upcoming', data.upcoming || []);
+              renderIpoList('listed',   data.listed   || []);
+              return;
+            }
+            throw new Error('Server returned ' + res.status);
           }
-
-          if (!res.ok) throw new Error('Server returned ' + res.status);
 
           const json = await res.json();
           if (json.error) throw new Error(json.error);
