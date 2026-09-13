@@ -4663,6 +4663,20 @@
           ? document.querySelectorAll(elementOrSelector)
           : [elementOrSelector];
 
+        // Critical Mobile Fix: On mobile viewports (<=768px), disable split-character scrub animations.
+        // This guarantees that "Get Started in 3 Steps" and "Everything You Need to Track Wealth"
+        // are ALWAYS 100% visible, beautifully wrapped, and never vanish on momentum scroll or address-bar resize!
+        if (window.innerWidth <= 768 || window.matchMedia('(max-width: 768px)').matches) {
+          elements.forEach(el => {
+            if (!el) return;
+            el.style.opacity = '1';
+            el.style.visibility = 'visible';
+            el.style.transform = 'none';
+            el.style.overflow = 'visible';
+          });
+          return;
+        }
+
         elements.forEach(el => {
           if (!el) return;
 
