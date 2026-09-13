@@ -3401,7 +3401,27 @@ def direct_check_allotment():
 
     # 3. Check if multi-PAN check is requested (IPOWiz mode)
     input_pans = data.get('pans')
-    if input_pans and isinstance(input_pans, list) and len(input_pans) > 0:
+    if input_pans is not None and isinstance(input_pans, list):
+        if len(input_pans) == 0 and clean_email and supabase:
+            try:
+                res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
+                if res.data and res.data[0].get('pan_card'):
+                    raw_c = res.data[0].get('pan_card')
+                    if str(raw_c).startswith('['):
+                        import json
+                        input_pans = json.loads(str(raw_c))
+            except Exception:
+                pass
+        if len(input_pans) == 0:
+            return jsonify({
+                'success': True,
+                'is_live': not is_not_live,
+                'allotment_date': scheduled_display_date or '',
+                'ipo_name': ipo_name,
+                'ipo_symbol': ipo_symbol,
+                'message': 'No PAN cards provided.',
+                'results': []
+            })
         results = []
         for it in input_pans:
             p_val = (it.get('pan') or '').strip().upper()

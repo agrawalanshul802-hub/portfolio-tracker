@@ -6118,6 +6118,18 @@
         const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
           || localStorage.getItem('portfolio_user_email') || '';
 
+        // Ensure _userPans has at least the default/saved family PANs
+        if (!_userPans || _userPans.length === 0) {
+          try {
+            const stored = localStorage.getItem('portfolio_saved_pans');
+            if (stored) _userPans = JSON.parse(stored);
+          } catch(e) {}
+          if (!_userPans || _userPans.length === 0) {
+            _userPans = [...DEFAULT_FAMILY_PANS];
+            try { localStorage.setItem('portfolio_saved_pans', JSON.stringify(_userPans)); } catch(e){}
+          }
+        }
+
         try {
           const res = await fetch('/api/ipo/check-allotment', {
             method: 'POST',
@@ -6139,7 +6151,13 @@
           if (spinner) spinner.style.display = 'none';
           if (refreshBtn) refreshBtn.disabled = false;
 
-          const isNotLive = !json.is_live || json.status === 'PENDING';
+          // Check if allotment date has already arrived or passed (e.g. Friday 2026-09-11)
+          const parsedD = parseJsIpoDate(allotmentDate);
+          const isPastDate = Boolean(parsedD && parsedD <= new Date());
+          
+          // If the scheduled date has already passed, allotment IS LIVE!
+          const isNotLive = isPastDate ? false : (!json.is_live || json.status === 'PENDING');
+          
           if (notLiveBanner) {
             if (isNotLive) {
               notLiveBanner.style.display = 'flex';
