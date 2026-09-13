@@ -924,7 +924,12 @@
         <div class="stats-row">
           <div class="net-worth-card animate-card">
             <div class="net-worth-header">
-              <span class="card-label">Total Net Worth</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="card-label">Total Portfolio Value</span>
+                <button type="button" id="privacyEyeBtn" class="privacy-eye-btn" title="Hide/Show balance" onclick="toggleBalancePrivacy()">
+                  <svg id="privacyEyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
               <span class="live-indicator"><span class="indicator-dot"></span>Live updates</span>
             </div>
             <div class="net-worth-value" id="statValue">₹0</div>
@@ -1655,7 +1660,7 @@
        PRICE ALERT MODAL (Matches Groww / Zerodha Dark Design)
        ========================================================= -->
   <div class="alert-modal-overlay" id="alertModalOverlay">
-    <div class="alert-modal-card">
+    <div class="alert-modal-card"><div class="sheet-drag-handle"></div>
       <div class="alert-header">
         <div class="alert-header-left">
           <button class="alert-back-btn" id="closeAlertModalBtn" title="Back / Close">
@@ -2203,6 +2208,32 @@
         ];
       }
 
+      let isBalanceHidden = false;
+      try {
+        isBalanceHidden = localStorage.getItem('portfolio_balance_hidden') === 'true';
+      } catch (e) {}
+
+      function updatePrivacyEyeUI() {
+        const icon = document.getElementById('privacyEyeIcon');
+        if (!icon) return;
+        if (isBalanceHidden) {
+          icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+        } else {
+          icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+        }
+      }
+      window.updatePrivacyEyeUI = updatePrivacyEyeUI;
+
+      function toggleBalancePrivacy() {
+        isBalanceHidden = !isBalanceHidden;
+        try {
+          localStorage.setItem('portfolio_balance_hidden', isBalanceHidden ? 'true' : 'false');
+        } catch (e) {}
+        updatePrivacyEyeUI();
+        if (typeof renderStats === 'function') renderStats();
+      }
+      window.toggleBalancePrivacy = toggleBalancePrivacy;
+
       const state = window.state = { holdings: [], filter: 'all', search: '', sort: 'default', sortDir: 'desc', dayOpen: {}, lastUpdated: new Date(), currentTab: 'portfolio', portfolioSection: 'all' };
       let _ipoLoaded = false;   // tracks whether IPO data has been fetched
       let _currentIpoSection = 'open'; // tracks active IPO tab
@@ -2395,7 +2426,7 @@
 
       /* ---------------- render: stats ---------------- */
       function renderStats() {
-        const allList = allHoldings();
+                const allList = allHoldings();
         const stocksList = allList.filter(h => h.assetClass !== 'Commodity' && (h.exchange || 'NSE') !== 'MCX');
         const mcxList = allList.filter(h => h.assetClass === 'Commodity' || h.exchange === 'MCX');
 
@@ -2428,31 +2459,46 @@
         const dayOpenTotal = value - dayPnl;
         const dayPct = dayOpenTotal ? (dayPnl / dayOpenTotal) * 100 : 0;
 
-        animateNumber('statInvested', invested, true, false);
-        animateNumber('statValue', value, true, false);
+        if (isBalanceHidden) {
+          const statValEl = document.getElementById('statValue');
+          if (statValEl) statValEl.textContent = '••••••••';
+          const statInvEl = document.getElementById('statInvested');
+          if (statInvEl) statInvEl.textContent = '••••••••';
+          const statGainEl = document.getElementById('statGain');
+          if (statGainEl) { statGainEl.textContent = '••••••••'; statGainEl.className = 'delta-amount'; }
+          const statGainPctEl = document.getElementById('statGainPct');
+          if (statGainPctEl) { statGainPctEl.textContent = '•••• return'; statGainPctEl.className = 'delta-pct'; }
+          const statDayEl = document.getElementById('statDay');
+          if (statDayEl) { statDayEl.textContent = '••••••••'; statDayEl.className = 'stat-value'; }
+          const statDayPctEl = document.getElementById('statDayPct');
+          if (statDayPctEl) { statDayPctEl.textContent = '••••'; statDayPctEl.className = 'sub'; }
+        } else {
+          animateNumber('statInvested', invested, true, false);
+          animateNumber('statValue', value, true, false);
 
-        animateNumber('statGain', gain, true, true);
-        const gainEl = document.getElementById('statGain');
-        if (gainEl) {
-          gainEl.className = 'delta-amount ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : '');
-        }
+          animateNumber('statGain', gain, true, true);
+          const gainEl = document.getElementById('statGain');
+          if (gainEl) {
+            gainEl.className = 'delta-amount ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : '');
+          }
 
-        animateNumber('statGainPct', gainPct, false);
-        const gainPctEl = document.getElementById('statGainPct');
-        if (gainPctEl) {
-          gainPctEl.className = 'delta-pct ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : 'neutral');
-        }
+          animateNumber('statGainPct', gainPct, false);
+          const gainPctEl = document.getElementById('statGainPct');
+          if (gainPctEl) {
+            gainPctEl.className = 'delta-pct ' + (list.length ? (gain >= 0 ? 'pos' : 'neg') : 'neutral');
+          }
 
-        animateNumber('statDay', dayPnl, true, true);
-        const dayEl = document.getElementById('statDay');
-        if (dayEl) {
-          dayEl.className = 'stat-value ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : '');
-        }
+          animateNumber('statDay', dayPnl, true, true);
+          const dayEl = document.getElementById('statDay');
+          if (dayEl) {
+            dayEl.className = 'stat-value ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : '');
+          }
 
-        animateNumber('statDayPct', dayPct, false);
-        const dayPctEl = document.getElementById('statDayPct');
-        if (dayPctEl) {
-          dayPctEl.className = 'sub ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : 'neutral');
+          animateNumber('statDayPct', dayPct, false);
+          const dayPctEl = document.getElementById('statDayPct');
+          if (dayPctEl) {
+            dayPctEl.className = 'sub ' + (list.length ? (dayPnl >= 0 ? 'pos' : 'neg') : 'neutral');
+          }
         }
 
         const liveResolvedCount = list.filter(h => {
@@ -2565,7 +2611,7 @@
       }
 
       function renderTable() {
-        const list = filteredSorted();
+                const list = filteredSorted();
         const wrap = document.getElementById('tableWrap');
         const footerBar = document.getElementById('footerBar');
         document.getElementById('holdingsCount').textContent = state.holdings.length + ' holdings';
@@ -2688,10 +2734,18 @@
       }
 
       function renderAll() {
-        renderStats();
-        renderTable();
+                try {
+          renderStats();
+        } catch (errStats) {
+          console.error("[CRITICAL ERROR IN renderStats]:", errStats);
+        }
+        try {
+          renderTable();
+        } catch (errTable) {
+          console.error("[CRITICAL ERROR IN renderTable]:", errTable);
+        }
         if (state.currentTab === 'analytics') {
-          renderCharts();
+          try { renderCharts(); } catch(e) { console.error("renderCharts err:", e); }
         }
       }
 
@@ -3184,6 +3238,13 @@
         if (window.innerWidth <= 900) {
           const sb = document.getElementById('sidebar');
           if (sb) sb.classList.remove('open');
+          try {
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          } catch(e) {
+            window.scrollTo(0, 0);
+          }
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
         }
         state.currentTab = tabId;
         try { localStorage.setItem('portfolio_active_tab', tabId); } catch(e){}
@@ -4372,6 +4433,14 @@
           dash.style.display = 'flex';
           dash.classList.remove('hidden');
         }
+        // Force scroll reset so top hero card aligns seamlessly with mobile header
+        try {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        } catch(e) {
+          window.scrollTo(0, 0);
+        }
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
       }
 
       async function enterDashboard(email) {
@@ -4388,6 +4457,7 @@
           console.warn('Session sync warning:', e);
         }
         showDashboardScreen();
+        if (typeof updatePrivacyEyeUI === 'function') updatePrivacyEyeUI();
         document.getElementById('userEmailLabel').textContent = email;
         const avatar = document.getElementById('userAvatar');
         if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
