@@ -6162,6 +6162,57 @@
         }
       };
 
+            window.togglePanAllotmentStatus = async function (pan, currentStatus) {
+        if (!_currentAllotModalData) return;
+        const { ipoName, ipoSymbol, lotSize, priceBand, gmp, allotmentUrl } = _currentAllotModalData;
+
+        // Cycle through statuses: NOT_APPLIED -> NOT_ALLOTTED -> ALLOTTED -> NOT_APPLIED
+        let nextStatus = 'NOT_ALLOTTED';
+        if (currentStatus === 'NOT_APPLIED') {
+          nextStatus = 'NOT_ALLOTTED';
+        } else if (currentStatus === 'NOT_ALLOTTED') {
+          nextStatus = 'ALLOTTED';
+        } else if (currentStatus === 'ALLOTTED') {
+          nextStatus = 'NOT_APPLIED';
+        }
+
+        const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
+          || localStorage.getItem('portfolio_user_email') || '';
+
+        try {
+          const res = await fetch('/api/ipo/check-allotment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: userEmail,
+              pan: pan,
+              override_pan: pan,
+              override_status: nextStatus,
+              ipo_name: ipoName,
+              ipo_symbol: ipoSymbol,
+              lot_size: lotSize,
+              issue_price: priceBand,
+              allotment_url: allotmentUrl
+            })
+          });
+
+          const json = await res.json();
+          if (json.success) {
+            const labelMap = {
+              'NOT_APPLIED': '⚪ Not Applied',
+              'NOT_ALLOTTED': '🔴 Non Allotted',
+              'ALLOTTED': '🟢 Allotted'
+            };
+            toast(`Status updated: ${labelMap[nextStatus] || nextStatus}`);
+            runMultiPanCheck();
+            if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
+          }
+        } catch (e) {
+          console.warn('Status toggle error:', e);
+          toast('Failed to update status: ' + e.message);
+        }
+      };
+
       function renderMultiCheckPanResults(results, isNotLive) {
         const listEl = document.getElementById('multiCheckPanList');
         if (!listEl) return;
@@ -6195,6 +6246,11 @@
             tagText = '⚪ Not Applied';
           }
 
+          const isClickable = !isNotLive && st !== 'PENDING';
+          const clickAttr = isClickable
+            ? `onclick="togglePanAllotmentStatus('${item.pan}', '${st}')" style="cursor:pointer;" title="Tap to toggle status (Not Applied / Non Allotted / Allotted)"`
+            : '';
+
           return `
             <div class="ipo-wiz-pan-card">
               <div style="display:flex;align-items:center;min-width:0;flex:1;">
@@ -6204,8 +6260,10 @@
                   <div class="pan-item-digits">${masked}</div>
                 </div>
               </div>
-              <div>
-                <span class="wiz-status-tag ${tagClass}">${tagText}</span>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span class="wiz-status-tag ${tagClass}" ${clickAttr}>
+                  ${tagText}${isClickable ? ' <span style="font-size:10px;opacity:0.6;margin-left:3px;">▾</span>' : ''}
+                </span>
               </div>
             </div>
           `;

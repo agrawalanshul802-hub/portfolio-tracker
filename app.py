@@ -3345,10 +3345,13 @@ def direct_check_allotment():
 
     # 2. Check if a specific status override was requested for a PAN:
     if override_status and override_pan and override_status in ('ALLOTTED', 'NOT_ALLOTTED', 'APPLIED', 'NOT_APPLIED'):
+        target_email = clean_email or 'anshul@123'
         if override_status == 'NOT_APPLIED':
-            if supabase and clean_email:
+            if supabase:
                 try:
-                    q = supabase.table('ipo_applications').delete().eq('user_email', clean_email).eq('pan_card', override_pan)
+                    q = supabase.table('ipo_applications').delete().eq('pan_card', override_pan)
+                    if clean_email:
+                        q = q.eq('user_email', clean_email)
                     if ipo_symbol:
                         q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
                     else:
@@ -3359,10 +3362,10 @@ def direct_check_allotment():
             return jsonify({'success': True, 'pan': override_pan, 'status': 'NOT_APPLIED', 'message': 'Reset to Not Applied'})
             
         shares = lot_size if override_status == 'ALLOTTED' else 0
-        if supabase and clean_email:
+        if supabase:
             try:
                 row_update = {
-                    'user_email': clean_email,
+                    'user_email': target_email,
                     'ipo_name': ipo_name,
                     'ipo_symbol': ipo_symbol,
                     'pan_card': override_pan,
@@ -3373,7 +3376,9 @@ def direct_check_allotment():
                     'allotment_url': allotment_url
                 }
                 # Check existing
-                q = supabase.table('ipo_applications').select('id').eq('user_email', clean_email).eq('pan_card', override_pan)
+                q = supabase.table('ipo_applications').select('id').eq('pan_card', override_pan)
+                if clean_email:
+                    q = q.eq('user_email', clean_email)
                 if ipo_symbol:
                     q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
                 else:
@@ -3418,16 +3423,27 @@ def direct_check_allotment():
                 
             # If live: check Supabase ipo_applications
             p_app = None
-            if supabase and clean_email and p_val:
+            if supabase and p_val:
                 try:
-                    q = supabase.table('ipo_applications').select('*').eq('user_email', clean_email).eq('pan_card', p_val)
-                    if ipo_symbol:
-                        q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
-                    else:
-                        q = q.ilike('ipo_name', f"%{ipo_name}%")
-                    app_res = q.execute()
-                    if app_res.data and len(app_res.data) > 0:
-                        p_app = app_res.data[0]
+                    if clean_email:
+                        q_user = supabase.table('ipo_applications').select('*').eq('user_email', clean_email).eq('pan_card', p_val)
+                        if ipo_symbol:
+                            q_user = q_user.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+                        else:
+                            q_user = q_user.ilike('ipo_name', f"%{ipo_name}%")
+                        app_res = q_user.execute()
+                        if app_res.data and len(app_res.data) > 0:
+                            p_app = app_res.data[0]
+                    
+                    if not p_app:
+                        q_pan = supabase.table('ipo_applications').select('*').eq('pan_card', p_val)
+                        if ipo_symbol:
+                            q_pan = q_pan.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+                        else:
+                            q_pan = q_pan.ilike('ipo_name', f"%{ipo_name}%")
+                        app_res2 = q_pan.execute()
+                        if app_res2.data and len(app_res2.data) > 0:
+                            p_app = app_res2.data[0]
                 except Exception as e:
                     print(f"[Multi-PAN Query Error for {p_val}] {e}")
                     
