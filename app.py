@@ -3312,6 +3312,7 @@ def direct_check_allotment():
 
     # If user has NOT applied for this IPO and did not click 'AUTO_VERIFY' / 'apply':
     if not existing_app and override_status != 'AUTO_VERIFY':
+        print(f"[Check Allotment] NOT_APPLIED for IPO: '{ipo_name}' (Symbol: '{ipo_symbol}') | PAN: {pan} | User: {clean_email}")
         return jsonify({
             'success': True,
             'status': 'NOT_APPLIED',

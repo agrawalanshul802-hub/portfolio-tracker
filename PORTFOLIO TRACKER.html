@@ -5830,9 +5830,10 @@
       };
 
       function updateIpoKpis() {
-        const total = _ipoApplications.length;
-        const allotted = _ipoApplications.filter(a => a.status === 'ALLOTTED').length;
-        const awaiting = _ipoApplications.filter(a => a.status === 'APPLIED').length;
+        const validApps = (_ipoApplications || []).filter(a => a.status && a.status !== 'NOT_APPLIED');
+        const total = validApps.length;
+        const allotted = validApps.filter(a => a.status === 'ALLOTTED').length;
+        const awaiting = validApps.filter(a => a.status === 'APPLIED').length;
 
         const kTotal = document.getElementById('kpiAppliedCount');
         const kAllot = document.getElementById('kpiAllottedCount');
@@ -5850,7 +5851,8 @@
         const empty = document.getElementById('ipoMyAppsEmpty');
         if (!wrap) return;
 
-        if (!_ipoApplications || _ipoApplications.length === 0) {
+        const validApps = (_ipoApplications || []).filter(a => a.status && a.status !== 'NOT_APPLIED');
+        if (validApps.length === 0) {
           wrap.innerHTML = '';
           if (empty) empty.style.display = 'block';
           return;
@@ -5858,7 +5860,7 @@
 
         if (empty) empty.style.display = 'none';
 
-        wrap.innerHTML = _ipoApplications.map(app => {
+        wrap.innerHTML = validApps.map(app => {
           const isAllotted = app.status === 'ALLOTTED';
           const isNot = app.status === 'NOT_ALLOTTED';
           const badgeClass = isAllotted ? 'allotted' : (isNot ? 'not-allotted' : 'applied');
@@ -5979,7 +5981,7 @@
           status = overrideStatus;
         } else if (overrideStatus === 'NOT_APPLIED') {
           status = 'NOT_APPLIED';
-        } else if (overrideStatus === 'AUTO_VERIFY' || foundApp) {
+        } else if (overrideStatus === 'AUTO_VERIFY' || (foundApp && foundApp.status && foundApp.status !== 'NOT_APPLIED')) {
           if (foundApp && (foundApp.status === 'ALLOTTED' || foundApp.status === 'NOT_ALLOTTED')) {
             status = foundApp.status;
           } else {
@@ -6477,10 +6479,11 @@
           const isSme = (ipo.type || ipo.exchange || '').toUpperCase().includes('SME');
           const typeText = isSme ? 'SME' : 'Mainboard';
 
-          // Check if user has an application record for this IPO
+          // Check if user has an active application record for this IPO
           const app = _ipoApplications.find(a => 
-            (ipo.symbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipo.symbol.toUpperCase()) ||
-            (ipo.name && a.ipo_name && (a.ipo_name.toLowerCase().includes(ipo.name.toLowerCase()) || ipo.name.toLowerCase().includes(a.ipo_name.toLowerCase())))
+            a.status && a.status !== 'NOT_APPLIED' &&
+            ((ipo.symbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipo.symbol.toUpperCase()) ||
+             (ipo.name && a.ipo_name && (a.ipo_name.toLowerCase().includes(ipo.name.toLowerCase()) || ipo.name.toLowerCase().includes(a.ipo_name.toLowerCase()))))
           );
 
           let statusChip = '';
