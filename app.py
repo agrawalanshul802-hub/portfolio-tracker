@@ -3087,6 +3087,7 @@ def get_ipo_detail():
 PAN_REGEX = re.compile(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$')
 
 @app.route('/api/user/pan', methods=['GET', 'POST', 'DELETE'])
+@app.route('/api/user/pans', methods=['GET', 'POST', 'DELETE'])
 def handle_user_pan():
     load_env_file()
     payload = request.get_json(silent=True) or {}
@@ -3097,35 +3098,108 @@ def handle_user_pan():
     clean_email = email.strip().lower()
     
     if request.method == 'GET':
-        pan = None
+        pan_raw = None
+        pans_list = []
         if supabase:
             try:
                 res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
                 if res.data and len(res.data) > 0:
-                    pan = res.data[0].get('pan_card')
+                    pan_raw = res.data[0].get('pan_card')
             except Exception as e:
                 print(f"[Supabase PAN Error] {e}")
-        return jsonify({'success': True, 'pan': pan or ''})
+                
+        primary_pan = ''
+        if pan_raw:
+            str_val = str(pan_raw).strip()
+            if str_val.startswith('[') and str_val.endswith(']'):
+                try:
+                    import json
+                    pans_list = json.loads(str_val)
+                    if pans_list and isinstance(pans_list, list):
+                        primary_pan = pans_list[0].get('pan', '')
+                except Exception:
+                    pass
+            elif len(str_val) == 10:
+                primary_pan = str_val
+                pans_list = [{'id': '1', 'name': 'ANSHUL AGRAWAL' if 'anshul' in clean_email else 'Primary Account', 'pan': str_val}]
+                
+        return jsonify({'success': True, 'pan': primary_pan, 'pans': pans_list})
         
     if request.method == 'DELETE':
+        pan_to_del = request.args.get('pan') or payload.get('pan')
         if supabase:
             try:
-                supabase.table('users').update({'pan_card': None}).eq('email', clean_email).execute()
+                if pan_to_del:
+                    # Remove only this PAN from pans array
+                    res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
+                    cur_val = res.data[0].get('pan_card') if res.data else None
+                    if cur_val and str(cur_val).strip().startswith('['):
+                        import json
+                        arr = json.loads(str(cur_val))
+                        arr = [x for x in arr if (x.get('pan') or '').upper() != pan_to_del.strip().upper()]
+                        new_val = json.dumps(arr) if arr else None
+                        supabase.table('users').update({'pan_card': new_val}).eq('email', clean_email).execute()
+                    else:
+                        supabase.table('users').update({'pan_card': None}).eq('email', clean_email).execute()
+                else:
+                    supabase.table('users').update({'pan_card': None}).eq('email', clean_email).execute()
             except Exception as e:
                 print(f"[Supabase PAN Delete Error] {e}")
                 return jsonify({'error': f'Failed to delete PAN: {str(e)}'}), 500
-        return jsonify({'success': True, 'pan': '', 'message': 'PAN deleted successfully'})
+        return jsonify({'success': True, 'pan': '', 'pans': [], 'message': 'PAN deleted successfully'})
     
-    # POST: Save / Update PAN
-    data = payload
-    raw_pan = (data.get('pan') or '').strip().upper()
-    
+    # POST: Save / Update PANs
+    import json
+    input_pans = payload.get('pans')
+    if input_pans and isinstance(input_pans, list):
+        # Save full array of PANs
+        cleaned_pans = []
+        for i, it in enumerate(input_pans, 1):
+            p_val = (it.get('pan') or '').strip().upper()
+            p_name = (it.get('name') or f'Investor {i}').strip()
+            if p_val and PAN_REGEX.match(p_val):
+                cleaned_pans.append({'id': str(it.get('id') or i), 'name': p_name, 'pan': p_val})
+        json_str = json.dumps(cleaned_pans)
+        if supabase:
+            try:
+                supabase.table('users').update({'pan_card': json_str}).eq('email', clean_email).execute()
+            except Exception as e:
+                print(f"[Supabase PANs Save Error] {e}")
+                return jsonify({'error': str(e)}), 500
+        prim = cleaned_pans[0]['pan'] if cleaned_pans else ''
+        return jsonify({'success': True, 'pan': prim, 'pans': cleaned_pans, 'message': f'{len(cleaned_pans)} PAN cards saved successfully!'})
+        
+    raw_pan = (payload.get('pan') or '').strip().upper()
+    raw_name = (payload.get('name') or 'Primary Account').strip()
     if raw_pan and not PAN_REGEX.match(raw_pan):
         return jsonify({'error': 'Invalid PAN format. Must be 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F)'}), 400
-    
+        
     if supabase:
         try:
-            supabase.table('users').update({'pan_card': raw_pan or None}).eq('email', clean_email).execute()
+            # Read existing to append or update
+            res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
+            cur_val = res.data[0].get('pan_card') if res.data else None
+            arr = []
+            if cur_val and str(cur_val).strip().startswith('['):
+                try:
+                    arr = json.loads(str(cur_val))
+                except Exception:
+                    arr = []
+            elif cur_val:
+                arr = [{'id': '1', 'name': 'Primary Account', 'pan': str(cur_val)}]
+                
+            # Check if exists in arr
+            found = False
+            for x in arr:
+                if (x.get('pan') or '').upper() == raw_pan:
+                    x['name'] = raw_name
+                    found = True
+                    break
+            if not found and raw_pan:
+                arr.append({'id': str(len(arr) + 1), 'name': raw_name, 'pan': raw_pan})
+                
+            save_val = json.dumps(arr) if arr else (raw_pan or None)
+            supabase.table('users').update({'pan_card': save_val}).eq('email', clean_email).execute()
         except Exception as e:
             print(f"[Supabase PAN Save Error] {e}")
             return jsonify({'error': f'Failed to update PAN in database: {str(e)}'}), 500
@@ -3234,11 +3308,6 @@ def direct_check_allotment():
     load_env_file()
     data = request.get_json(silent=True) or {}
     email = session.get('email') or request.args.get('email') or data.get('email')
-    pan = (data.get('pan') or '').strip().upper()
-    
-    if not email and not pan:
-        return jsonify({'error': 'Unauthorized', 'message': 'User session or PAN is required'}), 401
-        
     clean_email = (email or '').strip().lower()
     
     ipo_name = (data.get('ipo_name') or '').strip()
@@ -3248,100 +3317,11 @@ def direct_check_allotment():
     gmp = float(data.get('gmp') or 0)
     allotment_url = data.get('allotment_url') or ''
     override_status = data.get('override_status')
+    override_pan = (data.get('pan') or '').strip().upper()
     
-    # 1. Fetch user's linked PAN from Supabase if not sent directly
-    if not pan and clean_email and supabase:
-        try:
-            res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
-            if res.data and len(res.data) > 0:
-                pan = res.data[0].get('pan_card') or ''
-        except Exception as e:
-            print(f"[Check Allotment PAN fetch error] {e}")
-            
-    if not pan:
-        return jsonify({
-            'success': False,
-            'error': 'NO_PAN',
-            'message': 'No PAN card linked yet. Please link your 10-digit PAN first.'
-        }), 200
-        
-    masked_pan = pan[:5] + '••••' + pan[9:] if len(pan) == 10 else pan
     clean_issue_price = str(issue_price).replace('₹','').strip() if issue_price and issue_price != '-' else '124'
     
-    # 2. Check if an application already exists in Supabase
-    existing_app = None
-    if supabase and clean_email:
-        try:
-            query = supabase.table('ipo_applications').select('*').eq('user_email', clean_email)
-            if ipo_symbol:
-                query = query.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
-            else:
-                query = query.ilike('ipo_name', f"%{ipo_name}%")
-            app_res = query.execute()
-            if app_res.data and len(app_res.data) > 0:
-                existing_app = app_res.data[0]
-        except Exception as e:
-            print(f"[Check Allotment App Query Error] {e}")
-            
-    # If user explicitly overrode status:
-    if override_status in ('ALLOTTED', 'NOT_ALLOTTED', 'APPLIED'):
-        shares = lot_size if override_status == 'ALLOTTED' else 0
-        if supabase and clean_email:
-            try:
-                row_update = {
-                    'user_email': clean_email,
-                    'ipo_name': ipo_name,
-                    'ipo_symbol': ipo_symbol,
-                    'pan_card': pan,
-                    'status': override_status,
-                    'shares_allotted': shares,
-                    'bid_price': float(clean_issue_price) if clean_issue_price.replace('.','').isdigit() else 0.0,
-                    'allotment_url': allotment_url
-                }
-                if existing_app:
-                    supabase.table('ipo_applications').update(row_update).eq('id', existing_app['id']).execute()
-                else:
-                    supabase.table('ipo_applications').insert(row_update).execute()
-            except Exception as e:
-                print(f"[Supabase Override Error] {e}")
-        return jsonify({
-            'success': True,
-            'status': override_status,
-            'is_live': True,
-            'pan': pan,
-            'masked_pan': masked_pan,
-            'ipo_name': ipo_name,
-            'ipo_symbol': ipo_symbol,
-            'lots': existing_app.get('lots', 1) if existing_app else 1,
-            'shares_allotted': shares,
-            'issue_price': clean_issue_price,
-            'gmp': gmp,
-            'message': f"Status updated: {override_status}"
-        })
-
-    # If user explicitly set status to NOT_APPLIED:
-    if override_status == 'NOT_APPLIED':
-        if supabase and clean_email and existing_app:
-            try:
-                supabase.table('ipo_applications').delete().eq('id', existing_app['id']).execute()
-            except Exception as e:
-                print(f"[Supabase Delete App Error] {e}")
-        return jsonify({
-            'success': True,
-            'status': 'NOT_APPLIED',
-            'is_live': True,
-            'pan': pan,
-            'masked_pan': masked_pan,
-            'ipo_name': ipo_name,
-            'ipo_symbol': ipo_symbol,
-            'lots': 0,
-            'shares_allotted': 0,
-            'issue_price': clean_issue_price,
-            'gmp': gmp,
-            'message': f"No application record found for PAN {masked_pan} in {ipo_name}."
-        })
-
-    # 3. Check IPO timing in _ipo_cache to see if allotment is live yet
+    # 1. Warm IPO cache if needed and check timing
     global _ipo_cache
     now = time.time()
     if not _ipo_cache.get('data'):
@@ -3351,6 +3331,7 @@ def direct_check_allotment():
             _ipo_cache['ts'] = time.time()
         except Exception as e:
             print(f"[Direct Check Cache Warm Error] {e}")
+            
     ipo_data = _ipo_cache.get('data') or {}
     all_open = ipo_data.get('open') or []
     all_upcoming = ipo_data.get('upcoming') or []
@@ -3381,9 +3362,6 @@ def direct_check_allotment():
     allot_date_str = data.get('allotment_date') or (matched_ipo.get('allotment_date') if matched_ipo else None)
     parsed_allot_date = _parse_ipo_date(allot_date_str)
     
-    # An IPO's allotment is NOT live if:
-    # 1. It is currently in 'open' or 'upcoming'
-    # 2. Or its allotment date is strictly in the future (today < parsed_allot_date)
     is_not_live = False
     scheduled_display_date = None
     if ipo_section in ('open', 'upcoming'):
@@ -3392,7 +3370,156 @@ def direct_check_allotment():
     elif parsed_allot_date and today < parsed_allot_date:
         is_not_live = True
         scheduled_display_date = parsed_allot_date.strftime('%d %b %Y')
+
+    # 2. Check if a specific status override was requested for a PAN:
+    if override_status and override_pan and override_status in ('ALLOTTED', 'NOT_ALLOTTED', 'APPLIED', 'NOT_APPLIED'):
+        if override_status == 'NOT_APPLIED':
+            if supabase and clean_email:
+                try:
+                    q = supabase.table('ipo_applications').delete().eq('user_email', clean_email).eq('pan_card', override_pan)
+                    if ipo_symbol:
+                        q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+                    else:
+                        q = q.ilike('ipo_name', f"%{ipo_name}%")
+                    q.execute()
+                except Exception as e:
+                    print(f"[Supabase Delete Override Error] {e}")
+            return jsonify({'success': True, 'pan': override_pan, 'status': 'NOT_APPLIED', 'message': 'Reset to Not Applied'})
+            
+        shares = lot_size if override_status == 'ALLOTTED' else 0
+        if supabase and clean_email:
+            try:
+                row_update = {
+                    'user_email': clean_email,
+                    'ipo_name': ipo_name,
+                    'ipo_symbol': ipo_symbol,
+                    'pan_card': override_pan,
+                    'status': override_status,
+                    'shares_allotted': shares,
+                    'lots': 1,
+                    'bid_price': float(clean_issue_price) if clean_issue_price.replace('.','').isdigit() else 0.0,
+                    'allotment_url': allotment_url
+                }
+                # Check existing
+                q = supabase.table('ipo_applications').select('id').eq('user_email', clean_email).eq('pan_card', override_pan)
+                if ipo_symbol:
+                    q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+                else:
+                    q = q.ilike('ipo_name', f"%{ipo_name}%")
+                chk = q.execute()
+                if chk.data:
+                    supabase.table('ipo_applications').update(row_update).eq('id', chk.data[0]['id']).execute()
+                else:
+                    supabase.table('ipo_applications').insert(row_update).execute()
+            except Exception as e:
+                print(f"[Supabase Override Save Error] {e}")
+                
+        return jsonify({
+            'success': True,
+            'pan': override_pan,
+            'status': override_status,
+            'shares_allotted': shares,
+            'message': f"Updated {override_pan} to {override_status}"
+        })
+
+    # 3. Check if multi-PAN check is requested (IPOWiz mode)
+    input_pans = data.get('pans')
+    if input_pans and isinstance(input_pans, list) and len(input_pans) > 0:
+        results = []
+        for it in input_pans:
+            p_val = (it.get('pan') or '').strip().upper()
+            p_name = (it.get('name') or 'Investor').strip()
+            masked_p = ('X' * 9 + p_val[-1:]) if len(p_val) == 10 else p_val
+            
+            if is_not_live:
+                results.append({
+                    'id': str(it.get('id') or ''),
+                    'name': p_name,
+                    'pan': p_val,
+                    'masked_pan': masked_p,
+                    'status': 'PENDING',
+                    'is_live': False,
+                    'shares_allotted': 0,
+                    'lots': 0
+                })
+                continue
+                
+            # If live: check Supabase ipo_applications
+            p_app = None
+            if supabase and clean_email and p_val:
+                try:
+                    q = supabase.table('ipo_applications').select('*').eq('user_email', clean_email).eq('pan_card', p_val)
+                    if ipo_symbol:
+                        q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+                    else:
+                        q = q.ilike('ipo_name', f"%{ipo_name}%")
+                    app_res = q.execute()
+                    if app_res.data and len(app_res.data) > 0:
+                        p_app = app_res.data[0]
+                except Exception as e:
+                    print(f"[Multi-PAN Query Error for {p_val}] {e}")
+                    
+            if p_app:
+                st = p_app.get('status', 'NOT_APPLIED')
+                shs = p_app.get('shares_allotted', lot_size if st == 'ALLOTTED' else 0)
+                results.append({
+                    'id': str(it.get('id') or ''),
+                    'name': p_name,
+                    'pan': p_val,
+                    'masked_pan': masked_p,
+                    'status': st,
+                    'is_live': True,
+                    'shares_allotted': shs,
+                    'lots': p_app.get('lots', 1)
+                })
+            else:
+                results.append({
+                    'id': str(it.get('id') or ''),
+                    'name': p_name,
+                    'pan': p_val,
+                    'masked_pan': masked_p,
+                    'status': 'NOT_APPLIED',
+                    'is_live': True,
+                    'shares_allotted': 0,
+                    'lots': 0
+                })
+                
+        return jsonify({
+            'success': True,
+            'is_live': not is_not_live,
+            'allotment_date': scheduled_display_date or '',
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'message': f"Basis of allotment is scheduled for {scheduled_display_date}." if is_not_live else "Allotment verified.",
+            'results': results
+        })
+
+    # 4. Single PAN fallback check
+    pan = (data.get('pan') or '').strip().upper()
+    if not pan and clean_email and supabase:
+        try:
+            res = supabase.table('users').select('pan_card').eq('email', clean_email).execute()
+            if res.data and len(res.data) > 0:
+                raw_c = res.data[0].get('pan_card')
+                if raw_c and str(raw_c).strip().startswith('['):
+                    import json
+                    parsed_p = json.loads(str(raw_c))
+                    if parsed_p:
+                        pan = parsed_p[0].get('pan', '')
+                elif raw_c:
+                    pan = str(raw_c).strip()
+        except Exception as e:
+            print(f"[Check Allotment Single PAN fetch error] {e}")
+            
+    if not pan:
+        return jsonify({
+            'success': False,
+            'error': 'NO_PAN',
+            'message': 'No PAN card linked yet. Please add a PAN card first.'
+        }), 200
         
+    masked_pan = pan[:5] + '••••' + pan[9:] if len(pan) == 10 else pan
+    
     if is_not_live:
         date_msg = f"scheduled for {scheduled_display_date}" if scheduled_display_date else "in progress"
         return jsonify({
@@ -3403,7 +3530,7 @@ def direct_check_allotment():
             'masked_pan': masked_pan,
             'ipo_name': ipo_name,
             'ipo_symbol': ipo_symbol,
-            'lots': existing_app.get('lots', 1) if existing_app else 0,
+            'lots': 0,
             'shares_allotted': 0,
             'issue_price': clean_issue_price,
             'gmp': gmp,
@@ -3411,9 +3538,22 @@ def direct_check_allotment():
             'message': f"Basis of allotment is {date_msg}. The registrar has not declared the allotment yet. Results will appear automatically once published."
         })
 
-    # 4. Allotment IS live! Now check if user has applied:
+    # Check if application exists
+    existing_app = None
+    if supabase and clean_email:
+        try:
+            q = supabase.table('ipo_applications').select('*').eq('user_email', clean_email).eq('pan_card', pan)
+            if ipo_symbol:
+                q = q.or_(f"ipo_symbol.eq.{ipo_symbol},ipo_name.ilike.%{ipo_name}%")
+            else:
+                q = q.ilike('ipo_name', f"%{ipo_name}%")
+            r_app = q.execute()
+            if r_app.data and len(r_app.data) > 0:
+                existing_app = r_app.data[0]
+        except Exception:
+            pass
+            
     if not existing_app and override_status != 'AUTO_VERIFY':
-        print(f"[Check Allotment] NOT_APPLIED for IPO: '{ipo_name}' (Symbol: '{ipo_symbol}') | PAN: {pan} | User: {clean_email}")
         return jsonify({
             'success': True,
             'status': 'NOT_APPLIED',
@@ -3428,13 +3568,10 @@ def direct_check_allotment():
             'gmp': gmp,
             'message': f"No application record found for PAN {masked_pan} in {ipo_name}. You have not applied for this IPO."
         })
-
-    # If application exists and already has confirmed status:
+        
     if existing_app and existing_app.get('status') in ('ALLOTTED', 'NOT_ALLOTTED') and override_status != 'AUTO_VERIFY':
         st = existing_app['status']
         shs = existing_app.get('shares_allotted', lot_size if st == 'ALLOTTED' else 0)
-        bid_p = existing_app.get('bid_price')
-        final_price = str(bid_p) if bid_p and bid_p != 0.0 else clean_issue_price
         return jsonify({
             'success': True,
             'status': st,
@@ -3445,29 +3582,15 @@ def direct_check_allotment():
             'ipo_symbol': ipo_symbol,
             'lots': existing_app.get('lots', 1) or 1,
             'shares_allotted': shs,
-            'issue_price': final_price,
+            'issue_price': clean_issue_price,
             'gmp': gmp,
             'message': f"Allotment confirmed: {shs} shares allotted!" if st == 'ALLOTTED' else "Not allotted in this draw. Funds unblocked."
         })
 
-    # 5. User applied or clicked 'I Applied / Verify' for this live IPO:
+    # User verified with AUTO_VERIFY
     seed = hashlib.sha256(f"{pan}_{ipo_symbol or ipo_name}".encode('utf-8')).hexdigest()
     hash_val = int(seed[:8], 16)
-    
-    sub_mult = 3.0
-    for it in all_listed:
-        if (it.get('symbol') and it.get('symbol') == ipo_symbol) or (it.get('name') and ipo_name.lower() in it.get('name').lower()):
-            sub_str = str(it.get('sub_total') or '')
-            if 'x' in sub_str:
-                try:
-                    sub_mult = max(1.0, float(sub_str.replace('x','').strip()))
-                except Exception:
-                    pass
-            break
-            
-    prob = 1.0 / sub_mult if sub_mult > 1.0 else 1.0
-    is_allotted = ((hash_val % 1000) / 1000.0) < prob
-    
+    is_allotted = ((hash_val % 4) == 0)
     status = 'ALLOTTED' if is_allotted else 'NOT_ALLOTTED'
     shares = lot_size if is_allotted else 0
     
@@ -3505,6 +3628,7 @@ def direct_check_allotment():
         'gmp': gmp,
         'message': f"Congratulations! {shares} shares allotted to PAN {masked_pan}." if is_allotted else f"Not allotted in this IPO for PAN {masked_pan}. Blocked funds unblocked."
     })
+
 
 @app.route('/api/ipo/applications/<int:app_id>', methods=['DELETE'])
 def delete_ipo_application(app_id):

@@ -9635,3 +9635,337 @@ html {
   border-color: #94a3b8;
   color: #f1f5f9;
 }
+
+
+/* =========================================================
+   IPOWIZ MULTI-PAN MANAGER & 2-STEP ALLOTMENT MODAL STYLES
+   ========================================================= */
+.pan-numbers-dialog {
+  max-width: 480px !important;
+  width: 100% !important;
+  border-radius: 18px !important;
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(139, 92, 246, 0.12) !important;
+  overflow: hidden;
+}
+
+.pan-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pan-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  margin-bottom: 9px;
+  transition: all 0.2s ease;
+}
+
+.pan-item-card:hover {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+.pan-avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  font-weight: 800;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.pan-item-meta {
+  flex: 1;
+  margin-left: 12px;
+  min-width: 0;
+}
+
+.pan-item-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pan-item-digits {
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.pan-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pan-icon-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.pan-icon-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.pan-icon-btn.delete:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.add-pan-trigger-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px dashed rgba(167, 139, 250, 0.4);
+  background: rgba(167, 139, 250, 0.06);
+  color: #c084fc;
+  font-weight: 700;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.add-pan-trigger-btn:hover {
+  background: rgba(167, 139, 250, 0.14);
+  border-color: #a78bfa;
+}
+
+.pan-edit-form-card {
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  margin-top: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* IPO 2-Step Modal */
+.ipo-wizard-dialog {
+  max-width: 520px !important;
+  width: 100% !important;
+  border-radius: 20px !important;
+  background: #0b1120 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(99, 102, 241, 0.15) !important;
+  overflow: hidden;
+}
+
+.ipo-wiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ipo-wiz-back-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 12px;
+}
+
+.ipo-wiz-back-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.ipo-metric-grid-2x4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 18px 22px;
+}
+
+.ipo-metric-card {
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 11px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ipo-metric-card .label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.ipo-metric-card .val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.ipo-metric-card .val.green {
+  color: #34d399;
+}
+
+.ipo-metric-card .val.amber {
+  color: #fbbf24;
+}
+
+.ipo-wiz-footer-actions {
+  display: flex;
+  gap: 10px;
+  padding: 12px 22px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ipo-wiz-btn-sec {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.ipo-wiz-btn-sec:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ipo-wiz-btn-pri {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ipo-wiz-btn-pri:hover {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.55);
+}
+
+.ipo-wiz-not-live-banner {
+  margin: 16px 22px 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ipo-wiz-pan-list {
+  padding: 14px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.ipo-wiz-pan-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.wiz-status-tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.02em;
+}
+
+.wiz-status-tag.allotted {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #34d399;
+}
+
+.wiz-status-tag.non-allotted {
+  background: rgba(239, 68, 68, 0.16);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.wiz-status-tag.not-applied {
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+}
+
+.wiz-status-tag.pending {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+
+.wiz-refresh-bar {
+  padding: 12px 22px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
