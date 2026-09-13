@@ -3280,8 +3280,45 @@ def direct_check_allotment():
             'message': f"Status updated: {override_status}"
         })
 
+    # If user explicitly set status to NOT_APPLIED:
+    if override_status == 'NOT_APPLIED':
+        if supabase and clean_email and existing_app:
+            try:
+                supabase.table('ipo_applications').delete().eq('id', existing_app['id']).execute()
+            except Exception as e:
+                print(f"[Supabase Delete App Error] {e}")
+        return jsonify({
+            'success': True,
+            'status': 'NOT_APPLIED',
+            'pan': pan,
+            'masked_pan': masked_pan,
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'lots': 0,
+            'shares_allotted': 0,
+            'issue_price': clean_issue_price,
+            'gmp': gmp,
+            'message': f"No application record found for PAN {masked_pan} in {ipo_name}."
+        })
+
+    # If user has NOT applied for this IPO and did not click 'AUTO_VERIFY' / 'apply':
+    if not existing_app and override_status != 'AUTO_VERIFY':
+        return jsonify({
+            'success': True,
+            'status': 'NOT_APPLIED',
+            'pan': pan,
+            'masked_pan': masked_pan,
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'lots': 0,
+            'shares_allotted': 0,
+            'issue_price': clean_issue_price,
+            'gmp': gmp,
+            'message': f"No application found for PAN {masked_pan} in {ipo_name}. You have not applied for this IPO."
+        })
+
     # If application exists and already has confirmed status:
-    if existing_app and existing_app.get('status') in ('ALLOTTED', 'NOT_ALLOTTED'):
+    if existing_app and existing_app.get('status') in ('ALLOTTED', 'NOT_ALLOTTED') and override_status != 'AUTO_VERIFY':
         st = existing_app['status']
         shs = existing_app.get('shares_allotted', lot_size if st == 'ALLOTTED' else 0)
         bid_p = existing_app.get('bid_price')
@@ -3327,8 +3364,7 @@ def direct_check_allotment():
             'message': 'Bidding is currently open / ongoing. Allotment draw has not been conducted yet.'
         })
         
-    # 4. For closed / listed IPOs: Allotment is declared!
-    # Determine allotment result deterministically based on PAN and IPO
+    # 4. For closed / listed IPOs where user applied: Allotment is declared!
     seed = hashlib.sha256(f"{pan}_{ipo_symbol or ipo_name}".encode('utf-8')).hexdigest()
     hash_val = int(seed[:8], 16)
     

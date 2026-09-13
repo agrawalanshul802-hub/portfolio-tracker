@@ -9605,3 +9605,33 @@ html {
   color: #fcd34d;
 }
 
+
+.almt-result-card.not-applied {
+  border-color: rgba(148, 163, 184, 0.35);
+  background: linear-gradient(145deg, rgba(148, 163, 184, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
+  box-shadow: 0 14px 34px -8px rgba(15, 23, 42, 0.4);
+}
+
+.almt-hero-badge.not-applied {
+  background: rgba(148, 163, 184, 0.18);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.almt-notice-box.not-applied {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+}
+
+.allot-choice-btn.neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.allot-choice-btn.neutral:hover {
+  background: rgba(148, 163, 184, 0.22);
+  border-color: #94a3b8;
+  color: #f1f5f9;
+}

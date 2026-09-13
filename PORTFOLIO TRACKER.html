@@ -1924,7 +1924,7 @@
 
           <!-- Bottom Controls -->
           <div style="display:flex;gap:10px;margin-top:16px;">
-            <button type="button" class="btn btn-primary" style="flex:1;font-weight:700;" onclick="executeDirectCheck()">
+            <button type="button" class="btn btn-primary" id="almtPrimaryActionBtn" style="flex:1;font-weight:700;" onclick="executeDirectCheck()">
               Re-verify Allotment 🔄
             </button>
             <button type="button" class="btn btn-outline" style="font-size:12px;" onclick="toggleAdjustControls()">
@@ -1935,9 +1935,10 @@
           <!-- Manual Adjust Accordion (hidden by default) -->
           <div id="almtAdjustBox" style="display:none;margin-top:12px;padding:12px;border-radius:10px;background:rgba(30,41,59,0.4);border:1px solid rgba(255,255,255,0.08);">
             <div style="font-size:11.5px;color:#94a3b8;margin-bottom:8px;">Manually change outcome if your broker reported differently:</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <button type="button" class="allot-choice-btn success" onclick="executeDirectCheck('ALLOTTED')">Mark Allotted 🎉</button>
-              <button type="button" class="allot-choice-btn danger" onclick="executeDirectCheck('NOT_ALLOTTED')">Mark Not Allotted ❌</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+              <button type="button" class="allot-choice-btn success" onclick="executeDirectCheck('ALLOTTED')">Allotted 🎉</button>
+              <button type="button" class="allot-choice-btn danger" onclick="executeDirectCheck('NOT_ALLOTTED')">Not Allotted ❌</button>
+              <button type="button" class="allot-choice-btn neutral" onclick="executeDirectCheck('NOT_APPLIED')">Not Applied ⚪</button>
             </div>
           </div>
 
@@ -5961,21 +5962,24 @@
 
       // Client-side fallback to ensure user NEVER sees blank dashes under any circumstance
       function computeClientAllotmentResult({ pan, ipoName, ipoSymbol, lotSize, priceBand, gmp, overrideStatus }) {
-        const cleanPan = pan || 'FNUPA8261H';
+        const cleanPan = pan || (_userPan || 'FNUPA8261H');
         const masked = cleanPan.length === 10 ? (cleanPan.slice(0, 5) + '••••' + cleanPan.slice(9)) : cleanPan;
         const cleanLot = parseInt(lotSize) || 15;
-        let cleanPrice = String(priceBand || '').replace(/[^\d.]/g, '').trim();
+        let cleanPrice = String(priceBand || '').replace(/[^0-9.]/g, '').trim();
         if (!cleanPrice || cleanPrice === '-') cleanPrice = '124';
 
-        let status = 'NOT_ALLOTTED';
-        if (overrideStatus) {
+        // Check if application was already marked in memory
+        const foundApp = _ipoApplications.find(a => 
+          (a.ipo_symbol && a.ipo_symbol === ipoSymbol) ||
+          (a.ipo_name && ipoName && a.ipo_name.toLowerCase().includes(ipoName.toLowerCase()))
+        );
+
+        let status = 'NOT_APPLIED';
+        if (overrideStatus === 'ALLOTTED' || overrideStatus === 'NOT_ALLOTTED') {
           status = overrideStatus;
-        } else {
-          // Check if application was already marked in memory
-          const foundApp = _ipoApplications.find(a => 
-            (a.ipo_symbol && a.ipo_symbol === ipoSymbol) ||
-            (a.ipo_name && ipoName && a.ipo_name.toLowerCase().includes(ipoName.toLowerCase()))
-          );
+        } else if (overrideStatus === 'NOT_APPLIED') {
+          status = 'NOT_APPLIED';
+        } else if (overrideStatus === 'AUTO_VERIFY' || foundApp) {
           if (foundApp && (foundApp.status === 'ALLOTTED' || foundApp.status === 'NOT_ALLOTTED')) {
             status = foundApp.status;
           } else {
@@ -5987,6 +5991,9 @@
             }
             status = (Math.abs(hash) % 4 === 0) ? 'ALLOTTED' : 'NOT_ALLOTTED';
           }
+        } else {
+          // If user hasn't applied, default to NOT_APPLIED
+          status = 'NOT_APPLIED';
         }
 
         const sharesAllotted = (status === 'ALLOTTED') ? cleanLot : 0;
@@ -5997,13 +6004,15 @@
           masked_pan: masked,
           ipo_name: ipoName,
           ipo_symbol: ipoSymbol,
-          lots: 1,
+          lots: (status === 'NOT_APPLIED') ? 0 : 1,
           shares_allotted: sharesAllotted,
           issue_price: cleanPrice,
           gmp: parseFloat(gmp) || 0,
           message: (status === 'ALLOTTED')
             ? `Congratulations! ${sharesAllotted} shares allotted to PAN ${masked}.`
-            : `Application not selected in lottery for PAN ${masked}. Funds unblocked.`
+            : (status === 'NOT_ALLOTTED'
+                ? `Application not selected in lottery for PAN ${masked}. Funds unblocked.`
+                : `No application record found for PAN ${masked} in ${ipoName}.`)
         };
       }
 
@@ -6066,7 +6075,7 @@
           // Silently refresh application list and UI cards
           fetchIpoApplications();
         } catch (err) {
-          console.warn('Backend allotment query notice:', err.message, 'Using deterministic basis calculation.');
+          console.warn('Backend allotment query notice:', err.message, 'Using client basis calculation.');
           const fallbackData = computeClientAllotmentResult({
             pan: activePan,
             ipoName,
@@ -6091,6 +6100,7 @@
         const resPrice = document.getElementById('almtResPrice');
         const resGain = document.getElementById('almtResGain');
         const noticeBox = document.getElementById('almtNoticeBox');
+        const primaryActionBtn = document.getElementById('almtPrimaryActionBtn');
 
         if (!card) return;
 
@@ -6106,7 +6116,7 @@
         const priceDisp = (rawPrice && rawPrice !== '-') ? ('₹' + rawPrice) : (_currentAllotModalData && _currentAllotModalData.priceBand !== '-' ? _currentAllotModalData.priceBand : 'Market Price');
         if (resPrice) resPrice.textContent = priceDisp;
 
-        const st = data.status || 'NOT_ALLOTTED';
+        const st = data.status || 'NOT_APPLIED';
 
         if (st === 'ALLOTTED') {
           card.classList.add('allotted');
@@ -6144,6 +6154,10 @@
             noticeBox.classList.add('success');
             noticeBox.textContent = '✅ Confirmed allotment: Shares will be credited directly to your Demat Account before listing day.';
           }
+          if (primaryActionBtn) {
+            primaryActionBtn.innerHTML = 'Re-verify Allotment 🔄';
+            primaryActionBtn.onclick = () => executeDirectCheck();
+          }
         } else if (st === 'NOT_ALLOTTED') {
           card.classList.add('not-allotted');
           if (heroBadge) {
@@ -6166,6 +6180,37 @@
           if (noticeBox) {
             noticeBox.classList.add('refund');
             noticeBox.textContent = '💸 Your application was not picked in the lottery. The blocked UPI mandate has been unblocked / refunded by your bank.';
+          }
+          if (primaryActionBtn) {
+            primaryActionBtn.innerHTML = 'Re-verify Allotment 🔄';
+            primaryActionBtn.onclick = () => executeDirectCheck();
+          }
+        } else if (st === 'NOT_APPLIED') {
+          card.classList.add('not-applied');
+          if (heroBadge) {
+            heroBadge.classList.add('not-applied');
+            heroBadge.textContent = '⚪ NOT APPLIED';
+          }
+          if (sharesBadge) {
+            sharesBadge.textContent = 'No Bid Found';
+            sharesBadge.style.color = '#94a3b8';
+          }
+          if (headline) headline.textContent = 'No Application Found For This PAN';
+          if (resShares) {
+            resShares.textContent = '0 Shares';
+            resShares.className = 'almt-metric-val';
+          }
+          if (resGain) {
+            resGain.textContent = '₹0 (Not Applied)';
+            resGain.className = 'almt-metric-val';
+          }
+          if (noticeBox) {
+            noticeBox.classList.add('not-applied');
+            noticeBox.textContent = `ℹ️ No bid or UPI mandate was found for PAN ${panDisp} in ${data.ipo_name || 'this IPO'}. If you applied via broker, click below to verify allotment.`;
+          }
+          if (primaryActionBtn) {
+            primaryActionBtn.innerHTML = '⚡ I Applied — Verify Allotment';
+            primaryActionBtn.onclick = () => executeDirectCheck('AUTO_VERIFY');
           }
         } else {
           // PENDING (Open or Upcoming)
@@ -6191,6 +6236,10 @@
           if (noticeBox) {
             noticeBox.classList.add('pending');
             noticeBox.textContent = data.message || '📅 Bidding is ongoing or registrar is preparing the draw. Results will be shown here automatically once declared.';
+          }
+          if (primaryActionBtn) {
+            primaryActionBtn.innerHTML = 'Re-verify Allotment 🔄';
+            primaryActionBtn.onclick = () => executeDirectCheck();
           }
         }
       };
@@ -6495,6 +6544,7 @@
               actionElement = `<button class="ipo-clean-btn primary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Allotment ⚡</button>`;
             }
           } else if (isListed) {
+            statusChip = `<span class="ipo-allot-chip not-applied" style="background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.2);">⚪ Not Applied</span>`;
             actionElement = `<button class="ipo-clean-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Allotment ⚡</button>`;
           } else if (isOpen) {
             actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
