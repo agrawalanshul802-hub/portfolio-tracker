@@ -9939,6 +9939,16 @@ html {
   padding: 4px 10px;
   border-radius: 8px;
   letter-spacing: 0.02em;
+  transition: all 0.18s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.wiz-status-tag:hover {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .wiz-status-tag.allotted {

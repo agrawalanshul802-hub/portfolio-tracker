@@ -1893,7 +1893,7 @@
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
-            <a href="#" id="multiCheckRegistrarLink" target="_blank" rel="noopener noreferrer" class="pan-icon-btn" title="Open Registrar Portal">
+            <a href="#" id="multiCheckRegistrarLink" target="_blank" rel="noopener noreferrer" class="pan-icon-btn" title="Open Official Registrar Portal (Auto-copies PAN)" onclick="handleRegistrarClick(event)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
             <button class="pan-modal-close" onclick="closeAllotmentModal()">✕</button>
@@ -1921,6 +1921,14 @@
         <!-- Saved Family PANs Status Cards -->
         <div class="ipo-wiz-pan-list" id="multiCheckPanList">
           <!-- Dynamically populated with ANSHUL AGRAWAL, Ramesh Agrawal, SHIKHA AGRAWAL, kanak, akash -->
+        </div>
+
+        <!-- Interactive Tip Card -->
+        <div style="margin:10px 0 14px;padding:9px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:9px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:14px;">💡</span>
+          <div style="font-size:11.5px;color:#94a3b8;line-height:1.4;">
+            <b>Interactive:</b> Tap any status badge to switch (<i>Not Applied</i> ↔ <i>Non Allotted</i> ↔ <i>Allotted</i>). Tap <b>↗</b> in header to open official registrar with auto-copied PAN.
+          </div>
         </div>
 
         <!-- Refresh / Re-query Bottom Bar -->
@@ -6053,6 +6061,15 @@
         if (view2) view2.style.display = 'none';
 
         modal.style.display = 'flex';
+      };
+
+            window.handleRegistrarClick = function(e) {
+        const panToCopy = (_userPans && _userPans.length > 0) ? _userPans[0].pan : (_userPan || '');
+        if (panToCopy && navigator.clipboard) {
+          navigator.clipboard.writeText(panToCopy).then(() => {
+            toast(`📋 PAN (${maskPanDigits(panToCopy)}) copied to clipboard! Paste it on the registrar portal.`);
+          }).catch(() => {});
+        }
       };
 
       window.switchToMultiCheckView = function () {
