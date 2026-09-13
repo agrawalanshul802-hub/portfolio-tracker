@@ -91,6 +91,7 @@ supabase: SupabaseClient = create_client(SUPABASE_URL, SUPABASE_KEY)
 # Resilient In-Memory Fallback Caches (Prevents data loss on cold-starts & network glitches)
 _LOCAL_HOLDINGS_CACHE = {}
 _LOCAL_USER_PANS = {}
+DEMO_PANS = {'FNUPA8261H', 'AJLPA3918K', 'AVGPA2677Q', 'BTDPY6025L', 'QDKPS9103R'}
 _LOCAL_IPO_APPS = {}
 
 def hash_password(password):
@@ -3067,22 +3068,23 @@ def handle_user_pan():
             if str_val.startswith('[') and str_val.endswith(']'):
                 try:
                     import json
-                    pans_list = json.loads(str_val)
-                    if pans_list and isinstance(pans_list, list):
-                        primary_pan = pans_list[0].get('pan', '')
+                    parsed_p = json.loads(str_val)
+                    if parsed_p and isinstance(parsed_p, list):
+                        pans_list = [p for p in parsed_p if (p.get('pan') or '').strip().upper() not in DEMO_PANS]
+                        if pans_list:
+                            primary_pan = pans_list[0].get('pan', '')
                 except Exception:
                     pass
-            elif len(str_val) == 10:
+            elif len(str_val) == 10 and str_val.upper() not in DEMO_PANS:
                 primary_pan = str_val
-                pans_list = [{'id': '1', 'name': 'ANSHUL AGRAWAL' if 'anshul' in clean_email else 'Primary Account', 'pan': str_val}]
+                pans_list = [{'id': '1', 'name': 'Primary Account', 'pan': str_val}]
                 
         if not pans_list and clean_email in _LOCAL_USER_PANS:
-            pans_list = _LOCAL_USER_PANS[clean_email]
+            pans_list = [p for p in _LOCAL_USER_PANS[clean_email] if (p.get('pan') or '').strip().upper() not in DEMO_PANS]
             if pans_list:
                 primary_pan = pans_list[0].get('pan', '')
                 
-        if pans_list:
-            _LOCAL_USER_PANS[clean_email] = pans_list
+        _LOCAL_USER_PANS[clean_email] = pans_list
             
         return jsonify({'success': True, 'pan': primary_pan, 'pans': pans_list})
         
@@ -3120,7 +3122,7 @@ def handle_user_pan():
         for i, it in enumerate(input_pans, 1):
             p_val = (it.get('pan') or '').strip().upper()
             p_name = (it.get('name') or f'Investor {i}').strip()
-            if p_val and PAN_REGEX.match(p_val):
+            if p_val and PAN_REGEX.match(p_val) and p_val not in DEMO_PANS:
                 cleaned_pans.append({'id': str(it.get('id') or i), 'name': p_name, 'pan': p_val})
         json_str = json.dumps(cleaned_pans) if cleaned_pans else None
         _LOCAL_USER_PANS[clean_email] = cleaned_pans
@@ -3138,6 +3140,8 @@ def handle_user_pan():
         
     raw_pan = (payload.get('pan') or '').strip().upper()
     raw_name = (payload.get('name') or 'Primary Account').strip()
+    if raw_pan in DEMO_PANS:
+        return jsonify({'error': 'Demo PAN cannot be linked'}), 400
     if raw_pan and not PAN_REGEX.match(raw_pan):
         return jsonify({'error': 'Invalid PAN format. Must be 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F)'}), 400
         

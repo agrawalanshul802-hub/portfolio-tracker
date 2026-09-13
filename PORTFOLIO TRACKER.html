@@ -1870,77 +1870,18 @@
           </div>
         </div>
 
-        <div class="ipo-wiz-footer-actions">
+        <div class="ipo-wiz-footer-actions" style="gap:10px;">
           <a href="#" id="overviewDetailsBtn" target="_blank" rel="noopener noreferrer" class="ipo-wiz-btn-sec">
-            IPO Details
+            DRHP / Prospectus 📄
           </a>
-          <button type="button" class="ipo-wiz-btn-pri" onclick="switchToMultiCheckView()">
-            Check Allotment
+          <button type="button" class="ipo-wiz-btn-pri" id="openRegistrarBtn" onclick="openDirectRegistrarFromModal(event)">
+            Check on Official Registrar Portal ↗
           </button>
         </div>
       </div>
 
       <!-- SUBVIEW 2: MULTI-PAN ALLOTMENT STATUS LIST (IPOWIZ ALLOTMENT VIEW) -->
-      <div id="allotViewMultiCheck" style="display:none;">
-        <div class="ipo-wiz-header">
-          <div style="display:flex;align-items:center;">
-            <button type="button" class="ipo-wiz-back-btn" onclick="switchToOverviewView()" title="Back to Overview">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <div>
-              <h3 id="multiCheckTitle" class="ipo-wiz-title" style="font-size:15.5px;">Company Name</h3>
-              <div class="ipo-wiz-sub">Multi-PAN Allotment Verification</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <a href="#" id="multiCheckRegistrarLink" target="_blank" rel="noopener noreferrer" class="pan-icon-btn" title="Open Official Registrar Portal (Auto-copies PAN)" onclick="handleRegistrarClick(event)">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </a>
-            <button class="pan-modal-close" onclick="closeAllotmentModal()">✕</button>
-          </div>
-        </div>
-
-        <!-- Scheduled / Not Live Banner -->
-        <div id="multiCheckNotLiveBanner" style="display:none;" class="ipo-wiz-not-live-banner">
-          <div style="font-size:22px;line-height:1;">⏳</div>
-          <div>
-            <div style="font-weight:800;font-size:13.5px;color:#fef3c7;">Allotment Not Declared Yet</div>
-            <div id="multiCheckNotLiveMsg" style="font-size:12px;color:#fde68a;margin-top:2px;">
-              Basis of allotment scheduled on 15 Sep 2026.
-            </div>
-          </div>
-        </div>
-
-        <!-- Loading spinner -->
-        <div id="multiCheckLoading" style="display:none;text-align:center;padding:30px 10px;">
-          <div class="almt-spinner"></div>
-          <h4 style="margin:14px 0 4px;color:#fff;font-size:15px;font-weight:700;">Querying Basis of Allotment...</h4>
-          <p style="margin:0;font-size:12px;color:#94a3b8;">Verifying all family PANs against registrar records</p>
-        </div>
-
-        <!-- Saved Family PANs Status Cards -->
-        <div class="ipo-wiz-pan-list" id="multiCheckPanList">
-          <!-- Dynamically populated with ANSHUL AGRAWAL, Ramesh Agrawal, SHIKHA AGRAWAL, kanak, akash -->
-        </div>
-
-        <!-- Interactive Tip Card -->
-        <div style="margin:10px 0 14px;padding:9px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:9px;display:flex;align-items:center;gap:8px;">
-          <span style="font-size:14px;">💡</span>
-          <div style="font-size:11.5px;color:#94a3b8;line-height:1.4;">
-            <b>Interactive:</b> Tap any status badge to switch (<i>Not Applied</i> ↔ <i>Non Allotted</i> ↔ <i>Allotted</i>). Tap <b>↗</b> in header to open official registrar with auto-copied PAN.
-          </div>
-        </div>
-
-        <!-- Refresh / Re-query Bottom Bar -->
-        <div class="wiz-refresh-bar">
-          <button type="button" class="ipo-wiz-btn-pri" style="width:100%;" id="refreshAllPansBtn" onclick="runMultiPanCheck()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Refresh All
-          </button>
-        </div>
       </div>
-
-    </div>
   </div>
 
   <div class="toast-container" id="toastContainer"></div>
@@ -5626,26 +5567,23 @@
             // =========================================================
       //  IPOWIZ MULTI-PAN & 2-STEP ALLOTMENT TRACKER STATE & HANDLERS
       // =========================================================
-      const DEFAULT_FAMILY_PANS = [
-        { id: "pan_1", name: "ANSHUL AGRAWAL", pan: "FNUPA8261H" },
-        { id: "pan_2", name: "Ramesh Agrawal", pan: "AJLPA3918K" },
-        { id: "pan_3", name: "SHIKHA AGRAWAL", pan: "AVGPA2677Q" },
-        { id: "pan_4", name: "kanak", pan: "BTDPY6025L" },
-        { id: "pan_5", name: "akash", pan: "QDKPS9103R" }
-      ];
+      // No default or demo PANs - completely user managed
+      const DEMO_PANS = ['FNUPA8261H', 'AJLPA3918K', 'AVGPA2677Q', 'BTDPY6025L', 'QDKPS9103R'];
 
       let _userPans = [];
       try {
         const storedPans = localStorage.getItem('portfolio_saved_pans');
-        if (storedPans) _userPans = JSON.parse(storedPans);
+        if (storedPans) {
+          const parsed = JSON.parse(storedPans);
+          if (Array.isArray(parsed)) {
+            // Filter out any demo PANs permanently
+            _userPans = parsed.filter(p => p && p.pan && !DEMO_PANS.includes(p.pan.toUpperCase()));
+          }
+        }
       } catch (e) {}
+      try { localStorage.setItem('portfolio_saved_pans', JSON.stringify(_userPans)); } catch(e){}
 
-      if (!Array.isArray(_userPans) || _userPans.length === 0) {
-        _userPans = [...DEFAULT_FAMILY_PANS];
-        try { localStorage.setItem('portfolio_saved_pans', JSON.stringify(_userPans)); } catch(e){}
-      }
-
-      let _userPan = _userPans.length > 0 ? _userPans[0].pan : 'FNUPA8261H';
+      let _userPan = _userPans.length > 0 ? _userPans[0].pan : '';
       let _isPanMasked = true; // masked by default like video!
       let _ipoApplications = [];
       try {
@@ -5907,12 +5845,14 @@
             updatePanDisplay();
             renderPanListContainer();
           } else if (json.success && (!json.pans || json.pans.length === 0) && _userPans.length > 0 && userEmail) {
-            // Server has no saved PANs for this user, but client has locally saved PANs: sync to backend!
-            fetch('/api/user/pans', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: userEmail, pans: _userPans })
-            }).catch(e => console.warn('Two-way PAN sync notice:', e));
+            const validPans = _userPans.filter(p => p && p.pan && !DEMO_PANS.includes(p.pan.toUpperCase()));
+            if (validPans.length > 0) {
+              fetch('/api/user/pans', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, pans: validPans })
+              }).catch(e => console.warn('Two-way PAN sync notice:', e));
+            }
           }
         } catch (e) {
           console.warn('fetchUserPans notice:', e);
@@ -5999,8 +5939,8 @@
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <button class="btn btn-outline btn-sm" style="padding:6px 12px;font-weight:700;" onclick="openAllotmentModal('${appNameEsc}', '${app.ipo_symbol || ''}', '${allotUrl}', ${app.shares_allotted || 15}, '${app.bid_price || '-'}', 0)">
-                  Inspect Allotment
+                <button class="btn btn-primary btn-sm" style="padding:6px 12px;font-weight:700;" onclick="redirectToRegistrar('${allotUrl}', '${appNameEsc}')">
+                  Check on Registrar ↗
                 </button>
                 <button class="btn btn-outline btn-sm" style="padding:6px 10px;color:#ef4444;border-color:rgba(239,68,68,0.25);" title="Remove Tracking" onclick="handleDeleteApplication('${app.id}')">
                   🗑
@@ -6109,39 +6049,47 @@
         modal.style.display = 'flex';
       };
 
-            window.handleRegistrarClick = function(e) {
-        const panToCopy = (_userPans && _userPans.length > 0) ? _userPans[0].pan : (_userPan || '');
-        if (panToCopy && navigator.clipboard) {
-          navigator.clipboard.writeText(panToCopy).then(() => {
-            toast(`📋 PAN (${maskPanDigits(panToCopy)}) copied to clipboard! Paste it on the registrar portal.`);
-          }).catch(() => {});
+                  // Direct official registrar redirection (no automated / simulated guess)
+      window.resolveIpoRegistrarUrl = function(ipoName, symbol, rawUrl) {
+        if (rawUrl && !rawUrl.includes('example.com') && rawUrl !== '-' && rawUrl !== 'TBA') {
+          return rawUrl;
         }
+        const sName = (ipoName || '').toLowerCase();
+        if (sName.includes('kanohar')) {
+          return 'https://in.mpms.mufg.com/Initial_Offer/public-issues.html';
+        }
+        if (sName.includes('amtech')) {
+          return 'https://maashitla.com/';
+        }
+        if (sName.includes('steamhouse') || sName.includes('lcc')) {
+          return 'https://ipostatus.kfintech.com/';
+        }
+        // Universal BSE India Official Allotment Check
+        return 'https://www.bseindia.com/investors/appli_check.aspx';
       };
 
-      window.switchToMultiCheckView = function () {
-        const view1 = document.getElementById('allotViewOverview');
-        const view2 = document.getElementById('allotViewMultiCheck');
-        if (view1) view1.style.display = 'none';
-        if (view2) view2.style.display = 'block';
+      window.redirectToRegistrar = function(allotUrl, ipoNameEsc) {
+        if (window.event) window.event.stopPropagation();
+        const ipoName = decodeURIComponent(ipoNameEsc || '');
+        const targetUrl = resolveIpoRegistrarUrl(ipoName, '', allotUrl ? decodeURIComponent(allotUrl) : '');
 
-        if (_currentAllotModalData) {
-          const tEl = document.getElementById('multiCheckTitle');
-          if (tEl) tEl.textContent = _currentAllotModalData.ipoName;
-
-          const rLink = document.getElementById('multiCheckRegistrarLink');
-          if (rLink) {
-            rLink.href = _currentAllotModalData.allotmentUrl || 'https://linkintime.co.in/initial_offer/public-issues.html';
-          }
+        // If user has linked their PAN, auto-copy to clipboard for effortless pasting
+        const userPan = (_userPans && _userPans.length > 0) ? _userPans[0].pan : (_userPan || '');
+        if (userPan && navigator.clipboard) {
+          navigator.clipboard.writeText(userPan).catch(() => {});
+          toast(`📋 PAN (${maskPanDigits(userPan)}) copied! Opening official registrar portal...`);
+        } else {
+          toast(`🌐 Opening official allotment portal for ${ipoName}...`);
         }
 
-        runMultiPanCheck();
+        window.open(targetUrl, '_blank', 'noopener,noreferrer');
       };
 
-      window.switchToOverviewView = function () {
-        const view1 = document.getElementById('allotViewOverview');
-        const view2 = document.getElementById('allotViewMultiCheck');
-        if (view1) view1.style.display = 'block';
-        if (view2) view2.style.display = 'none';
+      window.openDirectRegistrarFromModal = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (!_currentAllotModalData) return;
+        const { ipoName, allotmentUrl } = _currentAllotModalData;
+        redirectToRegistrar(allotmentUrl, encodeURIComponent(ipoName));
       };
 
       window.closeAllotmentModal = function () {
@@ -6150,236 +6098,7 @@
         _currentAllotModalData = null;
       };
 
-      window.runMultiPanCheck = async function () {
-        if (!_currentAllotModalData) return;
-        const spinner = document.getElementById('multiCheckLoading');
-        const notLiveBanner = document.getElementById('multiCheckNotLiveBanner');
-        const listEl = document.getElementById('multiCheckPanList');
-        const refreshBtn = document.getElementById('refreshAllPansBtn');
-
-        if (spinner) spinner.style.display = 'block';
-        if (refreshBtn) refreshBtn.disabled = true;
-
-        const { ipoName, ipoSymbol, lotSize, priceBand, gmp, allotmentUrl, allotmentDate } = _currentAllotModalData;
-        const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
-          || localStorage.getItem('portfolio_user_email') || '';
-
-        // Ensure _userPans has at least the default/saved family PANs
-        if (!_userPans || _userPans.length === 0) {
-          try {
-            const stored = localStorage.getItem('portfolio_saved_pans');
-            if (stored) _userPans = JSON.parse(stored);
-          } catch(e) {}
-          if (!_userPans || _userPans.length === 0) {
-            _userPans = [...DEFAULT_FAMILY_PANS];
-            try { localStorage.setItem('portfolio_saved_pans', JSON.stringify(_userPans)); } catch(e){}
-          }
-        }
-
-        try {
-          const res = await fetch('/api/ipo/check-allotment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: userEmail,
-              pans: _userPans,
-              ipo_name: ipoName,
-              ipo_symbol: ipoSymbol,
-              lot_size: lotSize,
-              issue_price: priceBand,
-              gmp: gmp,
-              allotment_url: allotmentUrl,
-              allotment_date: allotmentDate
-            })
-          });
-
-          const json = await res.json();
-          if (spinner) spinner.style.display = 'none';
-          if (refreshBtn) refreshBtn.disabled = false;
-
-          // Check if allotment date has already arrived or passed (e.g. Friday 2026-09-11)
-          const parsedD = parseJsIpoDate(allotmentDate);
-          const isPastDate = Boolean(parsedD && parsedD <= new Date());
-          
-          // If the scheduled date has already passed, allotment IS LIVE!
-          const isNotLive = isPastDate ? false : (!json.is_live || json.status === 'PENDING');
-          
-          if (notLiveBanner) {
-            if (isNotLive) {
-              notLiveBanner.style.display = 'flex';
-              const msgEl = document.getElementById('multiCheckNotLiveMsg');
-              if (msgEl) {
-                const dt = json.allotment_date || allotmentDate;
-                msgEl.textContent = dt ? `Basis of allotment scheduled on ${dt}.` : 'Registrar has not published the draw yet.';
-              }
-            } else {
-              notLiveBanner.style.display = 'none';
-            }
-          }
-
-          renderMultiCheckPanResults(json.results || [], isNotLive);
-        } catch (err) {
-          console.warn('Multi-PAN query notice:', err.message);
-          if (spinner) spinner.style.display = 'none';
-          if (refreshBtn) refreshBtn.disabled = false;
-
-          const parsedD = parseJsIpoDate(allotmentDate);
-          const isNotLive = parsedD && parsedD > new Date();
-
-          if (notLiveBanner) {
-            notLiveBanner.style.display = isNotLive ? 'flex' : 'none';
-          }
-
-          const fallbackResults = _userPans.map((p, idx) => ({
-            id: p.id,
-            name: p.name,
-            pan: p.pan,
-            status: isNotLive ? 'PENDING' : 'NOT_APPLIED',
-            shares_allotted: 0,
-            lots: 0
-          }));
-
-          renderMultiCheckPanResults(fallbackResults, isNotLive);
-        }
-      };
-
-            window.togglePanAllotmentStatus = async function (pan, currentStatus) {
-        if (!_currentAllotModalData) return;
-        const { ipoName, ipoSymbol, lotSize, priceBand, gmp, allotmentUrl } = _currentAllotModalData;
-
-        // Cycle through statuses: NOT_APPLIED -> NOT_ALLOTTED -> ALLOTTED -> NOT_APPLIED
-        let nextStatus = 'NOT_ALLOTTED';
-        if (currentStatus === 'NOT_APPLIED') {
-          nextStatus = 'NOT_ALLOTTED';
-        } else if (currentStatus === 'NOT_ALLOTTED') {
-          nextStatus = 'ALLOTTED';
-        } else if (currentStatus === 'ALLOTTED') {
-          nextStatus = 'NOT_APPLIED';
-        }
-
-        const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
-          || localStorage.getItem('portfolio_user_email') || '';
-
-        // Optimistically update local _ipoApplications immediately
-        const existingIdx = _ipoApplications.findIndex(a => 
-          (a.pan_card === pan || !a.pan_card) && 
-          ((ipoSymbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipoSymbol.toUpperCase()) ||
-           (ipoName && a.ipo_name && a.ipo_name.toLowerCase().includes(ipoName.toLowerCase())))
-        );
-        if (nextStatus === 'NOT_APPLIED') {
-          if (existingIdx !== -1) _ipoApplications.splice(existingIdx, 1);
-        } else {
-          const appObj = {
-            id: existingIdx !== -1 ? _ipoApplications[existingIdx].id : ('app_' + Date.now()),
-            user_email: userEmail,
-            ipo_name: ipoName,
-            ipo_symbol: ipoSymbol,
-            pan_card: pan,
-            status: nextStatus,
-            shares_allotted: nextStatus === 'ALLOTTED' ? (parseInt(lotSize) || 15) : 0,
-            lots: 1,
-            bid_price: priceBand || '-',
-            allotment_url: allotmentUrl || ''
-          };
-          if (existingIdx !== -1) _ipoApplications[existingIdx] = appObj;
-          else _ipoApplications.unshift(appObj);
-        }
-        try { localStorage.setItem('portfolio_ipo_applications', JSON.stringify(_ipoApplications)); } catch(e){}
-        updateIpoKpis();
-        renderMyIpoApplications();
-        if (window._cachedIpoData) {
-          if (window._cachedIpoData.open) renderIpoList('open', window._cachedIpoData.open);
-          if (window._cachedIpoData.upcoming) renderIpoList('upcoming', window._cachedIpoData.upcoming);
-          if (window._cachedIpoData.listed) renderIpoList('listed', window._cachedIpoData.listed);
-        }
-
-        const labelMap = {
-          'NOT_APPLIED': '⚪ Not Applied',
-          'NOT_ALLOTTED': '🔴 Non Allotted',
-          'ALLOTTED': '🟢 Allotted'
-        };
-        toast(`Status updated: ${labelMap[nextStatus] || nextStatus}`);
-
-        try {
-          const res = await fetch('/api/ipo/check-allotment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: userEmail,
-              pan: pan,
-              override_pan: pan,
-              override_status: nextStatus,
-              ipo_name: ipoName,
-              ipo_symbol: ipoSymbol,
-              lot_size: lotSize,
-              issue_price: priceBand,
-              allotment_url: allotmentUrl
-            })
-          });
-          runMultiPanCheck();
-          if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
-        } catch (e) {
-          console.warn('Status toggle sync notice:', e);
-        }
-      };
-
-      function renderMultiCheckPanResults(results, isNotLive) {
-        const listEl = document.getElementById('multiCheckPanList');
-        if (!listEl) return;
-
-        const items = (results && results.length > 0) ? results : _userPans.map(p => ({
-          name: p.name,
-          pan: p.pan,
-          status: isNotLive ? 'PENDING' : 'NOT_APPLIED'
-        }));
-
-        listEl.innerHTML = items.map(item => {
-          const initials = getInitials(item.name);
-          const masked = maskPanDigits(item.pan);
-          const st = item.status || (isNotLive ? 'PENDING' : 'NOT_APPLIED');
-
-          let tagClass = 'not-applied';
-          let tagText = '⚪ Not Applied';
-
-          if (isNotLive || st === 'PENDING') {
-            tagClass = 'pending';
-            tagText = '⏳ Draw Pending';
-          } else if (st === 'ALLOTTED') {
-            tagClass = 'allotted';
-            const shs = item.shares_allotted || (_currentAllotModalData ? _currentAllotModalData.lotSize : 15);
-            tagText = `🟢 Allotted (1 Lot / ${shs} shs)`;
-          } else if (st === 'NOT_ALLOTTED') {
-            tagClass = 'non-allotted';
-            tagText = '🔴 Non Allotted';
-          } else {
-            tagClass = 'not-applied';
-            tagText = '⚪ Not Applied';
-          }
-
-          const isClickable = !isNotLive && st !== 'PENDING';
-          const clickAttr = isClickable
-            ? `onclick="togglePanAllotmentStatus('${item.pan}', '${st}')" style="cursor:pointer;" title="Tap to toggle status (Not Applied / Non Allotted / Allotted)"`
-            : '';
-
-          return `
-            <div class="ipo-wiz-pan-card">
-              <div style="display:flex;align-items:center;min-width:0;flex:1;">
-                <div class="pan-avatar-circle">${initials}</div>
-                <div class="pan-item-meta">
-                  <div class="pan-item-name">${item.name || 'Investor'}</div>
-                  <div class="pan-item-digits">${masked}</div>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:6px;">
-                <span class="wiz-status-tag ${tagClass}" ${clickAttr}>
-                  ${tagText}${isClickable ? ' <span style="font-size:10px;opacity:0.6;margin-left:3px;">▾</span>' : ''}
-                </span>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-
+            
       window.quickMarkApplied = async function (ipoNameEsc, ipoSymbol, lotSize, priceBand, allotmentUrl) {
         if (window.event) window.event.stopPropagation();
         const ipoName = decodeURIComponent(ipoNameEsc);
@@ -6658,27 +6377,11 @@
           const iSize = encodeURIComponent(ipo.issue_size || 'TBA');
 
           if (isFutureAllotment) {
-            if (app) {
-              statusChip = `<span class="ipo-allot-chip pending">⏳ Awaiting Draw</span>`;
-            } else {
-              statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25);">⏳ Not Live</span>`;
-            }
-            actionElement = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}', '${oDate}', '${cDate}', '${lDate}', '${iSize}')">Allotment Status ⏳</button>`;
-          } else if (app) {
-            if (app.status === 'ALLOTTED') {
-              const shs = app.shares_allotted ? `${app.shares_allotted} shs` : 'Allotted';
-              statusChip = `<span class="ipo-allot-chip allotted">🟢 ${shs} Allotted</span>`;
-              actionElement = `<button class="ipo-clean-btn allotted-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}', '${oDate}', '${cDate}', '${lDate}', '${iSize}')">Allotment Details ✨</button>`;
-            } else if (app.status === 'NOT_ALLOTTED') {
-              statusChip = `<span class="ipo-allot-chip not-allotted">🔴 Not Allotted</span>`;
-              actionElement = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}', '${oDate}', '${cDate}', '${lDate}', '${iSize}')">Check Again 🔄</button>`;
-            } else {
-              statusChip = `<span class="ipo-allot-chip applied">🟡 Applied</span>`;
-              actionElement = `<button class="ipo-clean-btn primary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}', '${oDate}', '${cDate}', '${lDate}', '${iSize}')">Check Allotment ⚡</button>`;
-            }
+            statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25);">⏳ Allotment ${ipo.allotment_date || 'Soon'}</span>`;
+            actionElement = `<button class="ipo-clean-btn secondary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Open Official Registrar Portal">Registrar Portal ↗</button>`;
           } else if (isListed) {
-            statusChip = `<span class="ipo-allot-chip not-applied" style="background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.2);">⚪ Not Applied</span>`;
-            actionElement = `<button class="ipo-clean-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}', '${oDate}', '${cDate}', '${lDate}', '${iSize}')">Check Allotment ⚡</button>`;
+            statusChip = `<span class="ipo-allot-chip allotted" style="background:rgba(52,211,153,0.12);color:#34d399;border:1px solid rgba(52,211,153,0.25);">📢 Allotment Live</span>`;
+            actionElement = `<button class="ipo-clean-btn primary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Check Allotment on Official Registrar Portal">Check Allotment ↗</button>`;
           } else if (isOpen) {
             actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
           } else {
