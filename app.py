@@ -3344,6 +3344,13 @@ def direct_check_allotment():
     # 3. Check IPO timing in _ipo_cache to see if allotment is live yet
     global _ipo_cache
     now = time.time()
+    if not _ipo_cache.get('data'):
+        try:
+            _, _, listed_init = _scrape_groww_all()
+            _ipo_cache['data'] = {'open': [], 'upcoming': [], 'listed': listed_init}
+            _ipo_cache['ts'] = time.time()
+        except Exception as e:
+            print(f"[Direct Check Cache Warm Error] {e}")
     ipo_data = _ipo_cache.get('data') or {}
     all_open = ipo_data.get('open') or []
     all_upcoming = ipo_data.get('upcoming') or []
