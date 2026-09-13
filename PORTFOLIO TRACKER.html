@@ -1168,8 +1168,8 @@
                 <div class="ipo-pan-text-wrap">
                   <div class="ipo-pan-label">Family Investor PAN Cards</div>
                   <div class="ipo-pan-number-wrap">
-                    <span class="ipo-pan-val" id="ipoPanDisplay">5 PAN Cards Active</span>
-                    <button type="button" class="ipo-pan-eye" id="ipoPanEyeBtn" title="Show/Hide PANs" onclick="togglePanMask()">
+                    <span class="ipo-pan-val" id="ipoPanDisplay">No PAN Linked</span>
+                    <button type="button" class="ipo-pan-eye" id="ipoPanEyeBtn" style="display:none;" title="Show/Hide PANs" onclick="togglePanMask()">
                       <svg class="pan-eye-open" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                       <svg class="pan-eye-closed" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                     </button>
@@ -1179,7 +1179,7 @@
               <div class="ipo-pan-actions">
                 <button class="btn btn-outline btn-sm ipo-link-pan-btn" id="editPanBtn" onclick="openPanModal()">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  <span id="editPanBtnText">Manage PANs</span>
+                  <span id="editPanBtnText">Link PAN</span>
                 </button>
               </div>
             </div>
@@ -3218,6 +3218,7 @@
         } else if (tabId === 'news') {
           fetchAndRenderNews();
         } else if (tabId === 'ipo') {
+          if (typeof updatePanDisplay === 'function') updatePanDisplay();
           loadIpoData(false);
         }
       }
@@ -4392,6 +4393,7 @@
         if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
 
         // Preload user's PAN cards and IPO applications in parallel immediately
+        if (typeof updatePanDisplay === 'function') updatePanDisplay();
         if (typeof fetchUserPans === 'function') fetchUserPans();
         if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
 
@@ -5677,6 +5679,8 @@
           editBtnText.textContent = _userPans.length > 0 ? 'Manage PANs' : 'Link PAN';
         }
       }
+      // Initialize immediately from localStorage
+      updatePanDisplay();
 
       function renderPanListContainer() {
         const wrap = document.getElementById('panCardsListContainer');
