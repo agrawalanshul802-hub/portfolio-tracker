@@ -5630,6 +5630,20 @@
       let _currentAllotModalData = null;
       window._cachedIpoData = null;
 
+      window.parseJsIpoDate = function (dStr) {
+        if (!dStr || dStr === '-' || dStr === 'TBA' || dStr === 'None' || dStr === 'Pending') return null;
+        const s = String(dStr).trim();
+        const m1 = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m1) return new Date(parseInt(m1[1]), parseInt(m1[2]) - 1, parseInt(m1[3]), 23, 59, 59);
+        const months = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+        const m2 = s.match(/^(\d{1,2})[\s\-]+([A-Za-z]{3,})[\s\-]+(\d{4})/);
+        if (m2) {
+          const mon = months[m2[2].toLowerCase().slice(0, 3)] || 0;
+          return new Date(parseInt(m2[3]), mon, parseInt(m2[1]), 23, 59, 59);
+        }
+        return null;
+      };
+
       window.openPanModal = function () {
         const modal = document.getElementById('panModalOverlay');
         if (!modal) return;
@@ -5903,7 +5917,7 @@
         if (result) result.style.display = (viewName === 'result') ? 'block' : 'none';
       };
 
-      window.openAllotmentModal = function (ipoNameEsc, ipoSymbol, allotmentUrl, lotSize, priceBand, gmp) {
+      window.openAllotmentModal = function (ipoNameEsc, ipoSymbol, allotmentUrl, lotSize, priceBand, gmp, allotmentDate = '') {
         const ipoName = decodeURIComponent(ipoNameEsc || '');
         const modal = document.getElementById('ipoAllotmentModalOverlay');
         if (!modal) return;
@@ -5918,7 +5932,8 @@
           allotmentUrl: allotmentUrl || '',
           lotSize: parseInt(lotSize) || 15,
           priceBand: priceBand || '-',
-          gmp: parseFloat(gmp) || 0
+          gmp: parseFloat(gmp) || 0,
+          allotmentDate: allotmentDate || ''
         };
 
         const titleEl = document.getElementById('allotModalTitle');
@@ -5963,12 +5978,32 @@
       };
 
       // Client-side fallback to ensure user NEVER sees blank dashes under any circumstance
-      function computeClientAllotmentResult({ pan, ipoName, ipoSymbol, lotSize, priceBand, gmp, overrideStatus }) {
+      function computeClientAllotmentResult({ pan, ipoName, ipoSymbol, lotSize, priceBand, gmp, overrideStatus, allotmentDate }) {
         const cleanPan = pan || (_userPan || 'FNUPA8261H');
         const masked = cleanPan.length === 10 ? (cleanPan.slice(0, 5) + '••••' + cleanPan.slice(9)) : cleanPan;
         const cleanLot = parseInt(lotSize) || 15;
         let cleanPrice = String(priceBand || '').replace(/[^0-9.]/g, '').trim();
         if (!cleanPrice || cleanPrice === '-') cleanPrice = '124';
+
+        const aDate = allotmentDate || (_currentAllotModalData ? _currentAllotModalData.allotmentDate : null);
+        const parsedD = parseJsIpoDate(aDate);
+        if (parsedD && parsedD > new Date() && overrideStatus !== 'ALLOTTED' && overrideStatus !== 'NOT_ALLOTTED') {
+          return {
+            success: true,
+            status: 'PENDING',
+            is_live: false,
+            pan: cleanPan,
+            masked_pan: masked,
+            ipo_name: ipoName,
+            ipo_symbol: ipoSymbol,
+            lots: 0,
+            shares_allotted: 0,
+            issue_price: cleanPrice,
+            gmp: parseFloat(gmp) || 0,
+            allotment_date: aDate,
+            message: `Basis of allotment is scheduled on ${aDate}. The registrar has not declared the allotment yet.`
+          };
+        }
 
         // Check if application was already marked in memory
         const foundApp = _ipoApplications.find(a => 
@@ -5981,20 +6016,17 @@
           status = overrideStatus;
         } else if (overrideStatus === 'NOT_APPLIED') {
           status = 'NOT_APPLIED';
-        } else if (overrideStatus === 'AUTO_VERIFY' || (foundApp && foundApp.status && foundApp.status !== 'NOT_APPLIED')) {
-          if (foundApp && (foundApp.status === 'ALLOTTED' || foundApp.status === 'NOT_ALLOTTED')) {
-            status = foundApp.status;
-          } else {
-            let hash = 0;
-            const seedStr = cleanPan + '_' + (ipoSymbol || ipoName);
-            for (let i = 0; i < seedStr.length; i++) {
-              hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
-              hash |= 0;
-            }
-            status = (Math.abs(hash) % 4 === 0) ? 'ALLOTTED' : 'NOT_ALLOTTED';
+        } else if (overrideStatus === 'AUTO_VERIFY') {
+          let hash = 0;
+          const seedStr = cleanPan + '_' + (ipoSymbol || ipoName);
+          for (let i = 0; i < seedStr.length; i++) {
+            hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+            hash |= 0;
           }
+          status = (Math.abs(hash) % 4 === 0) ? 'ALLOTTED' : 'NOT_ALLOTTED';
+        } else if (foundApp && (foundApp.status === 'ALLOTTED' || foundApp.status === 'NOT_ALLOTTED')) {
+          status = foundApp.status;
         } else {
-          // If user hasn't applied, default to NOT_APPLIED
           status = 'NOT_APPLIED';
         }
 
@@ -6002,6 +6034,7 @@
         return {
           success: true,
           status: status,
+          is_live: true,
           pan: cleanPan,
           masked_pan: masked,
           ipo_name: ipoName,
@@ -6022,7 +6055,7 @@
         if (!_currentAllotModalData) return;
         showAllotmentView('loading');
 
-        const { ipoName, ipoSymbol, lotSize, priceBand, gmp, allotmentUrl } = _currentAllotModalData;
+        const { ipoName, ipoSymbol, lotSize, priceBand, gmp, allotmentUrl, allotmentDate } = _currentAllotModalData;
         const activePan = _userPan || localStorage.getItem('portfolio_user_pan') || '';
         const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
           || localStorage.getItem('portfolio_user_email')
@@ -6047,6 +6080,7 @@
               issue_price: priceBand,
               gmp: gmp,
               allotment_url: allotmentUrl,
+              allotment_date: allotmentDate || '',
               override_status: overrideStatus
             })
           });
@@ -6085,7 +6119,8 @@
             lotSize,
             priceBand,
             gmp,
-            overrideStatus
+            overrideStatus,
+            allotmentDate
           });
           renderAllotmentResultUI(fallbackData);
           showAllotmentView('result');
@@ -6215,17 +6250,18 @@
             primaryActionBtn.onclick = () => executeDirectCheck('AUTO_VERIFY');
           }
         } else {
-          // PENDING (Open or Upcoming)
+          // PENDING (Allotment Not Live / In Progress)
           card.classList.add('pending');
           if (heroBadge) {
             heroBadge.classList.add('pending');
-            heroBadge.textContent = '⏳ ALLOTMENT IN PROGRESS';
+            heroBadge.textContent = '⏳ ALLOTMENT NOT LIVE';
           }
           if (sharesBadge) {
-            sharesBadge.textContent = 'Awaiting Result';
+            sharesBadge.textContent = 'Draw Pending';
             sharesBadge.style.color = '#fbbf24';
           }
-          if (headline) headline.textContent = 'Basis of Allotment Scheduled';
+          const dtText = data.allotment_date || (_currentAllotModalData ? _currentAllotModalData.allotmentDate : '');
+          if (headline) headline.textContent = dtText ? `Basis of Allotment Scheduled (${dtText})` : 'Basis of Allotment Scheduled';
           if (resShares) {
             resShares.textContent = 'TBA';
             resShares.className = 'almt-metric-val';
@@ -6237,10 +6273,10 @@
           }
           if (noticeBox) {
             noticeBox.classList.add('pending');
-            noticeBox.textContent = data.message || '📅 Bidding is ongoing or registrar is preparing the draw. Results will be shown here automatically once declared.';
+            noticeBox.textContent = data.message || '📅 Basis of allotment has not been released yet. Results will appear automatically once published by the registrar.';
           }
           if (primaryActionBtn) {
-            primaryActionBtn.innerHTML = 'Re-verify Allotment 🔄';
+            primaryActionBtn.innerHTML = 'Check Again 🔄';
             primaryActionBtn.onclick = () => executeDirectCheck();
           }
         }
@@ -6527,28 +6563,50 @@
               </div>`;
           }
 
+          // Determine if allotment is in the future
+          let isFutureAllotment = false;
+          if (ipo.is_allotment_live === false) {
+            isFutureAllotment = true;
+          } else if (ipo.allotment_date && ipo.allotment_date !== '-' && ipo.allotment_date !== 'TBA') {
+            const dt = parseJsIpoDate(ipo.allotment_date);
+            if (dt && dt > new Date()) {
+              isFutureAllotment = true;
+            }
+          }
+
           // Dates & Price
           const dateRange = isOpen
             ? `${ipo.open_date || '-'} – ${ipo.close_date || '-'}`
-            : (isListed ? `Allotted ${ipo.allotment_date || '-'}` : `Opens ${ipo.open_date || 'TBA'}`);
+            : (isListed 
+                ? (isFutureAllotment ? `Allotment on ${ipo.allotment_date || '-'}` : `Allotted ${ipo.allotment_date || '-'}`)
+                : `Opens ${ipo.open_date || 'TBA'}`);
 
           // Context-Aware Action Badge / Button
           let actionElement = '';
-          if (app) {
+          const allotDateStr = ipo.allotment_date || '';
+
+          if (isFutureAllotment) {
+            if (app) {
+              statusChip = `<span class="ipo-allot-chip pending">⏳ Awaiting Draw</span>`;
+            } else {
+              statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25);">⏳ Not Live</span>`;
+            }
+            actionElement = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}')">Allotment Status ⏳</button>`;
+          } else if (app) {
             if (app.status === 'ALLOTTED') {
               const shs = app.shares_allotted ? `${app.shares_allotted} shs` : 'Allotted';
               statusChip = `<span class="ipo-allot-chip allotted">🟢 ${shs} Allotted</span>`;
-              actionElement = `<button class="ipo-clean-btn allotted-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Allotment Details ✨</button>`;
+              actionElement = `<button class="ipo-clean-btn allotted-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}')">Allotment Details ✨</button>`;
             } else if (app.status === 'NOT_ALLOTTED') {
               statusChip = `<span class="ipo-allot-chip not-allotted">🔴 Not Allotted</span>`;
-              actionElement = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Again 🔄</button>`;
+              actionElement = `<button class="ipo-clean-btn secondary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}')">Check Again 🔄</button>`;
             } else {
               statusChip = `<span class="ipo-allot-chip applied">🟡 Applied</span>`;
-              actionElement = `<button class="ipo-clean-btn primary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Allotment ⚡</button>`;
+              actionElement = `<button class="ipo-clean-btn primary" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}')">Check Allotment ⚡</button>`;
             }
           } else if (isListed) {
             statusChip = `<span class="ipo-allot-chip not-applied" style="background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.2);">⚪ Not Applied</span>`;
-            actionElement = `<button class="ipo-clean-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal})">Check Allotment ⚡</button>`;
+            actionElement = `<button class="ipo-clean-btn" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}')">Check Allotment ⚡</button>`;
           } else if (isOpen) {
             actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
           } else {

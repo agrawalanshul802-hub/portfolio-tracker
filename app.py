@@ -2241,6 +2241,33 @@ def _fmt_date(ts_ms):
 
         return 'TBA'
 
+_MONTH_MAP = {
+    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+    'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+}
+
+def _parse_ipo_date(date_str):
+    if not date_str or str(date_str).strip() in ('-', 'TBA', 'None', '', 'Pending'):
+        return None
+    s = str(date_str).strip()
+    m1 = re.match(r'^(\d{4})-(\d{1,2})-(\d{1,2})', s)
+    if m1:
+        try:
+            return datetime.date(int(m1.group(1)), int(m1.group(2)), int(m1.group(3)))
+        except Exception:
+            pass
+    m2 = re.match(r'^(\d{1,2})[\s\-]+([A-Za-z]{3,})[\s\-]+(\d{4})', s)
+    if m2:
+        try:
+            d = int(m2.group(1))
+            mon_str = m2.group(2).lower()[:3]
+            m = _MONTH_MAP.get(mon_str, 1)
+            y = int(m2.group(3))
+            return datetime.date(y, m, d)
+        except Exception:
+            pass
+    return None
+
 def _scrape_nse_open():
 
     """Fetch live open IPO subscriptions from NSE official API."""
@@ -2490,6 +2517,8 @@ def _scrape_groww_all():
                 'listing_return': ret,
 
                 'allotment_date': item.get('allotmentDate', '-'),
+
+                'is_allotment_live': (lambda ad: False if (_parse_ipo_date(ad) and datetime.date.today() < _parse_ipo_date(ad)) else True)(item.get('allotmentDate')),
 
                 'allotment_url':  item.get('rtaLink') or 'https://linkintime.co.in/MIPO/Ipoallotment.html',
 
@@ -3278,6 +3307,7 @@ def direct_check_allotment():
         return jsonify({
             'success': True,
             'status': override_status,
+            'is_live': True,
             'pan': pan,
             'masked_pan': masked_pan,
             'ipo_name': ipo_name,
@@ -3299,6 +3329,7 @@ def direct_check_allotment():
         return jsonify({
             'success': True,
             'status': 'NOT_APPLIED',
+            'is_live': True,
             'pan': pan,
             'masked_pan': masked_pan,
             'ipo_name': ipo_name,
@@ -3310,12 +3341,76 @@ def direct_check_allotment():
             'message': f"No application record found for PAN {masked_pan} in {ipo_name}."
         })
 
-    # If user has NOT applied for this IPO and did not click 'AUTO_VERIFY' / 'apply':
+    # 3. Check IPO timing in _ipo_cache to see if allotment is live yet
+    global _ipo_cache
+    now = time.time()
+    ipo_data = _ipo_cache.get('data') or {}
+    all_open = ipo_data.get('open') or []
+    all_upcoming = ipo_data.get('upcoming') or []
+    all_listed = ipo_data.get('listed') or []
+    
+    # Find matching IPO from cache
+    matched_ipo = None
+    ipo_section = None
+    for item in all_open:
+        if (item.get('symbol') and ipo_symbol and item.get('symbol').upper() == ipo_symbol.upper()) or (item.get('name') and ipo_name and ipo_name.lower() in item.get('name').lower()):
+            matched_ipo = item
+            ipo_section = 'open'
+            break
+    if not matched_ipo:
+        for item in all_upcoming:
+            if (item.get('symbol') and ipo_symbol and item.get('symbol').upper() == ipo_symbol.upper()) or (item.get('name') and ipo_name and ipo_name.lower() in item.get('name').lower()):
+                matched_ipo = item
+                ipo_section = 'upcoming'
+                break
+    if not matched_ipo:
+        for item in all_listed:
+            if (item.get('symbol') and ipo_symbol and item.get('symbol').upper() == ipo_symbol.upper()) or (item.get('name') and ipo_name and ipo_name.lower() in item.get('name').lower()):
+                matched_ipo = item
+                ipo_section = 'listed'
+                break
+                
+    today = datetime.date.today()
+    allot_date_str = data.get('allotment_date') or (matched_ipo.get('allotment_date') if matched_ipo else None)
+    parsed_allot_date = _parse_ipo_date(allot_date_str)
+    
+    # An IPO's allotment is NOT live if:
+    # 1. It is currently in 'open' or 'upcoming'
+    # 2. Or its allotment date is strictly in the future (today < parsed_allot_date)
+    is_not_live = False
+    scheduled_display_date = None
+    if ipo_section in ('open', 'upcoming'):
+        is_not_live = True
+        scheduled_display_date = matched_ipo.get('close_date') or 'soon'
+    elif parsed_allot_date and today < parsed_allot_date:
+        is_not_live = True
+        scheduled_display_date = parsed_allot_date.strftime('%d %b %Y')
+        
+    if is_not_live:
+        date_msg = f"scheduled for {scheduled_display_date}" if scheduled_display_date else "in progress"
+        return jsonify({
+            'success': True,
+            'status': 'PENDING',
+            'is_live': False,
+            'pan': pan,
+            'masked_pan': masked_pan,
+            'ipo_name': ipo_name,
+            'ipo_symbol': ipo_symbol,
+            'lots': existing_app.get('lots', 1) if existing_app else 0,
+            'shares_allotted': 0,
+            'issue_price': clean_issue_price,
+            'gmp': gmp,
+            'allotment_date': scheduled_display_date or '',
+            'message': f"Basis of allotment is {date_msg}. The registrar has not declared the allotment yet. Results will appear automatically once published."
+        })
+
+    # 4. Allotment IS live! Now check if user has applied:
     if not existing_app and override_status != 'AUTO_VERIFY':
         print(f"[Check Allotment] NOT_APPLIED for IPO: '{ipo_name}' (Symbol: '{ipo_symbol}') | PAN: {pan} | User: {clean_email}")
         return jsonify({
             'success': True,
             'status': 'NOT_APPLIED',
+            'is_live': True,
             'pan': pan,
             'masked_pan': masked_pan,
             'ipo_name': ipo_name,
@@ -3324,7 +3419,7 @@ def direct_check_allotment():
             'shares_allotted': 0,
             'issue_price': clean_issue_price,
             'gmp': gmp,
-            'message': f"No application found for PAN {masked_pan} in {ipo_name}. You have not applied for this IPO."
+            'message': f"No application record found for PAN {masked_pan} in {ipo_name}. You have not applied for this IPO."
         })
 
     # If application exists and already has confirmed status:
@@ -3336,6 +3431,7 @@ def direct_check_allotment():
         return jsonify({
             'success': True,
             'status': st,
+            'is_live': True,
             'pan': pan,
             'masked_pan': masked_pan,
             'ipo_name': ipo_name,
@@ -3347,38 +3443,10 @@ def direct_check_allotment():
             'message': f"Allotment confirmed: {shs} shares allotted!" if st == 'ALLOTTED' else "Not allotted in this draw. Funds unblocked."
         })
 
-    # 3. Check IPO timing in _ipo_cache to see if allotment is already declared
-    global _ipo_cache
-    now = time.time()
-    ipo_data = _ipo_cache.get('data') or {}
-    all_open = ipo_data.get('open') or []
-    all_upcoming = ipo_data.get('upcoming') or []
-    all_listed = ipo_data.get('listed') or []
-    
-    is_open = any((x.get('symbol') and x.get('symbol') == ipo_symbol) or (x.get('name') and ipo_name.lower() in x.get('name').lower()) for x in all_open)
-    is_upcoming = any((x.get('symbol') and x.get('symbol') == ipo_symbol) or (x.get('name') and ipo_name.lower() in x.get('name').lower()) for x in all_upcoming)
-    
-    # If the IPO is currently open or upcoming (allotment not declared yet):
-    if is_open or is_upcoming:
-        return jsonify({
-            'success': True,
-            'status': 'PENDING',
-            'pan': pan,
-            'masked_pan': masked_pan,
-            'ipo_name': ipo_name,
-            'ipo_symbol': ipo_symbol,
-            'lots': 1,
-            'shares_allotted': 0,
-            'issue_price': clean_issue_price,
-            'gmp': gmp,
-            'message': 'Bidding is currently open / ongoing. Allotment draw has not been conducted yet.'
-        })
-        
-    # 4. For closed / listed IPOs where user applied: Allotment is declared!
+    # 5. User applied or clicked 'I Applied / Verify' for this live IPO:
     seed = hashlib.sha256(f"{pan}_{ipo_symbol or ipo_name}".encode('utf-8')).hexdigest()
     hash_val = int(seed[:8], 16)
     
-    # Check oversubscription if available from listed items
     sub_mult = 3.0
     for it in all_listed:
         if (it.get('symbol') and it.get('symbol') == ipo_symbol) or (it.get('name') and ipo_name.lower() in it.get('name').lower()):
@@ -3396,7 +3464,6 @@ def direct_check_allotment():
     status = 'ALLOTTED' if is_allotted else 'NOT_ALLOTTED'
     shares = lot_size if is_allotted else 0
     
-    # Automatically upsert into Supabase ipo_applications
     if supabase and clean_email:
         try:
             row_save = {
@@ -3420,6 +3487,7 @@ def direct_check_allotment():
     return jsonify({
         'success': True,
         'status': status,
+        'is_live': True,
         'pan': pan,
         'masked_pan': masked_pan,
         'ipo_name': ipo_name,
