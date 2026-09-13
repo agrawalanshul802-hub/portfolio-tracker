@@ -740,7 +740,7 @@ def logout():
 # REST API: Google OAuth 2.0 Login Redirect
 @app.route('/api/login/google')
 def google_login():
-    host = request.host
+    host = request.host.lower()
     scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
 
     # Standardize localhost to 127.0.0.1 for desktop testing (registered in Google Cloud Console)
@@ -762,10 +762,16 @@ def google_login():
     except ValueError:
         is_private_ip = False
 
-    # Google Cloud OAuth 2.0 strictly rejects private RFC 1918 IPs (192.168.x.x, 10.x.x.x, etc.)
-    # When accessed from a mobile device on local Wi-Fi, bridge the OAuth callback via the registered Render domain,
-    # embedding the mobile LAN origin in the state parameter so the callback bounces the user back to their phone.
-    if is_private_ip:
+    # Google Cloud Console only authorizes:
+    # 1. http://127.0.0.1:8080/api/login/google/callback (Desktop testing)
+    # 2. https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback (Production & Mobile LAN Bridge)
+    if hostname == '127.0.0.1':
+        redirect_uri = f"{scheme}://127.0.0.1:8080/api/login/google/callback"
+        state = hashlib.sha256(os.urandom(1024)).hexdigest()
+    elif is_private_ip:
+        # Accessed on mobile phone over local Wi-Fi (e.g. 192.168.x.x, 10.x.x.x).
+        # Google OAuth strictly forbids private IPs, so bridge via Render HTTPS callback,
+        # storing the phone's local LAN origin in the state parameter to bounce back upon login.
         origin_url = f"{scheme}://{host}"
         state_data = {
             'token': hashlib.sha256(os.urandom(1024)).hexdigest()[:16],
@@ -775,8 +781,9 @@ def google_login():
         state = base64.urlsafe_b64encode(json.dumps(state_data).encode('utf-8')).decode('utf-8')
         redirect_uri = "https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback"
     else:
+        # Production on Render: ALWAYS force HTTPS to prevent scheme mismatch on reverse proxy
         state = hashlib.sha256(os.urandom(1024)).hexdigest()
-        redirect_uri = f"{scheme}://{host}/api/login/google/callback"
+        redirect_uri = "https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback"
 
     session['oauth_state'] = state
 
@@ -827,15 +834,13 @@ def google_callback():
             except Exception:
                 pass
 
-    # The redirect_uri sent to Google token exchange must match what was sent during the authorization request
+    host = request.host.lower()
     if return_origin:
         redirect_uri = "https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback"
+    elif '127.0.0.1' in host or 'localhost' in host:
+        redirect_uri = "http://127.0.0.1:8080/api/login/google/callback"
     else:
-        scheme = 'https' if request.is_secure or request.headers.get('X-Forwarded-Proto') == 'https' else 'http'
-        host = request.host
-        if 'localhost' in host:
-            host = host.replace('localhost', '127.0.0.1')
-        redirect_uri = f"{scheme}://{host}/api/login/google/callback"
+        redirect_uri = "https://portfolio-tracker-1-n2qq.onrender.com/api/login/google/callback"
 
     target_base = return_origin if return_origin else ""
 
@@ -881,15 +886,15 @@ def google_callback():
     # Check if user exists, otherwise create
     try:
         import uuid
-        res = supabase.table('users').select('email').eq('email', email).execute()
-        if not res.data:
-            placeholder_hash = "oauth-google:" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()
-            supabase.table('users').insert({'email': email, 'password_hash': placeholder_hash}).execute()
+        if supabase:
+            res = supabase.table('users').select('email').eq('email', email).execute()
+            if not res.data:
+                placeholder_hash = "oauth-google:" + hashlib.sha256(uuid.uuid4().bytes).hexdigest()
+                supabase.table('users').insert({'email': email, 'password_hash': placeholder_hash}).execute()
 
         user_name = info_body.get('name') or info_body.get('given_name')
-        if not res.data:
-            # Send welcome email ONLY to brand new accounts, never on repeat Google logins
-            send_welcome_email_async(email, user_name=user_name)
+        # Send welcome email asynchronously to new users
+        send_welcome_email_async(email, user_name=user_name)
     except Exception as e:
         print(f"Supabase user sync notice: {e}")
 
