@@ -461,13 +461,7 @@
                     <span>Continue with Google</span>
                   </button>
 
-                  <!-- 1-Tap Quick Demo Login -->
-                  <button type="button" class="quick-demo-btn" id="quickDemoBtn" onclick="quickDemoLogin()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                    </svg>
-                    <span>Instant Demo Access (1-Tap)</span>
-                  </button>
+
                 </form>
 
                 <div class="auth-switch modern-auth-switch" id="authSwitch">
@@ -4548,13 +4542,7 @@
             startGoogleLogin();
           });
         }
-        const quickDemoBtn = document.getElementById('quickDemoBtn');
-        if (quickDemoBtn) {
-          quickDemoBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            quickDemoLogin();
-          });
-        }
+
       }
 
       /* ---------------- dock (vanilla-JS rebuild of the React Bits Dock — no React/motion needed) ---------------- */
@@ -4829,27 +4817,7 @@
       }
       window.startGoogleLogin = startGoogleLogin;
 
-      function quickDemoLogin() {
-        const emailInput = document.getElementById('authEmail');
-        const passInput = document.getElementById('authPassword');
-        if (emailInput && passInput) {
-          emailInput.value = 'test@example.com';
-          passInput.value = 'password123';
-          if (typeof setAuthMode === 'function') {
-            setAuthMode('login');
-          }
-          const form = document.getElementById('authForm');
-          if (form) {
-            if (typeof handleAuthSubmit === 'function') {
-              const fakeEvt = new Event('submit', { cancelable: true });
-              form.dispatchEvent(fakeEvt);
-            } else {
-              form.submit();
-            }
-          }
-        }
-      }
-      window.quickDemoLogin = quickDemoLogin;
+
 
       /* ---------------- OrbitImages Vanilla Component (React Bits port) ---------------- */
       function initOrbitImages() {
