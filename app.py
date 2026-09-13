@@ -82,11 +82,15 @@ SUPABASE_URL = os.getenv('SUPABASE_URL', '')
 
 SUPABASE_KEY = os.getenv('SUPABASE_KEY', '')
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-
-    raise RuntimeError('SUPABASE_URL and SUPABASE_KEY must be set in environment variables.')
-
-supabase: SupabaseClient = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: SupabaseClient = None
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    except Exception as e:
+        print(f"[Supabase] Init warning: {e}")
+        supabase = None
+else:
+    print("[Supabase] Notice: SUPABASE_URL or SUPABASE_KEY not set in environment. Falling back to resilient in-memory caches.")
 
 # Resilient In-Memory Fallback Caches (Prevents data loss on cold-starts & network glitches)
 _LOCAL_HOLDINGS_CACHE = {}
