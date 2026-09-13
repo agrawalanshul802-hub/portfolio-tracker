@@ -1,0 +1,112 @@
+{
+  "total": 21,
+  "passed": 21,
+  "failed": 0,
+  "results": [
+    {
+      "name": "App Load",
+      "status": true,
+      "detail": "Homepage loaded successfully"
+    },
+    {
+      "name": "User Login",
+      "status": true,
+      "detail": "Dashboard loaded and user authenticated as test@example.com"
+    },
+    {
+      "name": "Portfolio Metrics",
+      "status": true,
+      "detail": "Net Worth: ₹0 | Gain: +₹0 | Invested: ₹0"
+    },
+    {
+      "name": "MCX Commodities View",
+      "status": true,
+      "detail": "Section updated: \"Showing MCX Commodities (Gold, Silver, Metals, Crude)\""
+    },
+    {
+      "name": "Default PAN State",
+      "status": true,
+      "detail": "PAN Banner text is \"No PAN Linked\" (Zero demo PANs present)"
+    },
+    {
+      "name": "Clean PAN Modal",
+      "status": true,
+      "detail": "PAN modal accurately shows zero linked PAN cards"
+    },
+    {
+      "name": "Custom PAN Linked",
+      "status": true,
+      "detail": "Banner updated: 1 PANs Linked (XXXXXXXXXF)"
+    },
+    {
+      "name": "Kanohar IPO Found",
+      "status": true,
+      "detail": "Kanohar Electricals Ltd rendered in Listed section"
+    },
+    {
+      "name": "Allotment Live Badge",
+      "status": true,
+      "detail": "Status chip displays \"📢 Allotment Live\""
+    },
+    {
+      "name": "Check Allotment Button",
+      "status": true,
+      "detail": "Button displays \"Check Allotment ↗\""
+    },
+    {
+      "name": "Registrar URL Resolved",
+      "status": true,
+      "detail": "Target URL is official registrar portal: https://in.mpms.mufg.com/Initial_Offer/public-issues.html"
+    },
+    {
+      "name": "PAN Auto-Copied Toast",
+      "status": true,
+      "detail": "Notification displayed: \"📋 PAN (XXXXXXXXXF) copied! Opening official registrar portal...\""
+    },
+    {
+      "name": "No Automated Badge Generator",
+      "status": true,
+      "detail": "allotViewMultiCheck does not exist in DOM (Zero fake badges generated)"
+    },
+    {
+      "name": "IPO Overview Modal",
+      "status": true,
+      "detail": "Modal opened for: Kanohar Electricals"
+    },
+    {
+      "name": "Modal Direct Action",
+      "status": true,
+      "detail": "Modal primary button is \"Check on Official Registrar Portal ↗\""
+    },
+    {
+      "name": "Analytics Tab",
+      "status": true,
+      "detail": "Asset allocation and performance charts loaded"
+    },
+    {
+      "name": "Ask AI Analyst",
+      "status": true,
+      "detail": "AI research chat interacted and generated response"
+    },
+    {
+      "name": "News Tab",
+      "status": true,
+      "detail": "Live financial news articles loaded"
+    },
+    {
+      "name": "Session Persistence",
+      "status": true,
+      "detail": "User remains securely logged in after reload (No logout)"
+    },
+    {
+      "name": "Active Tab Preserved",
+      "status": true,
+      "detail": "Active tab restored to \"ipo\" after reload"
+    },
+    {
+      "name": "PAN Persistence",
+      "status": true,
+      "detail": "Linked PAN preserved across reload: \"1 PANs Linked (XXXXXXXXXF)\""
+    }
+  ]
+}
