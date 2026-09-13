@@ -2281,6 +2281,12 @@
             const parsed = JSON.parse(raw);
             if (Array.isArray(parsed) && parsed.length > 0) return parsed;
           }
+          // Secondary fallback: check global backup
+          const backup = localStorage.getItem('ptracker_holdings_backup');
+          if (backup) {
+            const parsed = JSON.parse(backup);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          }
         } catch (e) {
           console.warn('LocalStorage read error:', e);
         }
@@ -2290,6 +2296,9 @@
       function saveLocalHoldings(list) {
         try {
           localStorage.setItem(getHoldingsStorageKey(), JSON.stringify(list || []));
+          if (Array.isArray(list) && list.length > 0) {
+            localStorage.setItem('ptracker_holdings_backup', JSON.stringify(list));
+          }
         } catch (e) {
           console.warn('LocalStorage write error:', e);
         }
@@ -3236,6 +3245,7 @@
           if (sb) sb.classList.remove('open');
         }
         state.currentTab = tabId;
+        try { localStorage.setItem('portfolio_active_tab', tabId); } catch(e){}
 
         document.getElementById('tabBtnPortfolio').classList.toggle('active', tabId === 'portfolio');
         document.getElementById('tabBtnAnalytics').classList.toggle('active', tabId === 'analytics');
@@ -4440,9 +4450,20 @@
         const avatar = document.getElementById('userAvatar');
         if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
 
+        // Preload user's PAN cards and IPO applications in parallel immediately
+        if (typeof fetchUserPans === 'function') fetchUserPans();
+        if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
+
         // Render from database immediately so the user can see their data
         await loadHoldings();
         renderAll();
+
+        // Restore active tab (e.g. IPO tab, Analytics, News, or Portfolio)
+        const savedTab = localStorage.getItem('portfolio_active_tab') || 'portfolio';
+        if (typeof switchTab === 'function') {
+          switchTab(savedTab);
+        }
+
         // Fetch live prices in the background asynchronously
         document.getElementById('updatedLabel').textContent = "Fetching live prices...";
         refreshLivePricesForHoldings().then(() => {
@@ -5497,25 +5518,17 @@
           }
         }
 
-        // Check C: Stored Local Session (localStorage)
+        // Check C: Stored Local Session (localStorage) - NEVER wipe on refresh!
         if (!authenticatedEmail) {
           const savedEmail = localStorage.getItem('portfolio_user_email');
           if (savedEmail) {
-            try {
-              const syncRes = await fetch('/api/auth/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: savedEmail })
-              });
-              if (syncRes.ok) {
-                const syncData = await syncRes.json();
-                if (syncData.email) authenticatedEmail = syncData.email;
-              } else {
-                localStorage.removeItem('portfolio_user_email');
-              }
-            } catch (e) {
-              console.warn('Auto-login sync error:', e);
-            }
+            authenticatedEmail = savedEmail;
+            // Best-effort non-blocking sync with backend session
+            fetch('/api/auth/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: savedEmail })
+            }).catch(e => console.warn('Auto-login sync notice:', e));
           }
         }
 
@@ -5635,8 +5648,17 @@
       let _userPan = _userPans.length > 0 ? _userPans[0].pan : 'FNUPA8261H';
       let _isPanMasked = true; // masked by default like video!
       let _ipoApplications = [];
+      try {
+        const storedApps = localStorage.getItem('portfolio_ipo_applications');
+        if (storedApps) _ipoApplications = JSON.parse(storedApps);
+      } catch (e) {}
+
       let _currentAllotModalData = null;
       window._cachedIpoData = null;
+      try {
+        const storedIpoData = localStorage.getItem('portfolio_cached_ipos');
+        if (storedIpoData) window._cachedIpoData = JSON.parse(storedIpoData);
+      } catch (e) {}
 
       window.parseJsIpoDate = function (dStr) {
         if (!dStr || dStr === '-' || dStr === 'TBA' || dStr === 'None' || dStr === 'Pending') return null;
@@ -5884,6 +5906,13 @@
             localStorage.setItem('portfolio_saved_pans', JSON.stringify(_userPans));
             updatePanDisplay();
             renderPanListContainer();
+          } else if (json.success && (!json.pans || json.pans.length === 0) && _userPans.length > 0 && userEmail) {
+            // Server has no saved PANs for this user, but client has locally saved PANs: sync to backend!
+            fetch('/api/user/pans', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: userEmail, pans: _userPans })
+            }).catch(e => console.warn('Two-way PAN sync notice:', e));
           }
         } catch (e) {
           console.warn('fetchUserPans notice:', e);
@@ -5903,6 +5932,7 @@
           const json = await res.json();
           if (json.success && Array.isArray(json.applications)) {
             _ipoApplications = json.applications;
+            try { localStorage.setItem('portfolio_ipo_applications', JSON.stringify(_ipoApplications)); } catch(e){}
             updateIpoKpis();
             renderMyIpoApplications();
             if (window._cachedIpoData) {
@@ -5998,6 +6028,22 @@
         const cleanAllot = decodeURIComponent(allotmentDate || 'TBA');
         const cleanList = decodeURIComponent(listingDate || 'TBA');
         const cleanSize = decodeURIComponent(issueSize || 'TBA');
+
+        if (window._cachedIpoData) {
+          const allList = [...(window._cachedIpoData.open || []), ...(window._cachedIpoData.upcoming || []), ...(window._cachedIpoData.listed || [])];
+          const found = allList.find(x => 
+            (ipoSymbol && x.symbol && x.symbol.toUpperCase() === ipoSymbol.toUpperCase()) ||
+            (ipoName && x.name && (x.name.toLowerCase().includes(ipoName.toLowerCase()) || ipoName.toLowerCase().includes(x.name.toLowerCase())))
+          );
+          if (found) {
+            if ((!cleanAllot || cleanAllot === 'TBA' || cleanAllot === '-') && found.allotment_date) cleanAllot = found.allotment_date;
+            if ((!cleanOpen || cleanOpen === 'TBA' || cleanOpen === '-') && found.open_date) cleanOpen = found.open_date;
+            if ((!cleanClose || cleanClose === 'TBA' || cleanClose === '-') && found.close_date) cleanClose = found.close_date;
+            if ((!cleanList || cleanList === 'TBA' || cleanList === '-') && found.listing_date) cleanList = found.listing_date;
+            if ((!cleanSize || cleanSize === 'TBA' || cleanSize === '-') && found.issue_size) cleanSize = found.issue_size;
+            if (!allotmentUrl && found.allotment_url) allotmentUrl = found.allotment_url;
+          }
+        }
 
         _currentAllotModalData = {
           ipoName,
@@ -6214,6 +6260,46 @@
         const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email)
           || localStorage.getItem('portfolio_user_email') || '';
 
+        // Optimistically update local _ipoApplications immediately
+        const existingIdx = _ipoApplications.findIndex(a => 
+          (a.pan_card === pan || !a.pan_card) && 
+          ((ipoSymbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipoSymbol.toUpperCase()) ||
+           (ipoName && a.ipo_name && a.ipo_name.toLowerCase().includes(ipoName.toLowerCase())))
+        );
+        if (nextStatus === 'NOT_APPLIED') {
+          if (existingIdx !== -1) _ipoApplications.splice(existingIdx, 1);
+        } else {
+          const appObj = {
+            id: existingIdx !== -1 ? _ipoApplications[existingIdx].id : ('app_' + Date.now()),
+            user_email: userEmail,
+            ipo_name: ipoName,
+            ipo_symbol: ipoSymbol,
+            pan_card: pan,
+            status: nextStatus,
+            shares_allotted: nextStatus === 'ALLOTTED' ? (parseInt(lotSize) || 15) : 0,
+            lots: 1,
+            bid_price: priceBand || '-',
+            allotment_url: allotmentUrl || ''
+          };
+          if (existingIdx !== -1) _ipoApplications[existingIdx] = appObj;
+          else _ipoApplications.unshift(appObj);
+        }
+        try { localStorage.setItem('portfolio_ipo_applications', JSON.stringify(_ipoApplications)); } catch(e){}
+        updateIpoKpis();
+        renderMyIpoApplications();
+        if (window._cachedIpoData) {
+          if (window._cachedIpoData.open) renderIpoList('open', window._cachedIpoData.open);
+          if (window._cachedIpoData.upcoming) renderIpoList('upcoming', window._cachedIpoData.upcoming);
+          if (window._cachedIpoData.listed) renderIpoList('listed', window._cachedIpoData.listed);
+        }
+
+        const labelMap = {
+          'NOT_APPLIED': '⚪ Not Applied',
+          'NOT_ALLOTTED': '🔴 Non Allotted',
+          'ALLOTTED': '🟢 Allotted'
+        };
+        toast(`Status updated: ${labelMap[nextStatus] || nextStatus}`);
+
         try {
           const res = await fetch('/api/ipo/check-allotment', {
             method: 'POST',
@@ -6230,21 +6316,10 @@
               allotment_url: allotmentUrl
             })
           });
-
-          const json = await res.json();
-          if (json.success) {
-            const labelMap = {
-              'NOT_APPLIED': '⚪ Not Applied',
-              'NOT_ALLOTTED': '🔴 Non Allotted',
-              'ALLOTTED': '🟢 Allotted'
-            };
-            toast(`Status updated: ${labelMap[nextStatus] || nextStatus}`);
-            runMultiPanCheck();
-            if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
-          }
+          runMultiPanCheck();
+          if (typeof fetchIpoApplications === 'function') fetchIpoApplications();
         } catch (e) {
-          console.warn('Status toggle error:', e);
-          toast('Failed to update status: ' + e.message);
+          console.warn('Status toggle sync notice:', e);
         }
       };
 
@@ -6306,6 +6381,7 @@
       }
 
       window.quickMarkApplied = async function (ipoNameEsc, ipoSymbol, lotSize, priceBand, allotmentUrl) {
+        if (window.event) window.event.stopPropagation();
         const ipoName = decodeURIComponent(ipoNameEsc);
         if (!_userPan) {
           toast('Please link your PAN card first to track IPO applications! 🔒');
@@ -6313,27 +6389,57 @@
           return;
         }
 
+        const userEmail = (typeof currentUser !== 'undefined' && currentUser && currentUser.email) || localStorage.getItem('portfolio_user_email') || '';
+
+        // Optimistically update local _ipoApplications immediately
+        const existingIdx = _ipoApplications.findIndex(a => 
+          (ipoSymbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipoSymbol.toUpperCase()) ||
+          (a.ipo_name && a.ipo_name.toLowerCase() === ipoName.toLowerCase())
+        );
+        const newAppObj = {
+          id: existingIdx !== -1 ? _ipoApplications[existingIdx].id : ('app_' + Date.now()),
+          user_email: userEmail,
+          ipo_name: ipoName,
+          ipo_symbol: ipoSymbol,
+          pan_card: _userPan || '',
+          lots: 1,
+          bid_price: priceBand || '-',
+          status: 'APPLIED',
+          allotment_url: allotmentUrl || ''
+        };
+        if (existingIdx !== -1) _ipoApplications[existingIdx] = newAppObj;
+        else _ipoApplications.unshift(newAppObj);
+        try { localStorage.setItem('portfolio_ipo_applications', JSON.stringify(_ipoApplications)); } catch(e){}
+        updateIpoKpis();
+        renderMyIpoApplications();
+        if (window._cachedIpoData) {
+          if (window._cachedIpoData.open) renderIpoList('open', window._cachedIpoData.open);
+          if (window._cachedIpoData.upcoming) renderIpoList('upcoming', window._cachedIpoData.upcoming);
+          if (window._cachedIpoData.listed) renderIpoList('listed', window._cachedIpoData.listed);
+        }
+        toast(`Tracking ${ipoName} application! 📋`);
+
         try {
-          const res = await fetch('/api/ipo/apply', {
+          const res = await fetch('/api/ipo/apply' + (userEmail ? `?email=${encodeURIComponent(userEmail)}` : ''), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              email: userEmail,
               ipo_name: ipoName,
               ipo_symbol: ipoSymbol,
               lots: 1,
               bid_price: priceBand || '-',
-              allotment_url: allotmentUrl || ''
+              allotment_url: allotmentUrl || '',
+              pan_card: _userPan || ''
             })
           });
           const json = await res.json();
           if (!res.ok || !json.success) {
-            throw new Error(json.error || 'Failed to track IPO');
+            console.warn('Backend track notice:', json.error);
           }
-
-          toast(`Tracking ${ipoName} application! 📋`);
           await fetchIpoApplications();
         } catch (err) {
-          toast('Error tracking IPO: ' + err.message);
+          console.warn('Network notice for track IPO:', err.message);
         }
       };
 
@@ -6411,6 +6517,7 @@
 
           const data = json.data || { open: [], upcoming: [], listed: [] };
           window._cachedIpoData = data;
+          try { localStorage.setItem('portfolio_cached_ipos', JSON.stringify(data)); } catch(e){}
           const openList     = data.open     || [];
           const upcomingList = data.upcoming || [];
           const listedList   = data.listed   || [];
