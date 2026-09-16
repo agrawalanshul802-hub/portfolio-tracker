@@ -3538,10 +3538,10 @@ h1.top-bar-title,
 
 .orbit-center-glow {
   position: absolute;
-  width: 320px;
-  height: 320px;
+  width: 140px;
+  height: 60px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, rgba(124, 58, 237, 0.18) 40%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0) 70%);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -8398,6 +8398,7 @@ html {
 }
 
 .ambient-glow-orb {
+  display: none !important;
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
@@ -11142,6 +11143,7 @@ html, body {
 #authScreen.hidden .ambient-glow-orb,
 #authScreen[style*="display: none"] .ambient-glow-orb,
 #authScreen[style*="display:none"] .ambient-glow-orb {
+  display: none !important;
   display: none !important;
   animation: none !important;
 }
