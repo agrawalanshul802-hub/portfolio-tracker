@@ -1235,6 +1235,27 @@
             </button>
           </div>
 
+          <!-- Board Classification Segment: All / Mainboard / SME in different sections -->
+          <div class="ipo-board-bar" id="ipoBoardBar">
+            <div class="ipo-board-tabs" role="tablist" aria-label="Filter by Board Category">
+              <button type="button" class="ipo-board-btn active" id="ipoBoardTabAll" onclick="switchIpoBoard('all')">
+                <span>All Issues</span>
+                <span id="ipoBoardCountAll" class="ipo-board-count">0</span>
+              </button>
+              <button type="button" class="ipo-board-btn" id="ipoBoardTabMainboard" onclick="switchIpoBoard('mainboard')">
+                <span>🏢 Mainboard</span>
+                <span id="ipoBoardCountMainboard" class="ipo-board-count">0</span>
+              </button>
+              <button type="button" class="ipo-board-btn" id="ipoBoardTabSme" onclick="switchIpoBoard('sme')">
+                <span>🚀 SME Board</span>
+                <span id="ipoBoardCountSme" class="ipo-board-count">0</span>
+              </button>
+            </div>
+            <div class="ipo-board-hint" id="ipoBoardHint">
+              Showing All Categories (Mainboard &amp; SME)
+            </div>
+          </div>
+
           <!-- Loading State -->
           <div id="ipoLoading" class="ipo-loading-state" style="display:none;">
             <div class="ipo-spinner"></div>
@@ -6457,11 +6478,210 @@
         }
       };
 
+      let _currentIpoBoard = 'all'; // 'all' | 'mainboard' | 'sme'
+
+      window.switchIpoBoard = function (board) {
+        try {
+          _currentIpoBoard = board;
+          document.querySelectorAll('.ipo-board-btn').forEach(function (btn) {
+            btn.classList.toggle('active', btn.id === ('ipoBoardTab' + board.charAt(0).toUpperCase() + board.slice(1)));
+          });
+
+          const hintEl = document.getElementById('ipoBoardHint');
+          if (hintEl) {
+            if (board === 'mainboard') hintEl.textContent = 'Showing Mainboard Issues (NSE & BSE Mainboard)';
+            else if (board === 'sme') hintEl.textContent = 'Showing SME Issues (BSE SME & NSE Emerge)';
+            else hintEl.textContent = 'Showing All Categories (Mainboard & SME)';
+          }
+
+          if (_currentIpoSection === 'myApps') {
+            if (typeof renderMyIpoApplications === 'function') renderMyIpoApplications();
+          } else if (window._cachedIpoData && window._cachedIpoData[_currentIpoSection]) {
+            renderIpoList(_currentIpoSection, window._cachedIpoData[_currentIpoSection]);
+          }
+        } catch (e) {
+          console.error('switchIpoBoard error:', e);
+        }
+      };
+
+      function updateIpoBoardCounts(ipos) {
+        try {
+          const list = ipos || [];
+          const mainList = list.filter(i => !(i.type || i.exchange || '').toUpperCase().includes('SME'));
+          const smeList = list.filter(i => (i.type || i.exchange || '').toUpperCase().includes('SME'));
+
+          const bAll = document.getElementById('ipoBoardCountAll');
+          if (bAll) bAll.textContent = list.length;
+          const bMain = document.getElementById('ipoBoardCountMainboard');
+          if (bMain) bMain.textContent = mainList.length;
+          const bSme = document.getElementById('ipoBoardCountSme');
+          if (bSme) bSme.textContent = smeList.length;
+        } catch (e) {
+          console.error('updateIpoBoardCounts error:', e);
+        }
+      }
+
+      function renderSingleIpoCard(ipo, section) {
+        const isOpen = section === 'open';
+        const isListed = section === 'listed';
+
+        // Logo
+        const logo = ipo.logo_url
+          ? `<img src="${ipo.logo_url}" alt="" class="ipo-clean-logo" onerror="this.style.display='none'"/>`
+          : `<div class="ipo-clean-logo">${(ipo.name || 'I')[0]}</div>`;
+
+        // Tag
+        const isSme = (ipo.type || ipo.exchange || '').toUpperCase().includes('SME');
+        const typeText = isSme ? 'SME' : 'Mainboard';
+
+        // Check if user has an active application record for this IPO
+        const app = (_ipoApplications || []).find(a => 
+          a.status && a.status !== 'NOT_APPLIED' &&
+          ((ipo.symbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipo.symbol.toUpperCase()) ||
+           (ipo.name && a.ipo_name && (a.ipo_name.toLowerCase().includes(ipo.name.toLowerCase()) || ipo.name.toLowerCase().includes(a.ipo_name.toLowerCase()))))
+        );
+
+        let statusChip = '';
+        const nameEsc = encodeURIComponent(ipo.name || '');
+        const ipoSymbol = ipo.symbol || '';
+        const allotUrl = ipo.allotment_url || '';
+        const lotSize = parseInt(ipo.lot_size) || 1;
+        const priceBand = ipo.price_band || (ipo.issue_price ? '₹' + ipo.issue_price : '-');
+
+        // GMP representation
+        let gmpHtml = '';
+        if (ipo.gmp != null && ipo.gmp > 0) {
+          const lotNum = parseInt(ipo.lot_size) || 1;
+          const estProfit = (ipo.gmp * lotNum).toLocaleString('en-IN');
+          gmpHtml = `
+            <div class="ipo-clean-gmp">
+              <span class="gmp-pill positive">+₹${ipo.gmp} (+${(ipo.gmp_pct || 0).toFixed(1)}%)</span>
+              ${lotNum > 1 ? `<span class="gmp-subtext">+₹${estProfit} / lot</span>` : ''}
+            </div>`;
+        } else if (ipo.gmp === 0) {
+          gmpHtml = `
+            <div class="ipo-clean-gmp">
+              <span class="gmp-pill neutral">₹0 (0.0%)</span>
+            </div>`;
+        } else {
+          gmpHtml = `
+            <div class="ipo-clean-gmp">
+              <span class="gmp-pill neutral">TBA</span>
+            </div>`;
+        }
+
+        // Return representation for listed
+        if (isListed) {
+          const retStr = String(ipo.listing_return || 'Pending');
+          const isPos = retStr.startsWith('+');
+          gmpHtml = `
+            <div class="ipo-clean-gmp">
+              <span class="gmp-pill ${isPos ? 'positive' : 'neutral'}">${retStr}</span>
+              <span class="gmp-subtext">Issue: ₹${ipo.issue_price || '-'}</span>
+            </div>`;
+        }
+
+        // Determine if allotment is in the future
+        let isFutureAllotment = false;
+        if (ipo.is_allotment_live === false) {
+          isFutureAllotment = true;
+        } else if (ipo.allotment_date && ipo.allotment_date !== '-' && ipo.allotment_date !== 'TBA') {
+          const dt = parseJsIpoDate(ipo.allotment_date);
+          if (dt && dt > new Date()) {
+            isFutureAllotment = true;
+          }
+        }
+
+        // Dates & Price
+        const dateRange = isOpen
+          ? `${ipo.open_date || '-'} – ${ipo.close_date || '-'}`
+          : (isListed 
+              ? (isFutureAllotment ? `Allotment on ${ipo.allotment_date || '-'}` : `Allotted ${ipo.allotment_date || '-'}`)
+              : `Opens ${ipo.open_date || 'TBA'}`);
+
+        // Context-Aware Action Badge / Button
+        let actionElement = '';
+        const allotDateStr = ipo.allotment_date || '';
+        const oDate = encodeURIComponent(ipo.open_date || 'TBA');
+        const cDate = encodeURIComponent(ipo.close_date || 'TBA');
+        const lDate = encodeURIComponent(ipo.listing_date || 'TBA');
+        const iSize = encodeURIComponent(ipo.issue_size || 'TBA');
+
+        if (isFutureAllotment) {
+          statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color: #F59E0B;border:1px solid rgba(251,191,36,0.25);">⏳ Allotment ${ipo.allotment_date || 'Soon'}</span>`;
+          actionElement = `<button class="ipo-clean-btn secondary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Open Official Registrar Portal">Registrar Portal ↗</button>`;
+        } else if (isListed) {
+          statusChip = `<span class="ipo-allot-chip allotted" style="background:rgba(52,211,153,0.12);color: #10B981;border:1px solid rgba(52,211,153,0.25);">📢 Allotment Live</span>`;
+          actionElement = `<button class="ipo-clean-btn primary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Check Allotment on Official Registrar Portal">Check Allotment ↗</button>`;
+        } else if (isOpen) {
+          actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
+        } else {
+          actionElement = `<button class="ipo-clean-btn secondary" onclick="openIpoDetail('${encodeURIComponent(ipo.id || '')}', '${ipoSymbol}', '${nameEsc}', '${encodeURIComponent(gmpHtml)}')">View Prospectus</button>`;
+        }
+
+        if (app) {
+          if (app.status === 'ALLOTTED') {
+            statusChip = `<span class="ipo-allot-chip allotted">🎉 Allotted ${app.shares_allotted || ''} shares</span>`;
+          } else if (app.status === 'NOT_ALLOTTED') {
+            statusChip = `<span class="ipo-allot-chip not-allotted">Refund Initiated</span>`;
+          } else if (app.status === 'APPLIED') {
+            statusChip = `<span class="ipo-allot-chip applied">✓ Bid Tracked</span>`;
+          }
+        }
+
+        return `
+          <div class="ipo-row-card" onclick="openIpoDetail('${encodeURIComponent(ipo.id || '')}', '${ipoSymbol}', '${nameEsc}', '${encodeURIComponent(gmpHtml)}')">
+            <!-- Col 1: Identity -->
+            <div class="ipo-col-company">
+              ${logo}
+              <div class="ipo-company-meta">
+                <div class="ipo-company-name" title="${ipo.name || ''}">${ipo.name || 'Unknown Issue'}</div>
+                <div class="ipo-company-sub">
+                  <span class="ipo-type-pill ${isSme ? 'sme' : 'mainboard'}">${typeText.toUpperCase()}</span>
+                  <span>${dateRange}</span>
+                  ${statusChip}
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 2: Price Band / Issue Price -->
+            <div class="ipo-col-stat">
+              <span class="ipo-stat-label">Price Band</span>
+              <span class="ipo-stat-val">${ipo.price_band || (ipo.issue_price ? '₹' + ipo.issue_price : 'TBA')}</span>
+              ${ipo.lot_size && ipo.lot_size !== '-' ? `<span class="ipo-stat-sub">Lot: ${ipo.lot_size} shares</span>` : ''}
+            </div>
+
+            <!-- Col 3: Subscription -->
+            <div class="ipo-col-stat">
+              <span class="ipo-stat-label">${isListed ? 'Total Sub' : (isOpen ? 'Subscription' : 'Status')}</span>
+              ${isOpen && ipo.sub_total && ipo.sub_total !== '-'
+                ? `<span class="sub-pill">${ipo.sub_total}</span>`
+                : `<span class="ipo-stat-val" style="font-size: 12px;color:#94A3B8;">${ipo.sub_total || (isOpen ? '-' : 'Upcoming')}</span>`
+              }
+            </div>
+
+            <!-- Col 4: GMP or Return -->
+            <div class="ipo-col-stat">
+              <span class="ipo-stat-label">${isListed ? 'Listing Gain' : 'GMP Premium'}</span>
+              ${gmpHtml}
+            </div>
+
+            <!-- Col 5: Action -->
+            <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;">
+              ${actionElement}
+            </div>
+          </div>`;
+      }
+
       function renderIpoList(section, ipos) {
         const capSec = section.charAt(0).toUpperCase() + section.slice(1);
         const listWrap = document.getElementById('ipoList' + capSec);
         const emptyBox = document.getElementById('ipo' + capSec + 'Empty');
         if (!listWrap) return;
+
+        if (section === _currentIpoSection) {
+          updateIpoBoardCounts(ipos);
+        }
 
         if (!ipos || ipos.length === 0) {
           listWrap.innerHTML = '';
@@ -6470,150 +6690,54 @@
         }
         if (emptyBox) emptyBox.style.display = 'none';
 
-        const isOpen = section === 'open';
-        const isListed = section === 'listed';
+        const mainList = ipos.filter(i => !(i.type || i.exchange || '').toUpperCase().includes('SME'));
+        const smeList = ipos.filter(i => (i.type || i.exchange || '').toUpperCase().includes('SME'));
 
-        listWrap.innerHTML = ipos.map(ipo => {
-          // Logo
-          const logo = ipo.logo_url
-            ? `<img src="${ipo.logo_url}" alt="" class="ipo-clean-logo" onerror="this.style.display='none'"/>`
-            : `<div class="ipo-clean-logo">${(ipo.name || 'I')[0]}</div>`;
-
-          // Tag
-          const isSme = (ipo.type || ipo.exchange || '').toUpperCase().includes('SME');
-          const typeText = isSme ? 'SME' : 'Mainboard';
-
-          // Check if user has an active application record for this IPO
-          const app = _ipoApplications.find(a => 
-            a.status && a.status !== 'NOT_APPLIED' &&
-            ((ipo.symbol && a.ipo_symbol && a.ipo_symbol.toUpperCase() === ipo.symbol.toUpperCase()) ||
-             (ipo.name && a.ipo_name && (a.ipo_name.toLowerCase().includes(ipo.name.toLowerCase()) || ipo.name.toLowerCase().includes(a.ipo_name.toLowerCase()))))
-          );
-
-          let statusChip = '';
-          const nameEsc = encodeURIComponent(ipo.name || '');
-          const ipoSymbol = ipo.symbol || '';
-          const allotUrl = ipo.allotment_url || '';
-          const lotSize = parseInt(ipo.lot_size) || 1;
-          const priceBand = ipo.price_band || (ipo.issue_price ? '₹' + ipo.issue_price : '-');
-          const gmpVal = ipo.gmp || 0;
-
-          // GMP representation
-          let gmpHtml = '';
-          if (ipo.gmp != null && ipo.gmp > 0) {
-            const lotNum = parseInt(ipo.lot_size) || 1;
-            const estProfit = (ipo.gmp * lotNum).toLocaleString('en-IN');
-            gmpHtml = `
-              <div class="ipo-clean-gmp">
-                <span class="gmp-pill positive">+₹${ipo.gmp} (+${(ipo.gmp_pct || 0).toFixed(1)}%)</span>
-                ${lotNum > 1 ? `<span class="gmp-subtext">+₹${estProfit} / lot</span>` : ''}
-              </div>`;
-          } else if (ipo.gmp === 0) {
-            gmpHtml = `
-              <div class="ipo-clean-gmp">
-                <span class="gmp-pill neutral">₹0 (0.0%)</span>
-              </div>`;
+        if (_currentIpoBoard === 'mainboard') {
+          if (mainList.length === 0) {
+            listWrap.innerHTML = '<div class="ipo-empty-clean">No Mainboard IPOs found in this category.</div>';
           } else {
-            gmpHtml = `
-              <div class="ipo-clean-gmp">
-                <span class="gmp-pill neutral">TBA</span>
-              </div>`;
+            listWrap.innerHTML = mainList.map(ipo => renderSingleIpoCard(ipo, section)).join('');
           }
+          return;
+        }
 
-          // Return representation for listed
-          if (isListed) {
-            const retStr = String(ipo.listing_return || 'Pending');
-            const isPos = retStr.startsWith('+');
-            gmpHtml = `
-              <div class="ipo-clean-gmp">
-                <span class="gmp-pill ${isPos ? 'positive' : 'neutral'}">${retStr}</span>
-                <span class="gmp-subtext">Issue: ₹${ipo.issue_price || '-'}</span>
-              </div>`;
-          }
-
-          // Determine if allotment is in the future
-          let isFutureAllotment = false;
-          if (ipo.is_allotment_live === false) {
-            isFutureAllotment = true;
-          } else if (ipo.allotment_date && ipo.allotment_date !== '-' && ipo.allotment_date !== 'TBA') {
-            const dt = parseJsIpoDate(ipo.allotment_date);
-            if (dt && dt > new Date()) {
-              isFutureAllotment = true;
-            }
-          }
-
-          // Dates & Price
-          const dateRange = isOpen
-            ? `${ipo.open_date || '-'} – ${ipo.close_date || '-'}`
-            : (isListed 
-                ? (isFutureAllotment ? `Allotment on ${ipo.allotment_date || '-'}` : `Allotted ${ipo.allotment_date || '-'}`)
-                : `Opens ${ipo.open_date || 'TBA'}`);
-
-          // Context-Aware Action Badge / Button
-          let actionElement = '';
-          const allotDateStr = ipo.allotment_date || '';
-          const oDate = encodeURIComponent(ipo.open_date || 'TBA');
-          const cDate = encodeURIComponent(ipo.close_date || 'TBA');
-          const lDate = encodeURIComponent(ipo.listing_date || 'TBA');
-          const iSize = encodeURIComponent(ipo.issue_size || 'TBA');
-
-          if (isFutureAllotment) {
-            statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color: #F59E0B;border:1px solid rgba(251,191,36,0.25);">⏳ Allotment ${ipo.allotment_date || 'Soon'}</span>`;
-            actionElement = `<button class="ipo-clean-btn secondary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Open Official Registrar Portal">Registrar Portal ↗</button>`;
-          } else if (isListed) {
-            statusChip = `<span class="ipo-allot-chip allotted" style="background:rgba(52,211,153,0.12);color: #10B981;border:1px solid rgba(52,211,153,0.25);">📢 Allotment Live</span>`;
-            actionElement = `<button class="ipo-clean-btn primary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Check Allotment on Official Registrar Portal">Check Allotment ↗</button>`;
-          } else if (isOpen) {
-            actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
+        if (_currentIpoBoard === 'sme') {
+          if (smeList.length === 0) {
+            listWrap.innerHTML = '<div class="ipo-empty-clean">No SME IPOs found in this category.</div>';
           } else {
-            actionElement = ipo.document_url
-              ? `<a href="${ipo.document_url}" target="_blank" rel="noopener" class="ipo-clean-btn secondary">View DRHP 📄</a>`
-              : `<span class="ipo-status-pill-sub">Opening Soon</span>`;
+            listWrap.innerHTML = smeList.map(ipo => renderSingleIpoCard(ipo, section)).join('');
           }
+          return;
+        }
 
-          return `
-            <div class="ipo-row-card" style="cursor:pointer;" onclick="openAllotmentModal('${nameEsc}', '${ipoSymbol}', '${allotUrl}', ${lotSize}, '${priceBand}', ${gmpVal}, '${allotDateStr}', '${oDate}', '${cDate}', '${lDate}', '${iSize}')" data-search-id="${ipo.search_id || ipo.searchId || ''}" data-symbol="${ipo.symbol || ''}" data-name="${nameEsc}">
-              <!-- Col 1: Logo & Company -->
-              <div class="ipo-col-company">
-                ${logo}
-                <div class="ipo-company-meta">
-                  <h4 class="ipo-company-name">${ipo.name}</h4>
-                  <div class="ipo-company-sub">
-                    <span class="ipo-type-pill">${typeText}</span>
-                    <span>${dateRange}</span>
-                    ${statusChip}
-                  </div>
-                </div>
-              </div>
+        // Default 'all': Display structured sections if both categories exist
+        if (mainList.length > 0 && smeList.length > 0) {
+          const mainHtml = mainList.map(ipo => renderSingleIpoCard(ipo, section)).join('');
+          const smeHtml = smeList.map(ipo => renderSingleIpoCard(ipo, section)).join('');
 
-              <!-- Col 2: Price Band / Issue Price -->
-              <div class="ipo-col-stat">
-                <span class="ipo-stat-label">Price Band</span>
-                <span class="ipo-stat-val">${ipo.price_band || (ipo.issue_price ? '₹' + ipo.issue_price : 'TBA')}</span>
-                ${ipo.lot_size && ipo.lot_size !== '-' ? `<span class="ipo-stat-sub">Lot: ${ipo.lot_size} shares</span>` : ''}
+          listWrap.innerHTML = `
+            <div class="ipo-subgroup-header">
+              <div class="ipo-subgroup-title">
+                <span>🏢 Mainboard Issues</span>
+                <span class="ipo-subgroup-badge mainboard">${mainList.length}</span>
               </div>
+              <span class="ipo-subgroup-desc">Min retail lot ~₹14,000–₹15,000 • Regular NSE &amp; BSE</span>
+            </div>
+            <div class="ipo-subgroup-cards">${mainHtml}</div>
 
-              <!-- Col 3: Subscription -->
-              <div class="ipo-col-stat">
-                <span class="ipo-stat-label">${isListed ? 'Total Sub' : (isOpen ? 'Subscription' : 'Status')}</span>
-                ${isOpen && ipo.sub_total && ipo.sub_total !== '-'
-              ? `<span class="sub-pill">${ipo.sub_total}</span>`
-              : `<span class="ipo-stat-val" style="font-size: 12px;color:#94A3B8;">${ipo.sub_total || (isOpen ? '-' : 'Upcoming')}</span>`
-            }
+            <div class="ipo-subgroup-header" style="margin-top:24px;">
+              <div class="ipo-subgroup-title">
+                <span>🚀 SME Board Issues</span>
+                <span class="ipo-subgroup-badge sme">${smeList.length}</span>
               </div>
-
-              <!-- Col 4: GMP or Return -->
-              <div class="ipo-col-stat">
-                <span class="ipo-stat-label">${isListed ? 'Listing Gain' : 'GMP Premium'}</span>
-                ${gmpHtml}
-              </div>
-
-              <!-- Col 5: Action -->
-              <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;">
-                ${actionElement}
-              </div>
-            </div>`;
-        }).join('');
+              <span class="ipo-subgroup-desc">Lot size ~₹1 Lakh+ • BSE SME &amp; NSE Emerge</span>
+            </div>
+            <div class="ipo-subgroup-cards">${smeHtml}</div>
+          `;
+        } else {
+          listWrap.innerHTML = ipos.map(ipo => renderSingleIpoCard(ipo, section)).join('');
+        }
       }
 
       window.switchIpoSection = function (section) {
@@ -6637,14 +6761,15 @@
 
           if (section === 'myApps') {
             renderMyIpoApplications();
+          } else if (window._cachedIpoData && window._cachedIpoData[section]) {
+            updateIpoBoardCounts(window._cachedIpoData[section]);
+            renderIpoList(section, window._cachedIpoData[section]);
           }
         } catch (err) {
           console.error('switchIpoSection error:', err);
         }
       };
-
-
-      // =========================================================
+// =========================================================
       //  IPO MODAL DETAIL & CATEGORY DISTRIBUTION HANDLERS
       // =========================================================
       let _currentDetailData = null;
