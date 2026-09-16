@@ -1477,27 +1477,28 @@ tbody tr:hover {
 }
 
 .live-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  color: var(--green);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(16, 185, 129, 0.08) !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  color: #10B981 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  box-shadow: none !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
 }
 
 .indicator-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--green);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--green);
-  animation: pulse-dot-live 1.5s infinite;
+  width: 6px !important;
+  height: 6px !important;
+  background: #10B981 !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  animation: pulseLive 2s infinite ease-in-out !important;
 }
 
 @keyframes pulse-dot-live {
@@ -6202,28 +6203,28 @@ body {
 }
 
 .live-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(0, 208, 156, 0.12) !important;
-  border: 1px solid rgba(0, 208, 156, 0.3) !important;
-  color: var(--green) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(16, 185, 129, 0.08) !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  color: #10B981 !important;
   font-size: 11px !important;
-  font-weight: 700 !important;
-  padding: 5px 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
   border-radius: 9999px !important;
+  box-shadow: none !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.04em !important;
-  box-shadow: 0 0 14px rgba(0, 208, 156, 0.15);
+  letter-spacing: 0.03em !important;
 }
 
 .indicator-dot {
-  width: 7px;
-  height: 7px;
-  background: var(--green);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--green);
-  animation: pulseLive 2s infinite ease-in-out;
+  width: 6px !important;
+  height: 6px !important;
+  background: #10B981 !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  animation: pulseLive 2s infinite ease-in-out !important;
 }
 
 @keyframes pulseLive {
@@ -10299,14 +10300,20 @@ html {
   }
 
   .live-indicator {
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    color: #00D09C !important;
-    background: rgba(0, 208, 156, 0.12) !important;
-    border: 1px solid rgba(0, 208, 156, 0.25) !important;
-    padding: 2.5px 8px !important;
-    border-radius: 999px !important;
-  }
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: rgba(16, 185, 129, 0.08) !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  color: #10B981 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  box-shadow: none !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+}
 
   .net-worth-value {
     font-size: 32px !important;
@@ -11157,4 +11164,32 @@ html, body {
 /* 6. Smooth table hover performance */
 tbody tr {
   transition: background-color 0.12s ease !important;
+}
+
+
+/* Usability Issue 6: Hide redundant summary badge when active tab already communicates state */
+#sectionSummaryBadge,
+.section-summary-badge {
+  display: none !important;
+}
+
+
+/* Usability Issue 7: High-contrast holdings count (WCAG AAA contrast against dark background) */
+#holdingsCount,
+.holdings-count {
+  color: #94A3B8 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+}
+
+
+/* Usability Issue 8: Search input comfortable breathing room & padding */
+.search-box {
+  padding: 8px 14px !important;
+  gap: 10px !important;
+}
+#searchInput,
+.search-box input {
+  padding-left: 6px !important;
 }
