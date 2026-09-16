@@ -766,10 +766,11 @@
         </div>
       </section>
     </div>
-    <!-- Welcome Overlay for login transition -->
-    <div id="welcomeOverlay" style="display: none; opacity: 0;">
-      <div id="welcomeText">
-      </div>
+  </div>
+
+  <!-- Welcome Overlay for login transition (root level to prevent #authScreen display:none occlusion) -->
+  <div id="welcomeOverlay" style="display: none; opacity: 0;">
+    <div id="welcomeText">
     </div>
   </div>
 
@@ -4362,46 +4363,45 @@
       }
 
       async function showFullscreenWelcomeTransition(email, welcomePhrase) {
-        // Prevent repeated greeting transitions if already displayed in this session
-        if (sessionStorage.getItem('portfolio_welcome_shown') === 'true') {
-          const submitBtn = document.getElementById('authSubmit');
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = authMode === 'signup' ? 'Create account' : 'Log in';
-          }
-          await enterDashboard(email);
-          return;
-        }
         sessionStorage.setItem('portfolio_welcome_shown', 'true');
 
         const overlay = document.getElementById('welcomeOverlay');
         const welcomeText = document.getElementById('welcomeText');
-        const username = email.split('@')[0];
+        const username = (email && email.includes('@')) ? email.split('@')[0] : (email || 'Investor');
 
-        overlay.style.display = 'flex';
-        overlay.offsetHeight; // trigger reflow
-        overlay.style.opacity = '1';
+        if (overlay && welcomeText) {
+          overlay.style.display = 'flex';
+          overlay.offsetHeight; // trigger reflow
+          overlay.style.opacity = '1';
 
-        const textToAnimate = `${welcomePhrase}, ${username}!`;
+          const textToAnimate = `${welcomePhrase}, ${username}!`;
 
-        await new Promise(resolve => {
-          createSplitText(welcomeText, {
-            text: textToAnimate,
-            delay: 45,
-            duration: 0.7,
-            ease: 'power3.out',
-            from: { opacity: 0, y: 35 },
-            to: { opacity: 1, y: 0 },
-            onLetterAnimationComplete: resolve
-          });
-        });
+          try {
+            await Promise.race([
+              new Promise(resolve => {
+                createSplitText(welcomeText, {
+                  text: textToAnimate,
+                  delay: 45,
+                  duration: 0.7,
+                  ease: 'power3.out',
+                  from: { opacity: 0, y: 35 },
+                  to: { opacity: 1, y: 0 },
+                  onLetterAnimationComplete: resolve
+                });
+              }),
+              new Promise(resolve => setTimeout(resolve, 1400)) // Guarantee progression even if animation stalls
+            ]);
+          } catch (e) {
+            console.warn('Welcome text animation notice:', e);
+            welcomeText.textContent = textToAnimate;
+          }
 
-        await new Promise(r => setTimeout(r, 800));
+          await new Promise(r => setTimeout(r, 700));
 
-        overlay.style.opacity = '0';
-        await new Promise(r => setTimeout(r, 400));
-
-        overlay.style.display = 'none';
+          overlay.style.opacity = '0';
+          await new Promise(r => setTimeout(r, 350));
+          overlay.style.display = 'none';
+        }
 
         const submitBtn = document.getElementById('authSubmit');
         if (submitBtn) {
@@ -5571,6 +5571,8 @@
         if (oauthEmail) {
           window.history.replaceState({}, document.title, window.location.pathname);
           authenticatedEmail = oauthEmail;
+          await showFullscreenWelcomeTransition(authenticatedEmail, 'Welcome back');
+          return;
         }
 
         // Check B: Active Flask Session (/api/session)

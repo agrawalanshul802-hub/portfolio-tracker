@@ -7726,10 +7726,10 @@ html, body {
 
 /* Welcome overlay */
 #welcomeOverlay {
-  position: fixed !important; inset: 0 !important; z-index: 99999 !important;
+  position: fixed !important; inset: 0 !important; z-index: 999999 !important;
   background: #000000 !important; display: none;
   align-items: center !important; justify-content: center !important;
-  opacity: 0; transition: opacity 0.4s ease !important;
+  opacity: 0; transition: opacity 0.35s ease !important;
 }
 #welcomeText {
   font-size: clamp(24px, 6vw, 42px) !important; font-weight: 800 !important;
