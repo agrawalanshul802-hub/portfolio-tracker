@@ -3478,11 +3478,11 @@ h1.top-bar-title,
    ORBIT IMAGES / BADGES SHOWCASE
    ========================================================================== */
 .logo-orbit-section {
-  padding: 80px 0;
-  border-top: 1px solid var(--card-border-soft);
+  padding: 60px 0 80px 0;
+  border-top: none;
   position: relative;
   overflow: hidden;
-  background: #04040a;
+  background: transparent;
 }
 
 .orbit-showcase-container {
