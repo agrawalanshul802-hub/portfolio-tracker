@@ -873,8 +873,8 @@
     <main class="main-content">
       <!-- Dashboard Top Bar with User Dropdown -->
       <header class="dashboard-top-bar">
-        <div class="top-bar-left" style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px;">
-          <button class="topbar-menu-btn" id="topbarMenuBtn" title="Open Navigation Menu">
+        <div class="top-bar-left">
+          <button class="topbar-menu-btn" id="topbarMenuBtn" title="Open Navigation Menu" aria-label="Toggle navigation menu">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
               stroke-linecap="round">
               <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -884,10 +884,9 @@
             <img src="logo_icon.png" alt="Logo" style="width:20px;height:20px;object-fit:contain;">
             <span>Menu</span>
           </button>
-          <div>
-            <h2 class="top-bar-title" style="margin: 0; line-height: 1.2;">Dashboard</h2>
-            <p class="top-bar-subtitle" style="margin-top: 4px;">Overview of your investments &amp; equity performance
-            </p>
+          <div class="top-bar-titles">
+            <h1 class="top-bar-title">Dashboard</h1>
+            <p class="top-bar-subtitle">Overview of your investments &amp; equity performance</p>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -902,7 +901,7 @@
           <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
           <button class="profile-trigger-btn" id="profileTriggerBtn">
             <div class="avatar" id="userAvatar">U</div>
-            <span class="user-email-label" id="userEmailLabel">user@example.com</span>
+            <span class="user-email-label" id="userEmailLabel" title="user@example.com" aria-label="Signed in user email">user@example.com</span>
             <span class="dropdown-chevron">▼</span>
           </button>
           <div class="profile-dropdown-menu">
@@ -965,27 +964,31 @@
         </div>
 
         <!-- Dedicated Portfolio Section Switcher (Stocks vs MCX Commodities) -->
-        <div class="portfolio-section-bar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin: 20px 0 16px;">
-          <div class="sec-tabs-wrapper" style="display:inline-flex; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:4px; gap:4px;">
-            <button class="sec-tab-btn active" id="secBtnAll" onclick="switchPortfolioSection('all')">
+        <div class="portfolio-section-bar">
+          <div class="sec-tabs-wrapper" role="tablist" aria-label="Asset Class Filter">
+            <button class="sec-tab-btn active" id="secBtnAll" onclick="switchPortfolioSection('all')" role="tab" aria-selected="true">
               <span>🌐 All Assets</span>
               <span class="sec-pill-count" id="secCountAll">0</span>
             </button>
-            <button class="sec-tab-btn" id="secBtnStocks" onclick="switchPortfolioSection('stocks')">
+            <button class="sec-tab-btn" id="secBtnStocks" onclick="switchPortfolioSection('stocks')" role="tab" aria-selected="false">
               <span>📈 Stocks &amp; Equities (NSE/BSE)</span>
               <span class="sec-pill-count stocks-count" id="secCountStocks">0</span>
             </button>
-            <button class="sec-tab-btn" id="secBtnMcx" onclick="switchPortfolioSection('mcx')">
+            <button class="sec-tab-btn" id="secBtnMcx" onclick="switchPortfolioSection('mcx')" role="tab" aria-selected="false">
               <span>🪙 Commodities (MCX)</span>
               <span class="sec-pill-count mcx-count" id="secCountMcx">0</span>
             </button>
           </div>
-          <div id="sectionSummaryBadge" style="font-size:12px; color:var(--text-dim); font-weight:600;">Showing All Assets</div>
+          <div id="sectionSummaryBadge" class="section-summary-badge" role="status" aria-live="polite">Showing All Assets</div>
         </div>
 
         <div class="panel">
           <div class="panel-toolbar">
             <div class="toolbar-left">
+              <button class="btn btn-primary toolbar-add-btn" id="toolbarAddHoldingBtn" onclick="openModal('add')" title="Add new stock or holding">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>+ Add holding</span>
+              </button>
               <div class="search-box">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="7" />
@@ -4460,7 +4463,12 @@
         }
         showDashboardScreen();
         if (typeof updatePrivacyEyeUI === 'function') updatePrivacyEyeUI();
-        document.getElementById('userEmailLabel').textContent = email;
+        const uEmailLabel = document.getElementById('userEmailLabel');
+        if (uEmailLabel) {
+          uEmailLabel.textContent = email;
+          uEmailLabel.title = email;
+          uEmailLabel.setAttribute('aria-label', 'Signed in as ' + email);
+        }
         const avatar = document.getElementById('userAvatar');
         if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
 
@@ -7106,14 +7114,15 @@
 <!-- CHART_DIRECT_TRADINGVIEW -->
 <style>
 .link-btn.chart-link {
-  color: #A78BFA !important;
+  color: var(--text-dim) !important;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-.link-btn.chart-link:hover {
-  color: #c4b5fd !important;
+.link-btn.chart-link:hover,
+.link-btn.chart-link:focus-visible {
+  color: #A78BFA !important;
   text-decoration: none;
 }
 .m-chart-btn {

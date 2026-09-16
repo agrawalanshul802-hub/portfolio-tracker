@@ -46,6 +46,29 @@
   --red: #EF4444;
   --shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
   --logoloop-fadeColor: #000000;
+
+  /* --- Usability Heuristic Tokens: Typographic Scale (Issue 1) --- */
+  --fs-xs: 0.75rem;    /* 12px - Badges, pill counts, hints */
+  --fs-sm: 0.8125rem;  /* 13px - Subtitles, secondary table cells */
+  --fs-base: 0.875rem; /* 14px - Body, table data, default */
+  --fs-md: 1rem;       /* 16px - Form controls, inputs, buttons */
+  --fs-lg: 1.125rem;   /* 18px - Panel headers, card titles */
+  --fs-xl: 1.5rem;     /* 24px - Page titles (H1), modal headings */
+  --fs-2xl: 2rem;      /* 32px - Big metric values */
+
+  /* --- Usability Heuristic Tokens: Semantic Text Colors (Issue 2) --- */
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  --text-success: #10B981;
+  --text-danger: #EF4444;
+  --text-accent: #A78BFA;
+
+  /* --- Usability Heuristic Tokens: Corner Radii (Issue 3) --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
 }
 
 *,
@@ -155,41 +178,76 @@ select {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 16px;
-  border-radius: 9px;
-  font-size: 13.5px;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md, 10px);
+  font-size: var(--fs-base, 14px);
   font-weight: 600;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all .15s ease;
   white-space: nowrap;
+  font-family: inherit;
+  line-height: 1.25;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .btn-primary {
   background: var(--accent);
   color: var(--accent-text);
+  border-color: transparent;
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
+.btn-secondary,
 .btn-outline {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--card-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
+.btn-secondary:hover,
 .btn-outline:hover {
-  border-color: #3E434F;
-  background: rgba(255, 255, 255, .03);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--text-danger);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--text-danger);
+  color: #FFF;
 }
 
 .btn-sm {
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: var(--fs-xs, 12px);
+  border-radius: var(--radius-sm, 6px);
 }
 
 .stat-grid {
@@ -1411,11 +1469,11 @@ tbody tr:hover {
 }
 
 .net-worth-header .card-label {
-  font-size: 13px;
+  font-size: var(--fs-sm, 13px);
   font-weight: 600;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: 0.01em;
 }
 
 .live-indicator {
@@ -2172,18 +2230,28 @@ tbody tr:hover {
 
 .top-bar-left {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
 
+.top-bar-titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+h1.top-bar-title,
 .top-bar-title {
-  font-size: 20px;
+  font-size: var(--fs-xl, 22px);
   font-weight: 700;
   color: #FFFFFF;
   margin: 0 0 2px 0;
+  line-height: 1.2;
 }
 
 .top-bar-subtitle {
-  font-size: 13px;
+  font-size: var(--fs-xs, 12px);
   color: var(--text-dim);
   margin: 0;
 }
@@ -2225,9 +2293,9 @@ tbody tr:hover {
 }
 
 .profile-trigger-btn .user-email-label {
-  font-size: 13px;
+  font-size: var(--fs-sm, 13px);
   font-weight: 500;
-  max-width: 140px;
+  max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -5315,9 +5383,9 @@ tbody tr:hover {
 
 .top-bar-left {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
 
 .topbar-menu-btn {
@@ -6106,8 +6174,8 @@ body {
   font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--text-dim) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
+  text-transform: none !important;
+  letter-spacing: 0.01em !important;
 }
 
 .live-indicator {
@@ -6206,8 +6274,8 @@ body {
   font-size: 11.5px !important;
   font-weight: 700 !important;
   color: var(--text-dim) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
+  text-transform: none !important;
+  letter-spacing: 0.01em !important;
 }
 
 .stat-card.mini-card .stat-value {
@@ -6511,13 +6579,23 @@ body {
   transform: translateY(-1px) !important;
 }
 
-.row-actions .link-btn.alert-link {
-  color: var(--green) !important;
-  border-color: rgba(0, 208, 156, 0.25) !important;
-  background: rgba(0, 208, 156, 0.06) !important;
+.row-actions .link-btn {
+  opacity: 0.72;
 }
 
-.row-actions .link-btn.alert-link:hover {
+tbody tr:hover .row-actions .link-btn,
+tbody tr:focus-within .row-actions .link-btn {
+  opacity: 1;
+}
+
+.row-actions .link-btn.alert-link {
+  color: var(--text-dim) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.row-actions .link-btn.alert-link:hover,
+.row-actions .link-btn.alert-link:focus-visible {
   background: rgba(0, 208, 156, 0.16) !important;
   border-color: var(--green) !important;
   color: #FFFFFF !important;
@@ -6525,12 +6603,13 @@ body {
 }
 
 .row-actions .link-btn.danger {
-  color: var(--red) !important;
-  border-color: rgba(251, 113, 133, 0.2) !important;
-  background: rgba(251, 113, 133, 0.05) !important;
+  color: var(--text-dim) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
 }
 
-.row-actions .link-btn.danger:hover {
+.row-actions .link-btn.danger:hover,
+.row-actions .link-btn.danger:focus-visible {
   background: rgba(251, 113, 133, 0.15) !important;
   border-color: var(--red) !important;
   color: #FFFFFF !important;
@@ -6713,12 +6792,13 @@ body {
 
 /* Refined Table Action Pills */
 .row-actions .link-btn.sell-link {
-  color: #A5B4FC !important;
-  border-color: rgba(99, 102, 241, 0.28) !important;
-  background: rgba(99, 102, 241, 0.08) !important;
+  color: var(--text-dim) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
 }
 
-.row-actions .link-btn.sell-link:hover {
+.row-actions .link-btn.sell-link:hover,
+.row-actions .link-btn.sell-link:focus-visible {
   background: rgba(99, 102, 241, 0.2) !important;
   border-color: #818CF8 !important;
   color: #FFFFFF !important;
@@ -6726,12 +6806,13 @@ body {
 }
 
 .row-actions .link-btn.edit-link {
-  color: #7DD3FC !important;
-  border-color: rgba(56, 189, 248, 0.28) !important;
-  background: rgba(56, 189, 248, 0.08) !important;
+  color: var(--text-dim) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
 }
 
-.row-actions .link-btn.edit-link:hover {
+.row-actions .link-btn.edit-link:hover,
+.row-actions .link-btn.edit-link:focus-visible {
   background: rgba(56, 189, 248, 0.2) !important;
   border-color: #38BDF8 !important;
   color: #FFFFFF !important;
@@ -10188,8 +10269,8 @@ html {
     font-size: 11.5px !important;
     font-weight: 700 !important;
     color: #94A3B8 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
+    text-transform: none !important;
+    letter-spacing: 0.01em !important;
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
@@ -10256,9 +10337,9 @@ html {
   .stats-grid-side .card-label {
     font-size: 10.5px !important;
     color: #94A3B8 !important;
-    text-transform: uppercase !important;
+    text-transform: none !important;
     font-weight: 600 !important;
-    letter-spacing: 0.03em !important;
+    letter-spacing: 0.01em !important;
     margin-bottom: 3px !important;
     display: block !important;
   }
@@ -10926,4 +11007,79 @@ html {
   .m-action-btn {
     flex: 0 0 auto !important;
   }
+}
+
+
+/* ==========================================================================
+   USABILITY HEURISTIC FIXES: Layout, Dock, Section Bar & Table Clarity
+   ========================================================================== */
+
+/* Issue 8 & 11: Hide redundant floating dock on desktop viewports where toolbars exist */
+@media (min-width: 1024px) {
+  .dock-outer {
+    display: none !important;
+  }
+}
+
+/* Issue 11: Persistent inline Add holding button for desktop table toolbar */
+.toolbar-add-btn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-base, 14px);
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius-md, 10px);
+  background: var(--accent);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.toolbar-add-btn:hover {
+  background: var(--accent-hover, #7C3AED);
+  transform: translateY(-1px);
+}
+
+.toolbar-add-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (min-width: 1024px) {
+  .toolbar-add-btn {
+    display: inline-flex !important;
+  }
+}
+
+/* Issue 8: Ensure sticky table header never bleeds content or overlaps */
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: #0f121d !important;
+}
+
+/* Issue 10: Portfolio section bar proximity and badge styling */
+.portfolio-section-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+  margin: 20px 0 16px !important;
+  flex-wrap: wrap !important;
+}
+
+.section-summary-badge {
+  font-size: var(--fs-xs, 12px) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-radius: var(--radius-sm, 6px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
