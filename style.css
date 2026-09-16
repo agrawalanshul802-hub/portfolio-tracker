@@ -3482,7 +3482,7 @@ h1.top-bar-title,
   border-top: 1px solid var(--card-border-soft);
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04) 0%, rgba(4, 4, 10, 0) 70%);
+  background: #04040a;
 }
 
 .orbit-showcase-container {
@@ -3520,6 +3520,10 @@ h1.top-bar-title,
   transform: translate(-50%, -50%);
   z-index: 10;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .orbit-center-logo-img {
@@ -3527,18 +3531,22 @@ h1.top-bar-title,
   height: 76px;
   object-fit: contain;
   display: block;
-
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
 }
 
 .orbit-center-glow {
   position: absolute;
-  width: 150px;
-  height: 150px;
+  width: 320px;
+  height: 320px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0) 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, rgba(124, 58, 237, 0.18) 40%, transparent 70%);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .orbit-node {
@@ -3609,6 +3617,11 @@ h1.top-bar-title,
   .orbit-center-logo-img {
     width: 52px;
     height: 52px;
+  }
+
+  .orbit-center-glow {
+    width: 220px !important;
+    height: 220px !important;
   }
 
   .orbit-node {
