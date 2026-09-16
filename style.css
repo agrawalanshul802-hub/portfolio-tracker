@@ -85,7 +85,7 @@ body {
 body {
   margin: 0;
   background: #000000;
-  background-attachment: fixed;
+  background-attachment: scroll;
   color: var(--text);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -3951,7 +3951,7 @@ h1.top-bar-title,
 .nav-item,
 .btn-primary,
 .filter-pill {
-  will-change: transform, opacity;
+  will-change: auto;
 }
 
 /* Prevent layout reflow flash during Motion One entrance animations */
@@ -6094,7 +6094,7 @@ h1.top-bar-title,
 body {
   background: var(--bg) !important;
   background-image: var(--bg-gradient) !important;
-  background-attachment: fixed !important;
+  background-attachment: scroll !important;
   color: var(--text) !important;
   font-family: var(--font-sans) !important;
   -webkit-font-smoothing: antialiased;
@@ -8378,11 +8378,9 @@ html {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(100px);
   z-index: 0;
-  opacity: 0.42;
-  mix-blend-mode: screen;
-  will-change: transform, opacity;
+  opacity: 0.35;
+  transform: translateZ(0);
 }
 
 .ambient-glow-orb.orb-primary {
@@ -11082,4 +11080,56 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.07) !important;
   display: inline-flex !important;
   align-items: center !important;
+}
+
+
+/* ==========================================================================
+   HIGH PERFORMANCE / ZERO-LAG ACCELERATION OVERRIDES
+   ========================================================================== */
+
+/* 1. Prevent expensive CPU repainting on scroll by ensuring body scrolls normally */
+html, body {
+  background-attachment: scroll !important;
+}
+
+/* 2. Hardware-accelerate main containers with isolated compositing layers */
+.main-content,
+.desktop-holdings-table,
+.panel,
+.net-worth-card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 3. Optimize backdrop-filter blur radius from 24px-28px down to crisp, efficient 10px */
+.net-worth-card,
+.stat-card,
+.panel,
+.panel-toolbar,
+.dock-panel,
+.modal-card,
+.alert-modal-card {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* 4. Disable heavy background orb animations completely once user enters dashboard */
+#dashboardScreen:not(.hidden) ~ * .ambient-glow-orb,
+#authScreen.hidden .ambient-glow-orb,
+#authScreen[style*="display: none"] .ambient-glow-orb,
+#authScreen[style*="display:none"] .ambient-glow-orb {
+  display: none !important;
+  animation: none !important;
+}
+
+/* 5. Smooth GPU-accelerated hover for dock items without JS layout thrashing */
+.dock-item {
+  transform-origin: bottom center;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease !important;
+}
+
+/* 6. Smooth table hover performance */
+tbody tr {
+  transition: background-color 0.12s ease !important;
 }

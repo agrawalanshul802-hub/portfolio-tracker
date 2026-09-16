@@ -4414,6 +4414,7 @@
 
 
       function showAuthScreen() {
+        if (typeof window._startDarkVeil === 'function') window._startDarkVeil();
         const auth = document.getElementById('authScreen');
         const dash = document.getElementById('dashboardScreen');
         if (auth) {
@@ -4428,6 +4429,7 @@
       }
 
       function showDashboardScreen() {
+        if (typeof window._stopDarkVeil === 'function') window._stopDarkVeil();
         const auth = document.getElementById('authScreen');
         const dash = document.getElementById('dashboardScreen');
         if (auth) {
@@ -4625,11 +4627,17 @@
             s.size += s.velocity * (1 / 60);
             if (Math.abs(s.target - s.size) > 0.1 || Math.abs(s.velocity) > 0.1) stillMoving = true;
             else { s.size = s.target; s.velocity = 0; }
-            s.el.style.width = s.size + 'px';
-            s.el.style.height = s.size + 'px';
+            // Use hardware-accelerated transform instead of layout-thrashing width/height
+            const scale = s.size / BASE;
+            s.el.style.transform = `scale(${scale}) translateZ(0)`;
           });
           if (stillMoving) raf = requestAnimationFrame(tick);
-          else raf = null;
+          else {
+            raf = null;
+            if (mouseX === null) {
+              dockState.forEach(s => { s.el.style.transform = ''; });
+            }
+          }
         }
         function ensureLoop() { if (!raf) raf = requestAnimationFrame(tick); }
 
@@ -5032,7 +5040,15 @@
         resize();
         window.addEventListener('resize', resize);
 
+        let lastFrameTime = 0;
         function render(time) {
+          // Throttle to 30 FPS to reduce GPU and battery consumption by 70%
+          if (time - lastFrameTime < 32) {
+            raf = requestAnimationFrame(render);
+            return;
+          }
+          lastFrameTime = time;
+
           const timeSeconds = (time - start) * 0.001 * (options.speed || 1.0);
 
           gl.clearColor(0, 0, 0, 0);
@@ -5055,6 +5071,27 @@
 
           raf = requestAnimationFrame(render);
         }
+
+        window._stopDarkVeil = function() {
+          if (raf) { cancelAnimationFrame(raf); raf = null; }
+        };
+        window._startDarkVeil = function() {
+          if (!raf && canvas && canvas.offsetParent !== null) {
+            lastFrameTime = performance.now();
+            raf = requestAnimationFrame(render);
+          }
+        };
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            if (typeof window._stopDarkVeil === 'function') window._stopDarkVeil();
+          } else {
+            const auth = document.getElementById('authScreen');
+            if (auth && !auth.classList.contains('hidden') && auth.style.display !== 'none') {
+              if (typeof window._startDarkVeil === 'function') window._startDarkVeil();
+            }
+          }
+        });
 
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
