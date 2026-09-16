@@ -28,7 +28,7 @@
     .alert-modal-overlay.open { display: flex; }
     .alert-modal-card {
       background: #12161A; border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 18px; width: 100%; max-width: 440px;
+      border-radius: 20px; width: 100%; max-width: 440px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 208, 156, 0.08);
       overflow: hidden; animation: alertSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -45,27 +45,27 @@
     }
     .alert-back-btn {
       background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #FFF; width: 34px; height: 34px; border-radius: 50%;
+      color: #FFFFFF; width: 34px; height: 34px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; transition: all 0.2s ease;
     }
     .alert-back-btn:hover { background: rgba(255, 255, 255, 0.14); transform: scale(1.05); }
     .alert-title {
-      font-size: 18px; font-weight: 700; color: #FFF; margin: 0;
+      font-size: 18px; font-weight: 700; color: #FFFFFF; margin: 0;
       letter-spacing: -0.2px;
     }
     .alert-tabs-nav {
       display: flex; background: rgba(255, 255, 255, 0.05);
-      padding: 4px; border-radius: 10px; margin: 16px 22px 0; gap: 4px;
+      padding: 4px; border-radius: 12px; margin: 16px 22px 0; gap: 4px;
     }
     .alert-tab-btn {
       flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 600;
-      background: transparent; border: none; color: #8B949E;
+      background: transparent; border: none; color: #94A3B8;
       border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
       text-align: center;
     }
     .alert-tab-btn.active {
-      background: #1E242B; color: #FFF; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      background: #1E242B; color: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     .alert-body { padding: 18px 22px 24px; }
     .alert-stock-banner {
@@ -74,25 +74,25 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .alert-stock-info { display: flex; flex-direction: column; gap: 2px; }
-    .alert-stock-sym { font-size: 15px; font-weight: 700; color: #FFF; }
-    .alert-stock-sub { font-size: 11px; color: #8B949E; }
+    .alert-stock-sym { font-size: 14px; font-weight: 700; color: #FFFFFF; }
+    .alert-stock-sub { font-size: 11px; color: #94A3B8; }
     .alert-cmp-wrap { text-align: right; }
-    .alert-cmp-val { font-size: 15px; font-weight: 700; color: #00D09C; }
-    .alert-cmp-sub { font-size: 11px; color: #8B949E; }
+    .alert-cmp-val { font-size: 14px; font-weight: 700; color: #10B981; }
+    .alert-cmp-sub { font-size: 11px; color: #94A3B8; }
     .alert-row {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 18px;
     }
-    .alert-row-label { font-size: 14px; color: #E6EDF3; font-weight: 500; }
+    .alert-row-label { font-size: 14px; color: #94A3B8; font-weight: 500; }
     .alert-target-input-wrap {
       display: flex; align-items: center; background: #0D221C;
-      border: 1.5px solid #00D09C; border-radius: 10px;
+      border: 1.5px solid #00D09C; border-radius: 12px;
       padding: 2px 10px; width: 150px;
       box-shadow: 0 0 14px rgba(0, 208, 156, 0.15);
     }
-    .alert-target-prefix { color: #00D09C; font-weight: 700; font-size: 14px; margin-right: 4px; }
+    .alert-target-prefix { color: #10B981; font-weight: 700; font-size: 14px; margin-right: 4px; }
     .alert-target-input {
-      background: transparent; border: none; color: #00D09C;
+      background: transparent; border: none; color: #10B981;
       font-size: 16px; font-weight: 700; width: 100%;
       text-align: right; outline: none; font-family: inherit;
     }
@@ -101,35 +101,35 @@
     }
     .alert-chip {
       background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #8B949E; font-size: 11px; font-weight: 600; padding: 3px 8px;
+      color: #94A3B8; font-size: 11px; font-weight: 600; padding: 3px 8px;
       border-radius: 12px; cursor: pointer; transition: all 0.15s ease;
     }
-    .alert-chip:hover { color: #00D09C; border-color: #00D09C; background: rgba(0, 208, 156, 0.1); }
+    .alert-chip:hover { color: #10B981; border-color: #00D09C; background: rgba(0, 208, 156, 0.1); }
     .alert-cond-hint {
       background: rgba(0, 208, 156, 0.08); border: 1px solid rgba(0, 208, 156, 0.2);
-      border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #A7F3D0;
+      border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #10B981;
       margin-bottom: 20px; display: flex; align-items: center; gap: 6px;
     }
     .alert-notify-pills { display: flex; gap: 8px; }
     .alert-pill {
       border-radius: 20px; padding: 7px 18px; font-size: 13px; font-weight: 600;
       cursor: pointer; transition: all 0.2s ease; background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2); color: #8B949E;
+      border: 1px solid rgba(255, 255, 255, 0.2); color: #94A3B8;
     }
     .alert-pill.active-every {
       border-color: #FFFFFF; color: #FFFFFF; background: rgba(255, 255, 255, 0.1);
     }
     .alert-pill.active-once {
-      border-color: #00D09C; color: #00D09C; background: rgba(0, 208, 156, 0.12);
+      border-color: #00D09C; color: #10B981; background: rgba(0, 208, 156, 0.12);
     }
     .alert-btn-submit {
       width: 100%; height: 48px; background: #181D23; border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px; color: #FFF; font-size: 14px; font-weight: 700;
+      border-radius: 12px; color: #FFFFFF; font-size: 14px; font-weight: 700;
       letter-spacing: 0.8px; cursor: pointer; transition: all 0.25s ease;
       margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .alert-btn-submit:hover {
-      background: #00D09C; color: #0B1E19; border-color: #00D09C;
+      background: #00D09C; color: #000000; border-color: #00D09C;
       box-shadow: 0 0 24px rgba(0, 208, 156, 0.4); transform: translateY(-1px);
     }
     /* Active Alerts List */
@@ -142,45 +142,45 @@
     }
     .alert-item-card:hover { border-color: rgba(0, 208, 156, 0.3); background: rgba(255, 255, 255, 0.05); }
     .alert-item-left { display: flex; flex-direction: column; gap: 2px; }
-    .alert-item-sym { font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 6px; }
-    .alert-item-cond { font-size: 12px; color: #00D09C; font-weight: 600; }
-    .alert-item-meta { font-size: 11px; color: #8B949E; }
+    .alert-item-sym { font-weight: 700; font-size: 14px; color: #FFFFFF; display: flex; align-items: center; gap: 6px; }
+    .alert-item-cond { font-size: 12px; color: #10B981; font-weight: 600; }
+    .alert-item-meta { font-size: 11px; color: #94A3B8; }
     .alert-item-right { display: flex; align-items: center; gap: 8px; }
     .alert-status-badge {
-      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;
+      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 12px;
     }
-    .alert-status-badge.active { background: rgba(0, 208, 156, 0.15); color: #00D09C; border: 1px solid rgba(0, 208, 156, 0.3); }
+    .alert-status-badge.active { background: rgba(0, 208, 156, 0.15); color: #10B981; border: 1px solid rgba(0, 208, 156, 0.3); }
     .alert-status-badge.triggered { background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); }
     .alert-del-btn {
-      background: transparent; border: none; color: #8B949E; cursor: pointer;
-      padding: 4px; border-radius: 6px; font-size: 14px; transition: all 0.15s;
+      background: transparent; border: none; color: #94A3B8; cursor: pointer;
+      padding: 4px; border-radius: 8px; font-size: 14px; transition: all 0.15s;
     }
     .alert-del-btn:hover { color: #EF4444; background: rgba(239, 68, 68, 0.1); }
     /* Topbar Alert Button */
     .topbar-alert-btn {
       background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 10px; padding: 8px 14px; color: #E6EDF3; font-size: 13px; font-weight: 600;
+      border-radius: 12px; padding: 8px 14px; color: #94A3B8; font-size: 13px; font-weight: 600;
       display: flex; align-items: center; gap: 7px; cursor: pointer; transition: all 0.2s ease;
       position: relative;
     }
     .topbar-alert-btn:hover {
-      background: rgba(0, 208, 156, 0.12); border-color: #00D09C; color: #00D09C;
+      background: rgba(0, 208, 156, 0.12); border-color: #00D09C; color: #10B981;
     }
     .alert-badge-count {
-      background: #00D09C; color: #05231B; font-size: 11px; font-weight: 800;
-      border-radius: 10px; padding: 1px 6px; min-width: 18px; text-align: center;
+      background: #00D09C; color: #000000; font-size: 11px; font-weight: 800;
+      border-radius: 12px; padding: 1px 6px; min-width: 18px; text-align: center;
     }
     /* Table Alert Button */
-    .link-btn.alert-link { color: #00D09C; }
-    .link-btn.alert-link:hover { color: #34D399; background: rgba(0, 208, 156, 0.12); }
-    .m-card-bottom button.m-alert-btn { color: #00D09C; border-color: rgba(0, 208, 156, 0.3); }
+    .link-btn.alert-link { color: #10B981; }
+    .link-btn.alert-link:hover { color: #10B981; background: rgba(0, 208, 156, 0.12); }
+    .m-card-bottom button.m-alert-btn { color: #10B981; border-color: rgba(0, 208, 156, 0.3); }
     .m-card-bottom button.m-alert-btn:hover { background: rgba(0, 208, 156, 0.15); }
     /* Triggered Floating Notification Banner */
     .price-alert-banner {
       position: fixed; top: 20px; right: 20px; z-index: 100000;
       background: linear-gradient(135deg, #064E3B, #065F46);
-      border: 1.5px solid #00D09C; border-radius: 14px;
-      padding: 14px 18px; color: #FFF; box-shadow: 0 12px 36px rgba(0,0,0,0.6), 0 0 30px rgba(0,208,156,0.3);
+      border: 1.5px solid #00D09C; border-radius: 12px;
+      padding: 14px 18px; color: #FFFFFF; box-shadow: 0 12px 36px rgba(0,0,0,0.6), 0 0 30px rgba(0,208,156,0.3);
       display: flex; align-items: center; gap: 12px; max-width: 380px;
       animation: alertBannerSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -235,18 +235,18 @@
       font-size: 11px;
       font-weight: 700;
       padding: 1px 7px;
-      border-radius: 10px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.16);
       color: currentColor;
     }
     .mcx-quick-btn {
       background: rgba(245, 158, 11, 0.12);
       border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #FBBF24;
-      font-size: 11.5px;
+      color: #F59E0B;
+      font-size: 11px;
       font-weight: 600;
       padding: 5px 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
@@ -257,7 +257,7 @@
     }
     .exchange-badge-tag {
       display: inline-block;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       padding: 2px 6px;
       border-radius: 4px;
@@ -275,7 +275,7 @@
     .exchange-badge-tag.nse {
       background: rgba(59, 130, 246, 0.15);
       border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #60A5FA;
+      color: #A78BFA;
     }
     .exchange-badge-tag.bse {
       background: rgba(139, 92, 246, 0.15);
@@ -577,7 +577,7 @@
         <div class="clarity-left" style="display: flex; flex-direction: column; justify-content: center;">
           <span class="clarity-badge" style="margin-bottom: 16px;">🔥 Inside Look</span>
           <h2 style="margin-bottom: 12px;">Explore the Active Platform Features</h2>
-          <p style="margin-bottom: 24px; font-size: 14.5px;">Click on any feature below to preview the actual interface
+          <p style="margin-bottom: 24px; font-size: 14px;">Click on any feature below to preview the actual interface
             you will get after logging in:</p>
 
           <div class="feature-tabs" style="display: flex; flex-direction: column; gap: 12px;">
@@ -586,7 +586,7 @@
               style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); transition: all 0.25s ease;"
               onclick="switchShowcaseTab(this, 'holdings')">
               <h3
-                style="font-size: 15.5px; font-weight: 700; color: #FFF; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
                 <span class="tab-dot"
                   style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
                 Holdings Dashboard
@@ -599,7 +599,7 @@
               style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
               onclick="switchShowcaseTab(this, 'analytics')">
               <h3
-                style="font-size: 15.5px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
                 <span class="tab-dot"
                   style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
                 Interactive Chart Analytics
@@ -614,7 +614,7 @@
               style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
               onclick="switchShowcaseTab(this, 'ai')">
               <h3
-                style="font-size: 15.5px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
                 <span class="tab-dot"
                   style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
                 Ask AI Investment Analyst
@@ -629,7 +629,7 @@
               style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
               onclick="switchShowcaseTab(this, 'news')">
               <h3
-                style="font-size: 15.5px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
                 <span class="tab-dot"
                   style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
                 Aggregated Ticker News
@@ -643,7 +643,7 @@
         </div>
         <div class="clarity-mockup" style="display: flex; align-items: center; justify-content: center;">
           <div
-            style="position: relative; width: 100%; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); background: #08070e; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);">
+            style="position: relative; width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: #08070e; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);">
             <img id="showcaseImage" src="holdings_preview.png" alt="Portfolio Tracker Live Preview"
               style="width: 100%; height: auto; display: block; will-change: opacity, transform; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" />
             <div
@@ -655,7 +655,7 @@
               <span
                 style="width: 8px; height: 8px; border-radius: 50%; background: #8B5CF6; display: inline-block;"></span>
               <span
-                style="margin-left: 8px; font-size: 10px; color: var(--text-faint); font-weight: 500; font-family: monospace;">portfolio_tracker_secure_session</span>
+                style="margin-left: 8px; font-size: 11px; color: var(--text-faint); font-weight: 500; font-family: monospace;">portfolio_tracker_secure_session</span>
             </div>
           </div>
         </div>
@@ -838,7 +838,7 @@
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
             <span>Price Alerts</span>
-            <span class="nav-badge" id="sidebarAlertBadge" style="display:none; background:#00D09C; color:#05231B; font-weight:700;">0</span>
+            <span class="nav-badge" id="sidebarAlertBadge" style="display:none; background:#00D09C; color: #000000; font-weight:700;">0</span>
           </button>
         </nav>
       </div>
@@ -1027,23 +1027,23 @@
           style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
           <div class="stat-card mini-card animate-card" style="min-height: 100px; padding: 16px;">
             <span class="card-label">Diversification Score</span>
-            <div class="stat-value" id="analyticDivScore" style="color: #8B5CF6; font-size: 24px; margin-top: 4px;">
+            <div class="stat-value" id="analyticDivScore" style="color: #A78BFA; font-size: 24px; margin-top: 4px;">
               75/100</div>
-            <div class="sub" id="analyticDivStatus" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">
+            <div class="sub" id="analyticDivStatus" style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">
               Optimal Diversification</div>
           </div>
           <div class="stat-card mini-card animate-card"
             style="min-height: 100px; padding: 16px; animation-delay: 0.1s;">
             <span class="card-label">Total Assets Monitored</span>
             <div class="stat-value" id="analyticHoldingsCount" style="font-size: 24px; margin-top: 4px;">0</div>
-            <div class="sub" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">Active equities & ETFs
+            <div class="sub" style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Active equities & ETFs
             </div>
           </div>
           <div class="stat-card mini-card animate-card"
             style="min-height: 100px; padding: 16px; animation-delay: 0.2s;">
             <span class="card-label">Highest Concentration</span>
             <div class="stat-value" id="analyticMaxWeight" style="font-size: 24px; margin-top: 4px;">0.00%</div>
-            <div class="sub" id="analyticMaxAsset" style="font-size: 11.5px; color: var(--text-dim); margin-top: 2px;">
+            <div class="sub" id="analyticMaxAsset" style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">
               No holdings</div>
           </div>
         </div>
@@ -1396,8 +1396,8 @@
             </div>
           </div>
           <div style="text-align:right;">
-            <div style="font-size:16px;font-weight:800;color:#111827;">PORTFOLIO TRACKER</div>
-            <div style="font-size:11px;color:#6b7280;">Financial Analytics Platform</div>
+            <div style="font-size:16px;font-weight:800;color: #000000;">PORTFOLIO TRACKER</div>
+            <div style="font-size:11px;color: #64748B;">Financial Analytics Platform</div>
           </div>
         </div>
 
@@ -1455,10 +1455,10 @@
             <div class="form-field">
               <label>Symbol <span class="req">*</span></label>
               <input required name="symbol" id="symbolInput" placeholder="NTPC" style="text-transform:uppercase;">
-              <div id="symbolCmpIndicator" style="display:none; font-size:12px; font-weight:600; color:#00D09C; margin-top:5px; align-items:center; gap:6px;">
+              <div id="symbolCmpIndicator" style="display:none; font-size:12px; font-weight:600; color: #10B981; margin-top:5px; align-items:center; gap:6px;">
                 <span style="display:inline-block; width:6px; height:6px; background:#00D09C; border-radius:50%;"></span>
                 <span id="symbolCmpText">Live CMP: ₹0.00</span>
-                <button type="button" id="useCmpAsBuyPriceBtn" style="background:rgba(0,208,156,0.15); border:1px solid rgba(0,208,156,0.3); color:#00D09C; border-radius:6px; font-size:10.5px; font-weight:700; padding:1px 6px; cursor:pointer; margin-left:4px;">Use as Buy Price</button>
+                <button type="button" id="useCmpAsBuyPriceBtn" style="background:rgba(0,208,156,0.15); border:1px solid rgba(0,208,156,0.3); color: #10B981; border-radius: 8px; font-size: 11px; font-weight:700; padding:1px 6px; cursor:pointer; margin-left:4px;">Use as Buy Price</button>
               </div>
               <div id="symbolWarning"
                 style="color:var(--red); font-size:11px; margin-top:4px; display:none; line-height:1.4;">Tickers usually
@@ -1474,7 +1474,7 @@
               </select>
             </div>
           </div>
-          <div id="mcxQuickPills" style="margin: 6px 0 12px; padding: 10px 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 10px;">
+          <div id="mcxQuickPills" style="margin: 6px 0 12px; padding: 10px 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px;">
             <div style="font-size: 11px; font-weight: 700; color: #F59E0B; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Quick Select MCX Commodity:</div>
             <div style="display: flex; flex-wrap: wrap; gap: 6px;">
               <button type="button" class="mcx-quick-btn" onclick="selectMcxCommodity('GOLD', 'Gold 24K (10g)', 73945)">🪙 Gold (10g)</button>
@@ -1555,12 +1555,12 @@
           <div class="report-kpi-card">
             <div class="kpi-label">Current Net Worth</div>
             <div class="kpi-value" id="repNetWorth">₹0.00</div>
-            <div class="kpi-sub" style="color: #9CA3AF;">Total Market Value</div>
+            <div class="kpi-sub" style="color: #94A3B8;">Total Market Value</div>
           </div>
           <div class="report-kpi-card">
             <div class="kpi-label">Invested Capital</div>
             <div class="kpi-value" id="repInvested">₹0.00</div>
-            <div class="kpi-sub" style="color: #9CA3AF;">Total Cost Basis</div>
+            <div class="kpi-sub" style="color: #94A3B8;">Total Cost Basis</div>
           </div>
           <div class="report-kpi-card">
             <div class="kpi-label">Unrealized Gain / Loss</div>
@@ -1569,7 +1569,7 @@
           </div>
           <div class="report-kpi-card">
             <div class="kpi-label">Portfolio Health</div>
-            <div class="kpi-value" id="repHoldingsCount" style="color: #8B5CF6;">0 Assets</div>
+            <div class="kpi-value" id="repHoldingsCount" style="color: #A78BFA;">0 Assets</div>
             <div class="kpi-sub" id="repDiversification" style="color: #10B981;">Diversified</div>
           </div>
         </div>
@@ -1577,7 +1577,7 @@
         <!-- Detailed Holdings Statement Table -->
         <div class="report-section-title">
           <span>Asset Breakdown Statement</span>
-          <span style="font-size: 11.5px; color: var(--text-dim);" id="repTableSummary">-</span>
+          <span style="font-size: 11px; color: var(--text-dim);" id="repTableSummary">-</span>
         </div>
         <div class="report-table-wrap">
           <table class="report-table">
@@ -1639,7 +1639,7 @@
             </div>
             <div class="account-info-row">
               <span class="account-info-label">Live Valuation</span>
-              <span class="account-info-value" id="accPortfolioValue" style="color: #8B5CF6;">₹0.00</span>
+              <span class="account-info-value" id="accPortfolioValue" style="color: #A78BFA;">₹0.00</span>
             </div>
           </div>
 
@@ -1673,7 +1673,7 @@
           <h3 class="alert-title">Set alert</h3>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:11px; padding:3px 8px; border-radius:12px; background:rgba(0,208,156,0.12); color:#00D09C; font-weight:700; border:1px solid rgba(0,208,156,0.25);">LIVE</span>
+          <span style="font-size:11px; padding:3px 8px; border-radius:12px; background:rgba(0,208,156,0.12); color: #10B981; font-weight:700; border:1px solid rgba(0,208,156,0.25);">LIVE</span>
           <button class="report-close-btn" id="closeAlertModalCrossBtn" title="Close" style="font-size:16px;">✕</button>
         </div>
       </div>
@@ -1691,7 +1691,7 @@
           <div class="alert-stock-info">
             <div style="display:flex; align-items:center; gap:6px;">
               <span class="alert-stock-sym" id="alertStockSymbol">RELIANCE</span>
-              <span style="font-size:11px; color:#8B949E; background:rgba(255,255,255,0.06); padding:1px 6px; border-radius:6px;" id="alertStockExchange">NSE</span>
+              <span style="font-size:11px; color: #94A3B8; background:rgba(255,255,255,0.06); padding:1px 6px; border-radius: 8px;" id="alertStockExchange">NSE</span>
             </div>
             <div class="alert-stock-sub" id="alertStockName">Reliance Industries Ltd</div>
           </div>
@@ -1703,8 +1703,8 @@
 
         <!-- Stock Switcher Dropdown (if user wants to pick another holding) -->
         <div style="margin-bottom: 16px;">
-          <label style="font-size: 12px; color: #8B949E; display: block; margin-bottom: 5px;">Select Stock</label>
-          <select id="alertStockSelect" style="width: 100%; background: #161B22; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: #FFF; font-size: 13px; outline: none; cursor: pointer;">
+          <label style="font-size: 12px; color: #94A3B8; display: block; margin-bottom: 5px;">Select Stock</label>
+          <select id="alertStockSelect" style="width: 100%; background: #161B22; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: #FFFFFF; font-size: 13px; outline: none; cursor: pointer;">
             <!-- Populated dynamically -->
           </select>
         </div>
@@ -1775,12 +1775,12 @@
             💳
           </div>
           <div>
-            <h3 style="margin:0;font-size:16px;font-weight:800;color:#fff;">PAN Numbers</h3>
-            <p style="margin:2px 0 0;font-size:11.5px;color:#94a3b8;">Family &amp; Demat Accounts</p>
+            <h3 style="margin:0;font-size:16px;font-weight:800;color: #FFFFFF;">PAN Numbers</h3>
+            <p style="margin:2px 0 0;font-size: 11px;color:#94A3B8;">Family &amp; Demat Accounts</p>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <button type="button" class="pan-icon-btn" id="panModalEyeToggle" title="Show / Mask PANs" onclick="togglePanMask()" style="font-size:15px;padding:5px 8px;">
+          <button type="button" class="pan-icon-btn" id="panModalEyeToggle" title="Show / Mask PANs" onclick="togglePanMask()" style="font-size: 14px;padding:5px 8px;">
             👁️
           </button>
           <button class="pan-modal-close" onclick="closePanModal()">✕</button>
@@ -1802,18 +1802,18 @@
         <!-- Inline Add / Edit PAN Form -->
         <div id="panEditFormBox" style="display:none;" class="pan-edit-form-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <h4 id="panFormHeading" style="margin:0;font-size:14px;font-weight:700;color:#fff;">Add Family PAN</h4>
+            <h4 id="panFormHeading" style="margin:0;font-size:14px;font-weight:700;color: #FFFFFF;">Add Family PAN</h4>
             <button type="button" class="pan-modal-close" style="font-size:14px;" onclick="toggleAddPanForm(false)">✕</button>
           </div>
           <form id="multiPanForm" onsubmit="handleSavePanItem(event)">
             <input type="hidden" id="panEditId" value="">
             <div style="margin-bottom:12px;">
-              <label style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;margin-bottom:4px;">Holder Name</label>
-              <input type="text" id="panHolderNameInput" placeholder="e.g. ANSHUL AGRAWAL" style="width:100%;padding:10px 12px;border-radius:10px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:13.5px;" required>
+              <label style="display:block;font-size: 11px;font-weight:600;color: #94A3B8;margin-bottom:4px;">Holder Name</label>
+              <input type="text" id="panHolderNameInput" placeholder="e.g. ANSHUL AGRAWAL" style="width:100%;padding:10px 12px;border-radius: 12px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.12);color: #FFFFFF;font-size: 13px;" required>
             </div>
             <div style="margin-bottom:14px;">
-              <label style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;margin-bottom:4px;">10-Digit PAN Number</label>
-              <input type="text" id="panNumberInput" placeholder="ABCDE1234F" maxlength="10" style="width:100%;text-transform:uppercase;font-family:monospace;letter-spacing:0.12em;padding:10px 12px;border-radius:10px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:14px;font-weight:700;" required>
+              <label style="display:block;font-size: 11px;font-weight:600;color: #94A3B8;margin-bottom:4px;">10-Digit PAN Number</label>
+              <input type="text" id="panNumberInput" placeholder="ABCDE1234F" maxlength="10" style="width:100%;text-transform:uppercase;font-family:monospace;letter-spacing:0.12em;padding:10px 12px;border-radius: 12px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.12);color: #FFFFFF;font-size:14px;font-weight:700;" required>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:8px;">
               <button type="button" class="btn btn-outline btn-sm" onclick="toggleAddPanForm(false)">Cancel</button>
@@ -2551,7 +2551,7 @@
         if (summaryBadge) {
   
         if (sec === 'stocks') summaryBadge.innerHTML = 'Showing <b style="color:#A78BFA;">NSE / BSE Stocks</b> only';
-          else if (sec === 'mcx') summaryBadge.innerHTML = 'Showing <b style="color:#FBBF24;">MCX Commodities</b> (Gold, Silver, Metals, Crude)';
+          else if (sec === 'mcx') summaryBadge.innerHTML = 'Showing <b style="color: #F59E0B;">MCX Commodities</b> (Gold, Silver, Metals, Crude)';
           else summaryBadge.textContent = 'Showing Consolidated Net Worth (All Assets)';
         }
 
@@ -3041,7 +3041,7 @@
             item.className = 'weight-item';
             item.innerHTML = `
               <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
-                <span style="font-weight: 600; color: #FFF;">${h.symbol} <span style="font-weight: normal; color: var(--text-dim); font-size:11px;">(${h.assetClass})</span></span>
+                <span style="font-weight: 600; color: #FFFFFF;">${h.symbol} <span style="font-weight: normal; color: var(--text-dim); font-size:11px;">(${h.assetClass})</span></span>
                 <span style="color: var(--text-dim);">${w.toFixed(1)}% &middot; ₹${Math.round(h.value).toLocaleString('en-IN')}</span>
               </div>
               <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
@@ -3081,7 +3081,7 @@
               plugins: {
                 legend: {
                   position: 'bottom',
-                  labels: { color: '#98A0AC', font: { family: 'Inter', size: 11 } }
+                  labels: { color: '#94A3B8', font: { family: 'Inter', size: 11 } }
                 },
                 tooltip: {
                   callbacks: {
@@ -3152,7 +3152,7 @@
             healthContainer.innerHTML = `
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;">
                 <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Risk Profile Rating</span>
-                <span style="font-size: 13.5px; font-weight: 700; color: ${riskColor};">${riskRating}</span>
+                <span style="font-size: 13px; font-weight: 700; color: ${riskColor};">${riskRating}</span>
               </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;">
@@ -3163,7 +3163,7 @@
               <div style="padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Top Asset Exposure</span>
-                  <span style="font-size: 13px; font-weight: 700; color: #FFF;">${maxAsset.symbol} (${maxWeightVal.toFixed(1)}%)</span>
+                  <span style="font-size: 13px; font-weight: 700; color: #FFFFFF;">${maxAsset.symbol} (${maxWeightVal.toFixed(1)}%)</span>
                 </div>
                 <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
                   <div style="width: ${maxWeightVal}%; height: 100%; background: ${riskColor}; border-radius: 4px;"></div>
@@ -3172,7 +3172,7 @@
 
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px;">
                 <span style="font-size: 13px; color: var(--text-dim); font-weight: 500;">Total Assets Tracked</span>
-                <span style="font-size: 13.5px; font-weight: 700; color: #FFF;">${list.length} holdings</span>
+                <span style="font-size: 13px; font-weight: 700; color: #FFFFFF;">${list.length} holdings</span>
               </div>
             `;
           }
@@ -3213,12 +3213,12 @@
               scales: {
                 x: {
                   grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                  ticks: { color: '#98A0AC', font: { family: 'Inter', size: 10 } }
+                  ticks: { color: '#94A3B8', font: { family: 'Inter', size: 10 } }
                 },
                 y: {
                   grid: { color: 'rgba(255, 255, 255, 0.05)' },
                   ticks: {
-                    color: '#98A0AC',
+                    color: '#94A3B8',
                     font: { family: 'Inter', size: 10 },
                     callback: function (value) { return '₹' + value.toLocaleString('en-IN'); }
                   }
@@ -3227,7 +3227,7 @@
               plugins: {
                 legend: {
                   position: 'top',
-                  labels: { color: '#98A0AC', font: { family: 'Inter', size: 11 } }
+                  labels: { color: '#94A3B8', font: { family: 'Inter', size: 11 } }
                 }
               }
             }
@@ -3432,11 +3432,11 @@
           feedContent.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 48px 24px;">
               <div style="font-size: 32px;">📰</div>
-              <div style="font-size: 15px; font-weight: 600; color: #FFF;">No news articles found matching your filters.</div>
+              <div style="font-size: 14px; font-weight: 600; color: #FFFFFF;">No news articles found matching your filters.</div>
               <div style="font-size: 13px; color: var(--text-dim);">Try switching category tabs or resetting the ticker filter.</div>
               <div style="display: flex; gap: 8px; margin-top: 8px;">
-                <button onclick="switchNewsCategory('ALL');filterNewsBySymbol('ALL');" class="btn btn-sm btn-secondary" style="padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; cursor: pointer;">Reset Filters</button>
-                <button onclick="lastNewsFetchTime=0;fetchAndRenderNews();" class="btn btn-sm btn-primary" style="padding: 6px 14px; border-radius: 999px; background: var(--accent, #6366f1); border: none; color: #fff; cursor: pointer;">Refresh News</button>
+                <button onclick="switchNewsCategory('ALL');filterNewsBySymbol('ALL');" class="btn btn-sm btn-secondary" style="padding: 6px 14px; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #FFFFFF; cursor: pointer;">Reset Filters</button>
+                <button onclick="lastNewsFetchTime=0;fetchAndRenderNews();" class="btn btn-sm btn-primary" style="padding: 6px 14px; border-radius: 9999px; background: var(--accent, #6366f1); border: none; color: #FFFFFF; cursor: pointer;">Refresh News</button>
               </div>
             </div>
           `;
@@ -3452,7 +3452,7 @@
 
           bannerHtml = `
             <div class="empty-state" style="grid-column: 1 / -1; padding: 18px; background: rgba(167, 139, 250, 0.03); border: 1px dashed rgba(167, 139, 250, 0.15); border-radius: 8px; margin-bottom: 24px; text-align: left; width: 100%; display: flex; flex-direction: column; gap: 4px;">
-              <div style="font-size: 13.5px; font-weight: 700; color: #FFF; display: flex; align-items: center; gap: 8px;">
+              <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; display: flex; align-items: center; gap: 8px;">
                 💡 No articles specifically mentioning <span style="color: var(--accent); font-weight: 800;">${selectedFilterSymbol}</span> in ${categoryName} feed right now.
               </div>
               <div style="font-size: 12px; color: var(--text-dim);">Showing general updates for the <strong>${categoryName}</strong> feed instead:</div>
@@ -3536,7 +3536,7 @@
           }
 
           let badgeHtml = getBadgeHtml(art.type);
-          let targetHtml = art.targetPrice ? `<div class="news-card-target-overlay" style="font-size: 9.5px; padding: 2px 7px;">🎯 Target ${art.targetPrice}</div>` : '';
+          let targetHtml = art.targetPrice ? `<div class="news-card-target-overlay" style="font-size: 11px; padding: 2px 7px;">🎯 Target ${art.targetPrice}</div>` : '';
           const relatedStr = (art.relatedTickers && art.relatedTickers.length > 0)
             ? art.relatedTickers.join(', ')
             : (art.symbol ? art.symbol : 'GENERAL');
@@ -3549,7 +3549,7 @@
                 ${imgHtml}
               </div>
               <div class="mc-sub-body">
-                <div style="font-weight: 700; color: var(--accent); font-size: 10px; text-transform: uppercase;">${relatedStr}</div>
+                <div style="font-weight: 700; color: var(--accent); font-size: 11px; text-transform: uppercase;">${relatedStr}</div>
                 <h4 class="mc-sub-title">${art.title}</h4>
                 <p class="mc-sub-summary">${art.summary || ''}</p>
                 <div class="mc-sub-footer">
@@ -3751,7 +3751,7 @@
           return `
             <tr>
               <td><b>${h.symbol}</b> <div style="font-size:11px;color:var(--text-dim);">${h.name || h.yahooSymbol || ''}</div></td>
-              <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);">${h.exchange || 'NSE'}</span></td>
+              <td><span style="font-size: 11px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);">${h.exchange || 'NSE'}</span></td>
               <td>${qty}</td>
               <td>₹${buy.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
               <td>₹${cmp.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
@@ -5176,7 +5176,7 @@
         banner.innerHTML = `
           <div style="font-size: 24px; line-height: 1;">🔔</div>
           <div style="flex: 1;">
-            <div style="font-weight: 800; font-size: 13px; color: #A7F3D0; letter-spacing: 0.5px;">PRICE ALERT TRIGGERED!</div>
+            <div style="font-weight: 800; font-size: 13px; color: #10B981; letter-spacing: 0.5px;">PRICE ALERT TRIGGERED!</div>
             <div style="font-size: 13px; font-weight: 600; margin-top: 2px;">
               <b>${alert.symbol}</b> reached <b>₹${livePrice.toFixed(2)}</b>!
             </div>
@@ -5184,7 +5184,7 @@
               Target was ₹${alert.targetPrice.toFixed(2)} (${alert.direction === 'above' ? 'Crossed Above' : 'Crossed Below'})
             </div>
           </div>
-          <button style="background: transparent; border: none; color: #FFF; font-size: 16px; cursor: pointer; padding: 4px;" onclick="this.parentElement.remove()">✕</button>
+          <button style="background: transparent; border: none; color: #FFFFFF; font-size: 16px; cursor: pointer; padding: 4px;" onclick="this.parentElement.remove()">✕</button>
         `;
         document.body.appendChild(banner);
         setTimeout(() => {
@@ -5372,9 +5372,9 @@
 
         if (!alerts || !alerts.length) {
           container.innerHTML = `
-            <div style="text-align:center; padding:32px 16px; color:#8B949E;">
+            <div style="text-align:center; padding:32px 16px; color: #94A3B8;">
               <div style="font-size:32px; margin-bottom:8px;">🔕</div>
-              <div style="font-weight:600; color:#FFF;">No price alerts set</div>
+              <div style="font-weight:600; color: #FFFFFF;">No price alerts set</div>
               <div style="font-size:12px; margin-top:4px;">Create an alert to get notified when stocks reach your target price.</div>
             </div>
           `;
@@ -5388,7 +5388,7 @@
               <div class="alert-item-left">
                 <div class="alert-item-sym">
                   ${a.symbol}
-                  <span style="font-size:10px; padding:1px 5px; border-radius:4px; background:rgba(255,255,255,0.06); color:#8B949E;">${a.exchange || 'NSE'}</span>
+                  <span style="font-size: 11px; padding:1px 5px; border-radius:4px; background:rgba(255,255,255,0.06); color: #94A3B8;">${a.exchange || 'NSE'}</span>
                 </div>
                 <div class="alert-item-cond">
                   ${a.direction === 'above' ? '▲ Crosses Above' : '▼ Drops Below'} ₹${parseFloat(a.targetPrice).toFixed(2)}
@@ -5844,7 +5844,7 @@
         if (!wrap) return;
 
         if (_userPans.length === 0) {
-          wrap.innerHTML = '<div style="text-align:center;padding:24px;color:#94a3b8;font-size:13px;">No PAN cards linked yet. Click below to add one.</div>';
+          wrap.innerHTML = '<div style="text-align:center;padding:24px;color:#94A3B8;font-size:13px;">No PAN cards linked yet. Click below to add one.</div>';
           return;
         }
 
@@ -6096,14 +6096,14 @@
                 <div class="my-ipo-meta">
                   <span class="ipo-allot-chip ${badgeClass}">${statusText}</span>
                   <span>Lots: ${app.lots || 1}</span>
-                  ${app.pan_card ? `<span style="font-family:monospace;color:#a78bfa;">PAN: ${maskPanDigits(app.pan_card)}</span>` : ''}
+                  ${app.pan_card ? `<span style="font-family:monospace;color:#A78BFA;">PAN: ${maskPanDigits(app.pan_card)}</span>` : ''}
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <button class="btn btn-primary btn-sm" style="padding:6px 12px;font-weight:700;" onclick="redirectToRegistrar('${allotUrl}', '${appNameEsc}')">
                   Check on Registrar ↗
                 </button>
-                <button class="btn btn-outline btn-sm" style="padding:6px 10px;color:#ef4444;border-color:rgba(239,68,68,0.25);" title="Remove Tracking" onclick="handleDeleteApplication('${app.id}')">
+                <button class="btn btn-outline btn-sm" style="padding:6px 10px;color:#EF4444;border-color:rgba(239,68,68,0.25);" title="Remove Tracking" onclick="handleDeleteApplication('${app.id}')">
                   🗑
                 </button>
               </div>
@@ -6538,10 +6538,10 @@
           const iSize = encodeURIComponent(ipo.issue_size || 'TBA');
 
           if (isFutureAllotment) {
-            statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25);">⏳ Allotment ${ipo.allotment_date || 'Soon'}</span>`;
+            statusChip = `<span class="ipo-allot-chip" style="background:rgba(251,191,36,0.12);color: #F59E0B;border:1px solid rgba(251,191,36,0.25);">⏳ Allotment ${ipo.allotment_date || 'Soon'}</span>`;
             actionElement = `<button class="ipo-clean-btn secondary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Open Official Registrar Portal">Registrar Portal ↗</button>`;
           } else if (isListed) {
-            statusChip = `<span class="ipo-allot-chip allotted" style="background:rgba(52,211,153,0.12);color:#34d399;border:1px solid rgba(52,211,153,0.25);">📢 Allotment Live</span>`;
+            statusChip = `<span class="ipo-allot-chip allotted" style="background:rgba(52,211,153,0.12);color: #10B981;border:1px solid rgba(52,211,153,0.25);">📢 Allotment Live</span>`;
             actionElement = `<button class="ipo-clean-btn primary" onclick="redirectToRegistrar('${allotUrl}', '${nameEsc}')" title="Check Allotment on Official Registrar Portal">Check Allotment ↗</button>`;
           } else if (isOpen) {
             actionElement = `<button class="ipo-clean-btn mark-applied-btn" onclick="quickMarkApplied('${nameEsc}', '${ipoSymbol}', ${lotSize}, '${priceBand}', '${allotUrl}')">+ Track / Applied</button>`;
@@ -6578,7 +6578,7 @@
                 <span class="ipo-stat-label">${isListed ? 'Total Sub' : (isOpen ? 'Subscription' : 'Status')}</span>
                 ${isOpen && ipo.sub_total && ipo.sub_total !== '-'
               ? `<span class="sub-pill">${ipo.sub_total}</span>`
-              : `<span class="ipo-stat-val" style="font-size:12.5px;color:#94a3b8;">${ipo.sub_total || (isOpen ? '-' : 'Upcoming')}</span>`
+              : `<span class="ipo-stat-val" style="font-size: 12px;color:#94A3B8;">${ipo.sub_total || (isOpen ? '-' : 'Upcoming')}</span>`
             }
               </div>
 
@@ -6679,8 +6679,8 @@
           if (loading) {
             loading.style.display = 'flex';
             loading.innerHTML = `<div style="text-align:center;padding:20px;">
-              <p style="color:#f87171;font-weight:600;margin-bottom:8px;">⚠️ Detailed prospectus data currently unavailable for this issue.</p>
-              <p style="color:#94a3b8;font-size:13px;">Please check official exchange filings or retry.</p>
+              <p style="color: #EF4444;font-weight:600;margin-bottom:8px;">⚠️ Detailed prospectus data currently unavailable for this issue.</p>
+              <p style="color:#94A3B8;font-size:13px;">Please check official exchange filings or retry.</p>
             </div>`;
           }
         }
@@ -6714,7 +6714,7 @@
 
         const logoWrap = document.getElementById('ipoModalLogo');
         if (ipo.logoUrl) {
-          logoWrap.innerHTML = `<img src="${ipo.logoUrl}" style="width:100%;height:100%;object-fit:contain;border-radius:10px;" alt="" onerror="this.style.display='none'"/>`;
+          logoWrap.innerHTML = `<img src="${ipo.logoUrl}" style="width:100%;height:100%;object-fit:contain;border-radius: 12px;" alt="" onerror="this.style.display='none'"/>`;
         } else {
           logoWrap.textContent = (ipo.companyName || 'I')[0];
         }
@@ -6735,7 +6735,7 @@
               <div class="sub-rate-row">
                 <div class="sub-rate-header">
                   <span>${r.categoryName || r.category}</span>
-                  <span style="color:${isHot ? '#f59e0b' : '#60a5fa'};font-weight:700;">${r.subscriptionRate != null ? r.subscriptionRate + 'x' : '-'}</span>
+                  <span style="color:${isHot ? '#F59E0B' : '#A78BFA'};font-weight:700;">${r.subscriptionRate != null ? r.subscriptionRate + 'x' : '-'}</span>
                 </div>
                 <div class="sub-progress-track">
                   <div class="sub-progress-fill ${isHot ? 'high' : ''}" style="width: ${pctFill}%;"></div>
@@ -6743,7 +6743,7 @@
               </div>`;
           }).join('');
         } else {
-          subWrap.innerHTML = '<div style="color:#8890a4;font-size:13px;padding:8px 0;">Live category subscription will appear once bidding starts.</div>';
+          subWrap.innerHTML = '<div style="color: #94A3B8;font-size:13px;padding:8px 0;">Live category subscription will appear once bidding starts.</div>';
         }
         document.getElementById('ipoModalTotalSub').textContent = totalSubRate;
 
@@ -6756,7 +6756,7 @@
             const priceStr = c.minPrice && c.maxPrice ? `₹${c.minPrice} - ₹${c.maxPrice}` : (ipo.minPrice && ipo.maxPrice ? `₹${ipo.minPrice} - ₹${ipo.maxPrice}` : 'TBA');
             return `
               <tr>
-                <td><strong>${c.categoryLabel || c.category}</strong><br><small style="color:#8890a4;">${c.categorySubText || ''}</small></td>
+                <td><strong>${c.categoryLabel || c.category}</strong><br><small style="color: #94A3B8;">${c.categorySubText || ''}</small></td>
                 <td>${c.lotSize || ipo.lotSize || '-'} shares</td>
                 <td>${minShares} shares</td>
                 <td>${priceStr}</td>
@@ -6764,7 +6764,7 @@
               </tr>`;
           }).join('');
         } else {
-          catTable.innerHTML = '<tr><td colspan="5" style="color:#8890a4;text-align:center;padding:12px;">Category quota details will be updated shortly from DRHP.</td></tr>';
+          catTable.innerHTML = '<tr><td colspan="5" style="color: #94A3B8;text-align:center;padding:12px;">Category quota details will be updated shortly from DRHP.</td></tr>';
         }
 
         // 4. Issue Essentials Grid
@@ -6834,10 +6834,10 @@
         const pcWrap = document.getElementById('ipoModalProsCons');
         let pcHtml = '';
         if (ipo.pros && ipo.pros.length) {
-          pcHtml += `<div class="sub-breakdown-card"><div class="sub-card-title" style="color:#4ade80;">Key Strengths (Pros)</div><ul style="margin:0;padding-left:18px;font-size:13px;color:#cbd5e1;line-height:1.5;">${ipo.pros.map(p => `<li style="margin-bottom:6px;">${p}</li>`).join('')}</ul></div>`;
+          pcHtml += `<div class="sub-breakdown-card"><div class="sub-card-title" style="color: #10B981;">Key Strengths (Pros)</div><ul style="margin:0;padding-left:18px;font-size:13px;color: #94A3B8;line-height:1.5;">${ipo.pros.map(p => `<li style="margin-bottom:6px;">${p}</li>`).join('')}</ul></div>`;
         }
         if (ipo.cons && ipo.cons.length) {
-          pcHtml += `<div class="sub-breakdown-card"><div class="sub-card-title" style="color:#f87171;">Key Risks (Cons)</div><ul style="margin:0;padding-left:18px;font-size:13px;color:#cbd5e1;line-height:1.5;">${ipo.cons.map(c => `<li style="margin-bottom:6px;">${c}</li>`).join('')}</ul></div>`;
+          pcHtml += `<div class="sub-breakdown-card"><div class="sub-card-title" style="color: #EF4444;">Key Risks (Cons)</div><ul style="margin:0;padding-left:18px;font-size:13px;color: #94A3B8;line-height:1.5;">${ipo.cons.map(c => `<li style="margin-bottom:6px;">${c}</li>`).join('')}</ul></div>`;
         }
         pcWrap.innerHTML = pcHtml;
 
@@ -6989,14 +6989,14 @@
 
           return `
             <tr>
-              <td><strong>${h.symbol}</strong> <small style="color:#6b7280;">(${h.yahooSymbol || h.symbol})</small></td>
+              <td><strong>${h.symbol}</strong> <small style="color: #64748B;">(${h.yahooSymbol || h.symbol})</small></td>
               <td>${qty}</td>
               <td>₹${buy.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
               <td>₹${inv.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
               <td>₹${cmp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
               <td>₹${cur.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-              <td style="color:${gain >= 0 ? '#059669' : '#dc2626'};font-weight:700;">${gain >= 0 ? '+' : ''}₹${gain.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-              <td style="color:${gain >= 0 ? '#059669' : '#dc2626'};font-weight:700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(2)}%</td>
+              <td style="color:${gain >= 0 ? '#10B981' : '#EF4444'};font-weight:700;">${gain >= 0 ? '+' : ''}₹${gain.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+              <td style="color:${gain >= 0 ? '#10B981' : '#EF4444'};font-weight:700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(2)}%</td>
             </tr>`;
         }).join('');
 
@@ -7016,8 +7016,8 @@
             <td>₹${totalInvested.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
             <td>-</td>
             <td>₹${totalCurrent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-            <td style="color:${totalGain >= 0 ? '#059669' : '#dc2626'};font-weight:800;">${totalGain >= 0 ? '+' : ''}₹${totalGain.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-            <td style="color:${totalGain >= 0 ? '#059669' : '#dc2626'};font-weight:800;">${totalGainPct >= 0 ? '+' : ''}${totalGainPct.toFixed(2)}%</td>
+            <td style="color:${totalGain >= 0 ? '#10B981' : '#EF4444'};font-weight:800;">${totalGain >= 0 ? '+' : ''}₹${totalGain.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+            <td style="color:${totalGain >= 0 ? '#10B981' : '#EF4444'};font-weight:800;">${totalGainPct >= 0 ? '+' : ''}${totalGainPct.toFixed(2)}%</td>
           </tr>`;
 
         document.getElementById('printTableBody').innerHTML = rowsHtml + totalRowHtml;
@@ -7073,7 +7073,7 @@
           <div class="sub-breakdown-card">
             <div class="sub-card-title">
               <span>Category-Wise Subscription (Live)</span>
-              <span id="ipoModalTotalSub" style="color:#60a5fa;font-size:14px;font-weight:800;">-</span>
+              <span id="ipoModalTotalSub" style="color: #A78BFA;font-size:14px;font-weight:800;">-</span>
             </div>
             <div id="ipoModalSubList" style="display:flex;flex-direction:column;gap:12px;"></div>
           </div>
@@ -7112,8 +7112,8 @@
         <div id="ipoPanelCompany" class="ipo-tab-panel">
           <div class="sub-breakdown-card">
             <div class="sub-card-title">About the Company</div>
-            <p id="ipoModalAbout" style="font-size:13.5px;color:#cbd5e1;line-height:1.6;margin:0;"></p>
-            <div id="ipoModalManagement" style="font-size:12.5px;color:#94a3b8;margin-top:10px;"></div>
+            <p id="ipoModalAbout" style="font-size: 13px;color: #94A3B8;line-height:1.6;margin:0;"></p>
+            <div id="ipoModalManagement" style="font-size: 12px;color:#94A3B8;margin-top:10px;"></div>
           </div>
 
           <!-- Financial Performance Table -->
@@ -7132,7 +7132,7 @@
 
       <!-- Footer Actions -->
       <div class="ipo-modal-footer">
-        <div id="ipoModalRegistrarInfo" style="font-size:12px;color:#94a3b8;"></div>
+        <div id="ipoModalRegistrarInfo" style="font-size:12px;color:#94A3B8;"></div>
         <div style="display:flex;gap:10px;align-items:center;">
           <a id="ipoModalDrhpBtn" href="#" target="_blank" rel="noopener" class="ipo-clean-btn secondary"
             style="display:none;">View DRHP 📄</a>
@@ -7173,7 +7173,7 @@
 }
 .m-chart-btn:hover {
   background: rgba(167, 139, 250, 0.22);
-  color: #fff;
+  color: #FFFFFF;
   border-color: rgba(167, 139, 250, 0.5);
 }
 </style>
