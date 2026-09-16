@@ -491,7 +491,7 @@ table {
 
 thead th {
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: .05em;
   color: var(--text-faint);
@@ -522,13 +522,13 @@ tbody tr:hover {
 }
 
 .cell-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-faint);
   margin-top: 2px;
 }
 
 .cell-under {
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 3px;
   font-weight: 600;
 }
@@ -676,7 +676,7 @@ tbody tr:hover {
 }
 
 .form-field .hint {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-faint);
   font-weight: 400;
   margin-top: 6px;
@@ -897,7 +897,7 @@ tbody tr:hover {
 }
 
 .auth-field label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-dim);
 }
@@ -938,7 +938,7 @@ tbody tr:hover {
 }
 
 .auth-note {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-faint);
   text-align: center;
   margin-top: 18px;
@@ -1067,7 +1067,7 @@ tbody tr:hover {
   background: var(--card);
   border: 1px solid var(--card-border);
   color: var(--text);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   padding: 5px 10px;
@@ -1321,7 +1321,7 @@ tbody tr:hover {
 }
 
 .user-role {
-  font-size: 11px;
+  font-size: 12px;
   color: #A78BFA;
   font-weight: 500;
 }
@@ -1483,7 +1483,7 @@ tbody tr:hover {
   background: rgba(16, 185, 129, 0.08) !important;
   border: 1px solid rgba(16, 185, 129, 0.22) !important;
   color: #10B981 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   padding: 3px 8px !important;
   border-radius: 9999px !important;
@@ -1771,7 +1771,7 @@ tbody tr:hover {
   background: rgba(139, 92, 246, 0.1);
   border: 1px solid rgba(139, 92, 246, 0.2);
   color: #A78BFA;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 6px 14px;
   border-radius: 9999px;
@@ -1996,7 +1996,7 @@ tbody tr:hover {
   border: 1px solid rgba(139, 92, 246, 0.4);
   background: rgba(139, 92, 246, 0.1);
   color: #A78BFA;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 9999px;
@@ -2303,7 +2303,7 @@ h1.top-bar-title,
 }
 
 .profile-trigger-btn .dropdown-chevron {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-dim);
   transition: transform 0.2s ease;
 }
@@ -2482,7 +2482,7 @@ h1.top-bar-title,
 }
 
 .ai-badge-status {
-  font-size: 11px;
+  font-size: 12px;
   padding: 4px 8px;
   border-radius: 8px;
   font-weight: 600;
@@ -2908,7 +2908,7 @@ h1.top-bar-title,
 }
 
 .mc-sub-footer {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-faint);
   margin-top: auto;
   display: flex;
@@ -2985,7 +2985,7 @@ h1.top-bar-title,
 .mc-list-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-faint);
 }
 
@@ -3005,7 +3005,7 @@ h1.top-bar-title,
   background: rgba(139, 92, 246, 0.9);
   color: #FFFFFF;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 12px;
   padding: 4px 10px;
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
@@ -3022,7 +3022,7 @@ h1.top-bar-title,
   padding: 4px 10px;
   border-radius: 8px;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -3421,7 +3421,7 @@ h1.top-bar-title,
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -3444,7 +3444,7 @@ h1.top-bar-title,
 }
 
 .phone-holding-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   padding: 2px 5px;
   border-radius: 4px;
@@ -3627,7 +3627,7 @@ h1.top-bar-title,
 
   .orbit-node {
     padding: 6px 11px;
-    font-size: 11px;
+    font-size: 12px;
     gap: 6px;
   }
 }
@@ -3766,7 +3766,7 @@ h1.top-bar-title,
 
 .sm-socials-title {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--accent);
   text-transform: uppercase;
@@ -3944,7 +3944,7 @@ h1.top-bar-title,
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   transition: all 0.2s;
 }
 
@@ -4067,7 +4067,7 @@ h1.top-bar-title,
   padding: 1px 7px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.15);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -4148,7 +4148,7 @@ h1.top-bar-title,
 }
 
 .ipo-type-pill {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 1px 6px;
   border-radius: 4px;
@@ -4165,7 +4165,7 @@ h1.top-bar-title,
 }
 
 .ipo-stat-label {
-  font-size: 11px;
+  font-size: 12px;
   color: #64748B;
   font-weight: 600;
   text-transform: uppercase;
@@ -4179,7 +4179,7 @@ h1.top-bar-title,
 }
 
 .ipo-stat-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
 }
 
@@ -4214,7 +4214,7 @@ h1.top-bar-title,
 }
 
 .gmp-subtext {
-  font-size: 11px;
+  font-size: 12px;
   color: #64748B;
   font-weight: 500;
   padding-left: 2px;
@@ -4459,7 +4459,7 @@ h1.top-bar-title,
   }
 
   .ipo-company-sub {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   /* Grid for stats on mobile (2 cols) */
@@ -4481,7 +4481,7 @@ h1.top-bar-title,
   }
 
   .ipo-stat-label {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .ipo-stat-val {
@@ -4598,7 +4598,7 @@ h1.top-bar-title,
   }
 
   .dock-label {
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 }
 
@@ -4657,7 +4657,7 @@ h1.top-bar-title,
 }
 
 .m-stock-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-faint, #8890a4);
   margin-top: 2px;
 }
@@ -4677,7 +4677,7 @@ h1.top-bar-title,
 }
 
 .m-day-pct {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -4713,7 +4713,7 @@ h1.top-bar-title,
 }
 
 .m-dim-text {
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
 }
 
@@ -5060,7 +5060,7 @@ h1.top-bar-title,
 
 .category-quota-table th {
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -5093,7 +5093,7 @@ h1.top-bar-title,
 }
 
 .essential-label {
-  font-size: 11px;
+  font-size: 12px;
   color: #64748B;
   font-weight: 600;
   text-transform: uppercase;
@@ -5474,7 +5474,7 @@ h1.top-bar-title,
   }
 
   .ipo-modal-tab-btn {
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 8px 4px !important;
   }
 }
@@ -5565,7 +5565,7 @@ h1.top-bar-title,
   }
 
   .print-summary-box .label {
-    font-size: 11px;
+    font-size: 12px;
     text-transform: uppercase;
     color: #64748B;
     font-weight: 600;
@@ -5615,7 +5615,7 @@ h1.top-bar-title,
   .print-footer {
     border-top: 1px solid #e5e7eb;
     padding-top: 12px;
-    font-size: 11px;
+    font-size: 12px;
     color: #64748B;
     display: flex;
     justify-content: space-between;
@@ -5694,7 +5694,7 @@ h1.top-bar-title,
     overflow-y: auto;
   }
   .ipo-modal-tab-btn {
-    font-size: 11px;
+    font-size: 12px;
     padding: 8px 6px;
     flex: 1;
     text-align: center;
@@ -5777,11 +5777,11 @@ h1.top-bar-title,
 /* GMP badge: smaller font on mobile */
 @media (max-width: 480px) {
   .gmp-pill {
-    font-size: 11px;
+    font-size: 12px;
     padding: 3px 8px;
   }
   .ipo-stat-label {
-    font-size: 11px;
+    font-size: 12px;
   }
   .ipo-stat-val {
     font-size: 12px;
@@ -5838,7 +5838,7 @@ h1.top-bar-title,
   background: rgba(16, 185, 129, 0.12);
   color: #10B981;
   border: 1px solid rgba(16, 185, 129, 0.25);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 9999px;
@@ -5935,7 +5935,7 @@ h1.top-bar-title,
 }
 
 .report-kpi-card .kpi-label {
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -5985,7 +5985,7 @@ h1.top-bar-title,
   background: rgba(255, 255, 255, 0.04);
   padding: 10px 14px;
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   color: #94A3B8;
   letter-spacing: 0.04em;
@@ -6011,7 +6011,7 @@ h1.top-bar-title,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
   color: #64748B;
 }
 
@@ -6209,7 +6209,7 @@ body {
   background: rgba(16, 185, 129, 0.08) !important;
   border: 1px solid rgba(16, 185, 129, 0.22) !important;
   color: #10B981 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   padding: 3px 8px !important;
   border-radius: 9999px !important;
@@ -6295,7 +6295,7 @@ body {
 }
 
 .stat-card.mini-card .card-label {
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: var(--text-dim) !important;
   text-transform: none !important;
@@ -6402,7 +6402,7 @@ body {
 }
 
 .sec-pill-count {
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 800 !important;
   padding: 2px 8px !important;
   border-radius: 9999px !important;
@@ -6515,7 +6515,7 @@ body {
 .desktop-holdings-table th {
   background: rgba(10, 14, 22, 0.5) !important;
   color: var(--text-dim) !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.07em !important;
@@ -6558,7 +6558,7 @@ body {
 }
 
 .cell-under {
-  font-size: 11px !important;
+  font-size: 12px !important;
   margin-top: 3px !important;
   font-family: var(--font-mono) !important;
 }
@@ -6644,7 +6644,7 @@ tbody tr:focus-within .row-actions .link-btn {
 .exchange-badge-tag {
   display: inline-flex !important;
   align-items: center !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 800 !important;
   padding: 2px 7px !important;
   border-radius: 8px !important;
@@ -6921,7 +6921,7 @@ tbody tr:focus-within .row-actions .link-btn {
   background: rgba(15, 20, 32, 0.95) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #FFFFFF !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   padding: 5px 9px !important;
   border-radius: 8px !important;
@@ -7007,7 +7007,7 @@ html, body {
   }
 
   .top-bar-subtitle {
-    font-size: 11px !important;
+    font-size: 12px !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 1 !important;
     -webkit-box-orient: vertical !important;
@@ -7036,7 +7036,7 @@ html, body {
   .avatar {
     width: 26px !important;
     height: 26px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 }
 
@@ -7070,7 +7070,7 @@ html, body {
   }
 
   .net-worth-header .card-label {
-    font-size: 11px !important;
+    font-size: 12px !important;
     letter-spacing: 0.04em !important;
   }
 
@@ -7107,7 +7107,7 @@ html, body {
   }
 
   .stat-card.mini-card .card-label {
-    font-size: 11px !important;
+    font-size: 12px !important;
     margin-bottom: 6px !important;
   }
 
@@ -7116,7 +7116,7 @@ html, body {
   }
 
   .stat-card.mini-card .sub {
-    font-size: 11px !important;
+    font-size: 12px !important;
     margin-top: 4px !important;
   }
 }
@@ -7246,7 +7246,7 @@ html, body {
   }
 
   .m-stock-sub {
-    font-size: 11px !important;
+    font-size: 12px !important;
     color: var(--text-dim) !important;
     margin-top: 2px !important;
   }
@@ -7258,7 +7258,7 @@ html, body {
   }
 
   .m-day-pct {
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
   }
 
@@ -7483,7 +7483,7 @@ html, body {
   .ipo-seg-btn {
     flex: 1 !important;
     text-align: center !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 8px 4px !important;
     min-width: unset !important;
   }
@@ -7671,7 +7671,7 @@ html, body {
   }
 
   .hero-feature-badge {
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 4px 10px !important;
   }
 
@@ -7826,13 +7826,13 @@ html, body {
   .auth-card { padding: 20px 16px !important; }
   .hero-title { font-size: 24px !important; line-height: 1.22 !important; }
   .hero-subtitle { font-size: 13px !important; }
-  .hero-feature-badge { font-size: 11px !important; padding: 4px 10px !important; }
+  .hero-feature-badge { font-size: 12px !important; padding: 4px 10px !important; }
   .hero-cta .btn { width: 100% !important; justify-content: center !important; font-size: 14px !important; padding: 12px 20px !important; }
   .landing-clarity { padding: 16px !important; margin: 24px 0 !important; }
 }
 
 @media (max-width: 360px) {
-  .landing-header .nav-links .btn { font-size: 11px !important; padding: 6px 10px !important; }
+  .landing-header .nav-links .btn { font-size: 12px !important; padding: 6px 10px !important; }
   .landing-header .brand-name { font-size: 13px !important; }
   .auth-card { padding: 18px 14px !important; }
 }
@@ -7902,7 +7902,7 @@ html, body {
 
   /* Section badge */
   .badge {
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 5px 12px !important;
   }
 }
@@ -7938,7 +7938,7 @@ html, body {
   /* Chart tooltip: ensure it does not overflow screen */
   .chartjs-tooltip {
     max-width: 200px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 
   /* Commodities table mobile */
@@ -7972,7 +7972,7 @@ html, body {
 /* Fix auth note text on mobile */
 @media (max-width: 768px) {
   .auth-note {
-    font-size: 11px !important;
+    font-size: 12px !important;
     line-height: 1.5 !important;
     margin-top: 14px !important;
     padding: 8px !important;
@@ -8100,7 +8100,7 @@ html {
   right: -4px;
   background: #EF4444;
   color: #FFFFFF;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   min-width: 16px;
   height: 16px;
@@ -8196,7 +8196,7 @@ html {
 }
 
 .mob-nav-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -8208,7 +8208,7 @@ html {
   right: -5px;
   background: #22C55E;
   color: #000000;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   min-width: 14px;
   height: 14px;
@@ -8279,7 +8279,7 @@ html {
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 8px !important;
     color: #94A3B8 !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     padding: 5px 9px !important;
     cursor: pointer !important;
@@ -8383,7 +8383,7 @@ html {
 
   /* Holdings count below toolbar */
   .holdings-count {
-    font-size: 11px !important;
+    font-size: 12px !important;
     color: var(--text-dim) !important;
   }
 }
@@ -8495,7 +8495,7 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 6px 13px;
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
   white-space: nowrap;
   letter-spacing: 0.01em;
@@ -8606,7 +8606,7 @@ html {
 }
 
 .hero-metric-card .metric-lbl {
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
   font-weight: 500;
   margin-top: 3px;
@@ -8668,7 +8668,7 @@ html {
 .auth-pro-chip {
   background: linear-gradient(135deg, #8B5CF6, #6366F1);
   color: #FFFFFF;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   padding: 1.5px 6px;
   border-radius: 12px;
@@ -8856,7 +8856,7 @@ html {
 }
 
 .divider-text {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: #64748B;
@@ -8940,14 +8940,14 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
   font-weight: 600;
 }
 
 .trust-bullet {
   color: #64748B;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* -- Mobile Tweaks for Auth Screen -- */
@@ -8967,7 +8967,7 @@ html {
   }
 
   .hero-metric-card .metric-lbl {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .modern-auth-card {
@@ -8980,7 +8980,7 @@ html {
   }
 
   .trust-badge-item {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -9037,7 +9037,7 @@ html {
 }
 
 .ipo-pan-tag {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -9148,7 +9148,7 @@ html {
 }
 
 .ipo-kpi-lbl {
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
   font-weight: 500;
 }
@@ -9158,7 +9158,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 3px 9px;
   border-radius: 8px;
@@ -9268,7 +9268,7 @@ html {
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 12px;
   padding: 10px 12px;
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
   line-height: 1.45;
 }
@@ -9338,7 +9338,7 @@ html {
 
 .allot-grid-label {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: #64748B;
   font-weight: 600;
   text-transform: uppercase;
@@ -9494,7 +9494,7 @@ html {
   gap: 2px;
 }
 .ipo-pan-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -9689,7 +9689,7 @@ html {
 
 .almt-metric-lbl {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #64748B;
   text-transform: uppercase;
@@ -9964,7 +9964,7 @@ html {
 }
 
 .ipo-metric-card .label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   color: #64748B;
@@ -10289,7 +10289,7 @@ html {
   }
 
   .net-worth-header .card-label {
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 700 !important;
     color: #94A3B8 !important;
     text-transform: none !important;
@@ -10306,7 +10306,7 @@ html {
   background: rgba(16, 185, 129, 0.08) !important;
   border: 1px solid rgba(16, 185, 129, 0.22) !important;
   color: #10B981 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   padding: 3px 8px !important;
   border-radius: 9999px !important;
@@ -10364,7 +10364,7 @@ html {
   }
 
   .stats-grid-side .card-label {
-    font-size: 11px !important;
+    font-size: 12px !important;
     color: #94A3B8 !important;
     text-transform: none !important;
     font-weight: 600 !important;
@@ -10381,7 +10381,7 @@ html {
   }
 
   .stats-grid-side .sub {
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     margin-top: 2px !important;
   }
@@ -10434,7 +10434,7 @@ html {
   }
 
   .sec-pill-count {
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 1px 6px !important;
     border-radius: 9999px !important;
     background: rgba(255, 255, 255, 0.12) !important;
@@ -10501,7 +10501,7 @@ html {
 
   .filter-pill {
     padding: 6px 12px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     border-radius: 8px !important;
     white-space: nowrap !important;
@@ -10521,7 +10521,7 @@ html {
   .sort-select {
     height: 32px !important;
     padding: 2px 8px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     background: rgba(255, 255, 255, 0.04) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 8px !important;
@@ -10580,7 +10580,7 @@ html {
   }
 
   .exchange-badge-tag {
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 2px 6px !important;
     border-radius: 8px !important;
     margin-left: 6px !important;
@@ -10610,7 +10610,7 @@ html {
   }
 
   .m-day-pct {
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 700 !important;
   }
 
@@ -10633,7 +10633,7 @@ html {
 
   .m-dim-text {
     color: #64748B !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 
   .m-col-right {
@@ -10668,7 +10668,7 @@ html {
     align-items: center !important;
     gap: 4px !important;
     padding: 6px 11px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     border-radius: 8px !important;
     background: rgba(255, 255, 255, 0.04) !important;
@@ -10865,7 +10865,7 @@ html {
   }
 
   .mob-nav-label {
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     letter-spacing: 0.02em !important;
   }
@@ -10933,7 +10933,7 @@ html {
     min-width: 0 !important;
   }
   .ipo-pan-lbl {
-    font-size: 11px !important;
+    font-size: 12px !important;
     color: #94A3B8 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.04em !important;
@@ -11008,7 +11008,7 @@ html {
     margin-left: auto !important;
     height: 32px !important;
     border-radius: 8px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     padding: 2px 6px !important;
     max-width: 120px !important;
   }
@@ -11415,7 +11415,7 @@ button.btn-base,
   padding: 1px 7px !important;
   border-radius: 9999px !important;
   background: rgba(255, 255, 255, 0.1) !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   color: #94A3B8 !important;
 }
@@ -11456,7 +11456,7 @@ button.btn-base,
 }
 
 .ipo-subgroup-badge {
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   padding: 2px 8px !important;
   border-radius: 9999px !important;
@@ -11475,7 +11475,7 @@ button.btn-base,
 }
 
 .ipo-subgroup-desc {
-  font-size: 11px !important;
+  font-size: 12px !important;
   color: #64748B !important;
 }
 
@@ -11506,4 +11506,152 @@ button.btn-base,
 .ipo-type-pill.mainboard {
   background: rgba(139, 92, 246, 0.15) !important;
   color: #A78BFA !important;
+}
+
+/* ==========================================================================
+   USABILITY HEURISTICS 10-FIX CONSOLIDATION
+   ========================================================================== */
+
+/* 2. Canonical Button Styles (Collapse all buttons to <= 4 variants) */
+.google-login-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #FFFFFF !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 10px 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  transition: all 0.2s ease !important;
+}
+.google-login-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* 3. Text Divider (Sentence case, no all-caps) */
+.divider-text {
+  text-transform: none !important;
+  font-size: 12px !important;
+  letter-spacing: normal !important;
+  color: #94A3B8 !important;
+}
+
+/* 5. Get Started in 3 Steps - Vertical alignment & spacing fix */
+.step-number-circle {
+  margin: 0 auto 16px auto !important;
+}
+.step-card h3 {
+  margin-top: 18px !important;
+  margin-bottom: 12px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  line-height: 1.35 !important;
+}
+
+/* 6. Hero Visual Hierarchy - Soften auth card dominance */
+.modern-glass-shell {
+  background: rgba(13, 17, 23, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+}
+.border-gradient-bottom,
+.border-gradient-top {
+  opacity: 0.25 !important;
+}
+.auth-heading {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #FFFFFF !important;
+  margin-bottom: 4px !important;
+}
+.auth-subheading {
+  font-size: 13px !important;
+  color: #94A3B8 !important;
+  margin-bottom: 18px !important;
+}
+
+/* 7. Segmented Tab styling for Log in / Sign up */
+.auth-tabs.modern-tabs {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 3px !important;
+  gap: 4px !important;
+  margin-bottom: 20px !important;
+}
+.auth-tab {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 8px 14px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #94A3B8 !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+.auth-tab:hover {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+.auth-tab.active {
+  background: rgba(139, 92, 246, 0.2) !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+/* 8. Stock Ticker Bar vertical padding & breathing room */
+.landing-ticker-wrap {
+  padding: 18px 0 !important;
+  margin: 22px 0 32px 0 !important;
+}
+
+/* 9. Discoverable Sign Up Link */
+.auth-switch {
+  font-size: 14px !important;
+  color: #94A3B8 !important;
+  margin-top: 18px !important;
+  text-align: center !important;
+}
+.auth-switch button,
+#switchToSignup {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #A78BFA !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 2px 6px !important;
+  transition: color 0.15s ease !important;
+}
+.auth-switch button:hover,
+#switchToSignup:hover {
+  color: #FFFFFF !important;
+}
+
+/* 10. Integrated Financial Ecosystem - Tighten vertical dead space */
+.logo-orbit-section {
+  padding: 36px 0 40px 0 !important;
+}
+.orbit-showcase-container {
+  height: 240px !important;
+  margin: 0 auto !important;
 }
