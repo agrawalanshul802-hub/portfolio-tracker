@@ -11509,28 +11509,146 @@ button.btn-base,
 }
 
 /* ==========================================================================
-   USABILITY HEURISTICS 10-FIX CONSOLIDATION
+   USABILITY HEURISTICS 10-FIX CONSOLIDATION (REFINED)
    ========================================================================== */
 
-/* 2. Canonical Button Styles (Collapse all buttons to <= 4 variants) */
-.google-login-btn {
+/* 1. Global typography normalization (Eliminate browser 13.3333px default) */
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* 2. Canonical Button Styles (Consolidated to <= 5 distinct styles) */
+/* Style A: Primary Button (Header nav, Hero CTA, Submit) */
+.btn-primary,
+.nav-links .btn-primary,
+.modern-auth-btn {
+  background: #8B5CF6 !important;
+  color: #FFFFFF !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  border: 1px solid transparent !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.btn-primary:hover,
+.nav-links .btn-primary:hover,
+.modern-auth-btn:hover {
+  background: #7C3AED !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4) !important;
+}
+
+/* Style B: Secondary / Google Auth Button */
+.google-auth-btn,
+.google-login-btn,
+.btn-secondary {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #FFFFFF !important;
   border-radius: 8px !important;
   font-size: 14px !important;
   font-weight: 600 !important;
-  padding: 10px 16px !important;
+  padding: 8px 16px !important;
+  height: 42px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
   width: 100% !important;
+  cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
-.google-login-btn:hover {
+.google-auth-btn:hover,
+.google-login-btn:hover,
+.btn-secondary:hover {
   background: rgba(255, 255, 255, 0.1) !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Style C: Segmented Tabs (Log in / Sign up) */
+.auth-tabs.modern-tabs {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 3px !important;
+  gap: 4px !important;
+  margin-bottom: 20px !important;
+}
+.auth-tabs .auth-tab,
+.modern-tabs .auth-tab,
+.auth-tab {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 8px 14px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #94A3B8 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+.auth-tabs .auth-tab:hover,
+.modern-tabs .auth-tab:hover,
+.auth-tab:hover {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+.auth-tabs .auth-tab.active,
+.modern-tabs .auth-tab.active,
+.auth-tab.active {
+  background: rgba(139, 92, 246, 0.2) !important;
+  background-image: none !important;
+  border: 1px solid rgba(139, 92, 246, 0.45) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+/* Style D: Inline Link Button */
+.auth-switch button,
+#switchToSignup {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #A78BFA !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease !important;
+}
+.auth-switch button:hover,
+#switchToSignup:hover,
+#switchToSignup:focus-visible {
+  color: #FFFFFF !important;
+  outline: 2px solid #8B5CF6 !important;
+}
+
+/* Style E: Subtle Icon Button */
+#toggleAuthPassword {
+  background: transparent !important;
+  border: none !important;
+  padding: 6px !important;
+  color: #64748B !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+}
+#toggleAuthPassword:hover {
+  color: #FFFFFF !important;
 }
 
 /* 3. Text Divider (Sentence case, no all-caps) */
@@ -11544,6 +11662,9 @@ button.btn-base,
 /* 5. Get Started in 3 Steps - Vertical alignment & spacing fix */
 .step-number-circle {
   margin: 0 auto 16px auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .step-card h3 {
   margin-top: 18px !important;
@@ -11578,44 +11699,6 @@ button.btn-base,
   margin-bottom: 18px !important;
 }
 
-/* 7. Segmented Tab styling for Log in / Sign up */
-.auth-tabs.modern-tabs {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 8px !important;
-  padding: 3px !important;
-  gap: 4px !important;
-  margin-bottom: 20px !important;
-}
-.auth-tab {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  padding: 8px 14px !important;
-  border-radius: 6px !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  color: #94A3B8 !important;
-  background: transparent !important;
-  border: 1px solid transparent !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  box-shadow: none !important;
-}
-.auth-tab:hover {
-  color: #FFFFFF !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-.auth-tab.active {
-  background: rgba(139, 92, 246, 0.2) !important;
-  border: 1px solid rgba(139, 92, 246, 0.4) !important;
-  color: #FFFFFF !important;
-  font-weight: 600 !important;
-}
-
 /* 8. Stock Ticker Bar vertical padding & breathing room */
 .landing-ticker-wrap {
   padding: 18px 0 !important;
@@ -11629,23 +11712,6 @@ button.btn-base,
   margin-top: 18px !important;
   text-align: center !important;
 }
-.auth-switch button,
-#switchToSignup {
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  color: #A78BFA !important;
-  text-decoration: underline !important;
-  text-underline-offset: 3px !important;
-  background: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  padding: 2px 6px !important;
-  transition: color 0.15s ease !important;
-}
-.auth-switch button:hover,
-#switchToSignup:hover {
-  color: #FFFFFF !important;
-}
 
 /* 10. Integrated Financial Ecosystem - Tighten vertical dead space */
 .logo-orbit-section {
@@ -11654,4 +11720,51 @@ button.btn-base,
 .orbit-showcase-container {
   height: 240px !important;
   margin: 0 auto !important;
+}
+
+.nav-links .btn-primary,
+.nav-links .btn-sm {
+  font-size: 14px !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+}
+#toggleAuthPassword {
+  font-size: 14px !important;
+}
+
+/* Ensure primary button standardization */
+.btn-primary,
+.nav-links .btn-primary,
+.modern-submit-btn,
+.auth-submit {
+  background: #8B5CF6 !important;
+  color: #FFFFFF !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  border: 1px solid transparent !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#toggleAuthPassword,
+#toggleAuthConfirm {
+  background: transparent !important;
+  border: none !important;
+  padding: 6px !important;
+  color: #64748B !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+}
+
+.landing-header .nav-links .btn,
+.landing-header .nav-links .btn-primary {
+  font-size: 14px !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
 }
