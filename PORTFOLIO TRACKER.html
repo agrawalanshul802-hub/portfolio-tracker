@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=3.1">
+  <link rel="stylesheet" href="style.css?v=3.0">
 
   <!-- Price Alert Styles (Groww / Zerodha Dark Theme) -->
   <style id="alertModalCustomStyles">
@@ -299,9 +299,9 @@
           <span class="brand-name">Portfolio Tracker</span>
         </div>
 
-        <div class="nav-links" style="display:flex; align-items:center; gap:12px;">
-          <button class="btn btn-secondary" onclick="openAuthModal('login')">Log in</button>
-          <button class="btn btn-primary" onclick="openAuthModal('signup')">Create Free Account</button>
+        <div class="nav-links">
+          <button class="btn btn-primary"
+            onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Create Free Account</button>
         </div>
       </header>
 
@@ -357,90 +357,14 @@
             <span class="hero-feature-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 256-bit Secure Storage</span>
           </div>
 
-          <div class="hero-cta" style="display:flex; gap:14px; align-items:center;">
-            <button class="btn btn-primary" style="font-size:15px; padding:10px 22px;"
-              onclick="openAuthModal('signup')">Get Started Free &rarr;</button>
-            <button class="btn btn-secondary" style="font-size:15px; padding:10px 20px;"
-              onclick="document.getElementById('live-showcase-section').scrollIntoView({behavior: 'smooth'})">Live Platform Tour &darr;</button>
+          <div class="hero-cta">
+            <button class="btn btn-primary"
+              onclick="document.getElementById('authCardAnchor').scrollIntoView({behavior: 'smooth'})">Get Started Free &rarr;</button>
           </div>
           <div style="font-size:12px; color:var(--text-dim); margin-top:12px;">Free forever &bull; No phone number required &bull; 100% Private</div>
         </div>
 
-        <div class="hero-right">
-          <!-- Live Interactive Product Preview Card -->
-          <div class="hero-preview-card">
-            <div class="preview-card-header">
-              <div class="preview-window-dots">
-                <span class="preview-dot red"></span>
-                <span class="preview-dot yellow"></span>
-                <span class="preview-dot green"></span>
-              </div>
-              <div class="preview-status-tag">
-                <span class="ticker-pulse" style="width:6px; height:6px; background:#10B981; display:inline-block; border-radius:9999px;"></span>
-                <span>Live CMP Pulse</span>
-              </div>
-            </div>
-
-            <div class="preview-card-body">
-              <div class="preview-metric-row">
-                <div>
-                  <div style="font-size:12px; color:#94A3B8; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Consolidated Net Worth</div>
-                  <div class="preview-networth-num">₹2,75,743</div>
-                </div>
-                <div class="preview-gain-pill">+₹2,414 (0.88%) ▲</div>
-              </div>
-
-              <!-- Top Holdings mini list -->
-              <div class="preview-holdings-list">
-                <div class="preview-holding-item">
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-weight:700; color:#FFFFFF; font-size:13px;">RELIANCE</span>
-                    <span style="font-size:11px; color:#94A3B8; background:rgba(255,255,255,0.06); padding:1px 6px; border-radius:4px;">NSE</span>
-                  </div>
-                  <div style="text-align:right;">
-                    <div style="font-size:13px; font-weight:600; color:#FFFFFF;">₹2,980.50</div>
-                    <div style="font-size:11px; font-weight:600; color:#34D399;">+1.42% ▲</div>
-                  </div>
-                </div>
-                <div class="preview-holding-item">
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-weight:700; color:#FFFFFF; font-size:13px;">TCS</span>
-                    <span style="font-size:11px; color:#94A3B8; background:rgba(255,255,255,0.06); padding:1px 6px; border-radius:4px;">NSE</span>
-                  </div>
-                  <div style="text-align:right;">
-                    <div style="font-size:13px; font-weight:600; color:#FFFFFF;">₹4,120.10</div>
-                    <div style="font-size:11px; font-weight:600; color:#34D399;">+0.75% ▲</div>
-                  </div>
-                </div>
-                <div class="preview-holding-item">
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-weight:700; color:#FFFFFF; font-size:13px;">HDFCBANK</span>
-                    <span style="font-size:11px; color:#94A3B8; background:rgba(255,255,255,0.06); padding:1px 6px; border-radius:4px;">NSE</span>
-                  </div>
-                  <div style="text-align:right;">
-                    <div style="font-size:13px; font-weight:600; color:#FFFFFF;">₹1,642.00</div>
-                    <div style="font-size:11px; font-weight:600; color:#34D399;">+0.34% ▲</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="preview-card-footer-cta">
-              <span style="font-size:12px; color:#94A3B8;">Free forever &bull; Zero broker credentials</span>
-              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 14px;"
-                onclick="openAuthModal('signup')">Create Account &rarr;</button>
-            </div>
-          </div>
-        </div>
-          </div>
-        </div>
-      </section>
-      <!-- Accessible Auth Modal Dialog -->
-      <div class="auth-modal-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authHeading"
-        onclick="if(event.target===this)closeAuthModal()">
-        <div class="auth-modal-card" id="authCardAnchor">
-          <button type="button" class="auth-modal-close-btn" onclick="closeAuthModal()" aria-label="Close modal">✕</button>
-          <div class="auth-card-modal-wrap">
+        <div class="hero-right" id="authCardAnchor">
           <div class="star-border-container modern-glass-shell">
             <div class="border-gradient-bottom"
               style="background: radial-gradient(circle, var(--accent), transparent 10%); animation-duration: 5s;">
@@ -562,8 +486,7 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
 
       <!-- Ecosystem Orbit Showcase Section -->
       <section class="logo-orbit-section">
@@ -574,32 +497,18 @@
         </div>
 
         <div class="orbit-showcase-container">
-          <!-- Central Hub-and-Spoke Core Architecture -->
-          <div class="orbit-center-hub">
-            <div class="orbit-hub-core">
-              <img class="orbit-center-logo-img" src="logo.png" alt="Portfolio Tracker Unified Core Hub">
-              <div class="orbit-hub-badge">
-                <span class="hub-live-dot"></span>
-                <span>Unified Core</span>
-              </div>
-              <div class="orbit-hub-sub">6 Live Integrations</div>
-            </div>
+          <!-- Central Branding -->
+          <div class="orbit-center-wrapper">
+            <img class="orbit-center-logo-img" src="logo.png" alt="Portfolio Tracker Logo">
+            <div class="orbit-center-glow"></div>
           </div>
 
           <!-- Orbit Container -->
           <div class="orbit-view" id="financialOrbit">
             <!-- Orbit Path SVG -->
             <svg class="orbit-path-svg" viewBox="0 0 1000 1000">
-              <!-- Radial Hub-and-Spoke Connector Lines -->
-              <line x1="500" y1="500" x2="160" y2="500" class="orbit-spoke" />
-              <line x1="500" y1="500" x2="260" y2="440" class="orbit-spoke" />
-              <line x1="500" y1="500" x2="500" y2="420" class="orbit-spoke" />
-              <line x1="500" y1="500" x2="740" y2="440" class="orbit-spoke" />
-              <line x1="500" y1="500" x2="840" y2="500" class="orbit-spoke" />
-              <line x1="500" y1="500" x2="500" y2="580" class="orbit-spoke" />
-              <!-- Orbital Ellipse Path -->
               <path id="orbitEllipsePath" d="M 160 500 A 340 80 0 1 0 840 500 A 340 80 0 1 0 160 500" fill="none"
-                stroke="rgba(139, 92, 246, 0.25)" stroke-width="2" />
+                stroke="rgba(139, 92, 246, 0.22)" stroke-width="2" />
             </svg>
 
             <!-- Orbiting Badges -->
@@ -671,75 +580,67 @@
           <p style="margin-bottom: 24px; font-size: 14px;">Click on any feature below to preview the actual interface
             you will get after logging in:</p>
 
-          <div class="feature-tabs" role="tablist" aria-label="Platform Features Showcase">
-            <!-- Tab 1: Holdings Dashboard -->
-            <div class="feature-tab-btn active" role="tab" aria-selected="true" data-target="holdings" tabindex="0"
-              onclick="switchShowcaseTab(this, 'holdings')" onkeydown="if(event.key==='Enter'||event.key===' ')switchShowcaseTab(this, 'holdings')">
-              <div class="feature-tab-header">
-                <h3 class="feature-tab-title">
-                  <span class="tab-dot"></span>
-                  Holdings Dashboard
-                </h3>
-                <span class="feature-active-badge">Active View</span>
-              </div>
-              <p class="feature-tab-desc">Track stocks (NSE/BSE) and custom assets with live price updates and automatic profit/loss computations.</p>
-              <div class="feature-tab-action">
-                <span>Preview Live Interface</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
+          <div class="feature-tabs" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Tab 1 -->
+            <div class="feature-tab-btn active" data-target="holdings"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'holdings')">
+              <h3
+                style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
+                Holdings Dashboard
+              </h3>
+              <p style="font-size: 13px; color: var(--text-dim); margin: 0; line-height: 1.4;">Track stocks (NSE/BSE)
+                and custom assets with live price updates and automatic profit/loss computations.</p>
             </div>
-
-            <!-- Tab 2: Chart Analytics -->
-            <div class="feature-tab-btn" role="tab" aria-selected="false" data-target="analytics" tabindex="0"
-              onclick="switchShowcaseTab(this, 'analytics')" onkeydown="if(event.key==='Enter'||event.key===' ')switchShowcaseTab(this, 'analytics')">
-              <div class="feature-tab-header">
-                <h3 class="feature-tab-title">
-                  <span class="tab-dot"></span>
-                  Interactive Chart Analytics
-                </h3>
-                <span class="feature-active-badge">Active View</span>
-              </div>
-              <p class="feature-tab-desc">Visual asset allocation breakdowns and holding distributions powered by customizable Chart.js donut and bar charts.</p>
-              <div class="feature-tab-action">
-                <span>Preview Live Interface</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
+            <!-- Tab 2 -->
+            <div class="feature-tab-btn" data-target="analytics"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'analytics')">
+              <h3
+                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
+                Interactive Chart Analytics
+              </h3>
+              <p
+                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
+                Visual asset allocation breakdowns and holding distributions powered by customizable Chart.js donut and
+                bar charts.</p>
             </div>
-
-            <!-- Tab 3: AI Investment Analyst -->
-            <div class="feature-tab-btn" role="tab" aria-selected="false" data-target="ai" tabindex="0"
-              onclick="switchShowcaseTab(this, 'ai')" onkeydown="if(event.key==='Enter'||event.key===' ')switchShowcaseTab(this, 'ai')">
-              <div class="feature-tab-header">
-                <h3 class="feature-tab-title">
-                  <span class="tab-dot"></span>
-                  Ask AI Investment Analyst
-                </h3>
-                <span class="feature-active-badge">Active View</span>
-              </div>
-              <p class="feature-tab-desc">Direct financial AI assistant providing contextual portfolio audits, risk metrics, and instant market insights.</p>
-              <div class="feature-tab-action">
-                <span>Preview Live Interface</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
+            <!-- Tab 3 -->
+            <div class="feature-tab-btn" data-target="ai"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'ai')">
+              <h3
+                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
+                Ask AI Investment Analyst
+              </h3>
+              <p
+                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
+                Chat directly with a personalized AI assistant (Gemini/Grok) to audit your risk, concentration, and
+                diversification.</p>
             </div>
-
-            <!-- Tab 4: News Feed -->
-            <div class="feature-tab-btn" role="tab" aria-selected="false" data-target="news" tabindex="0"
-              onclick="switchShowcaseTab(this, 'news')" onkeydown="if(event.key==='Enter'||event.key===' ')switchShowcaseTab(this, 'news')">
-              <div class="feature-tab-header">
-                <h3 class="feature-tab-title">
-                  <span class="tab-dot"></span>
-                  Live Market News Feed
-                </h3>
-                <span class="feature-active-badge">Active View</span>
-              </div>
-              <p class="feature-tab-desc">Curated real-time financial headlines categorized by market movement, earnings, and regulatory developments.</p>
-              <div class="feature-tab-action">
-                <span>Preview Live Interface</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
+            <!-- Tab 4 -->
+            <div class="feature-tab-btn" data-target="news"
+              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
+              onclick="switchShowcaseTab(this, 'news')">
+              <h3
+                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <span class="tab-dot"
+                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
+                Aggregated Ticker News
+              </h3>
+              <p
+                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
+                A consolidated news feed matching your holdings from Moneycontrol recommendations and Yahoo Finance
+                feeds.</p>
             </div>
           </div>
+        </div>
         <div class="clarity-mockup" style="display: flex; align-items: center; justify-content: center;">
           <div
             style="position: relative; width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: #08070e; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);">
@@ -4891,66 +4792,61 @@
         });
       }
 
-      // ==========================================
-    // AUTH MODAL LOGIC (Accessible Dialog)
-    // ==========================================
-    function openAuthModal(mode) {
-      const modal = document.getElementById('authModal');
-      if (modal) {
-        modal.style.display = 'flex';
-        // Force reflow
-        void modal.offsetWidth;
-        modal.classList.add('open');
-        if (mode && typeof switchAuthMode === 'function') {
-          switchAuthMode(mode);
-        }
-        const emailInput = document.getElementById('authEmail');
-        if (emailInput) setTimeout(() => emailInput.focus(), 60);
-      }
-    }
-    function closeAuthModal() {
-      const modal = document.getElementById('authModal');
-      if (modal) {
-        modal.classList.remove('open');
-        setTimeout(() => {
-          if (!modal.classList.contains('open')) {
-            modal.style.display = 'none';
+      function switchShowcaseTab(element, tabName) {
+        // Find all tab buttons
+        const tabs = document.querySelectorAll('.feature-tab-btn');
+        tabs.forEach(tab => {
+          // Reset styling
+          tab.style.background = 'transparent';
+          tab.style.borderColor = 'transparent';
+
+          const h3 = tab.querySelector('h3');
+          if (h3) h3.style.color = 'var(--text-dim)';
+
+          const dot = tab.querySelector('.tab-dot');
+          if (dot) dot.style.backgroundColor = 'transparent';
+
+          const p = tab.querySelector('p');
+          if (p) p.style.color = 'var(--text-faint)';
+        });
+
+        // Activate current tab
+        element.style.background = 'rgba(139, 92, 246, 0.08)';
+        element.style.borderColor = 'rgba(139, 92, 246, 0.25)';
+
+        const h3 = element.querySelector('h3');
+        if (h3) h3.style.color = '#FFF';
+
+        const dot = element.querySelector('.tab-dot');
+        if (dot) dot.style.backgroundColor = 'var(--accent)';
+
+        const p = element.querySelector('p');
+        if (p) p.style.color = 'var(--text-dim)';
+
+        // Update image with smooth GSAP transition
+        const img = document.getElementById('showcaseImage');
+        if (img) {
+          if (typeof gsap !== 'undefined') {
+            gsap.to(img, {
+              opacity: 0,
+              y: 10,
+              duration: 0.15,
+              onComplete: () => {
+                img.src = `${tabName}_preview.png`;
+                gsap.to(img, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.25,
+                  ease: 'power2.out'
+                });
+              }
+            });
+          } else {
+            img.src = `${tabName}_preview.png`;
           }
-        }, 250);
-      }
-    }
-    window.openAuthModal = openAuthModal;
-    window.closeAuthModal = closeAuthModal;
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeAuthModal();
-    });
-
-    // Clean switchShowcaseTab implementation
-    function switchShowcaseTab(element, tabName) {
-      const tabs = document.querySelectorAll('.feature-tab-btn');
-      tabs.forEach(tab => {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
-      });
-      element.classList.add('active');
-      element.setAttribute('aria-selected', 'true');
-
-      const img = document.getElementById('showcaseImage');
-      if (img) {
-        const images = {
-          holdings: 'holdings_preview.png',
-          analytics: 'analytics_preview.png',
-          ai: 'ai_preview.png',
-          news: 'news_preview.png'
-        };
-        if (images[tabName]) {
-          img.style.opacity = '0.3';
-          img.src = images[tabName];
-          setTimeout(() => { img.style.opacity = '1'; }, 180);
         }
       }
-    }
-    window.switchShowcaseTab = switchShowcaseTab;
+      window.switchShowcaseTab = switchShowcaseTab;
 
       function startGoogleLogin() {
         const btn = document.getElementById('googleLoginBtn');
