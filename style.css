@@ -11509,19 +11509,40 @@ button.btn-base,
 }
 
 /* ==========================================================================
-   USABILITY HEURISTICS 10-FIX CONSOLIDATION (REFINED)
+   USABILITY AUDIT: 6-FIX CONSOLIDATION
    ========================================================================== */
 
-/* 1. Global typography normalization (Eliminate browser 13.3333px default) */
-button, input, select, textarea {
-  font-family: inherit;
+/* 1. Corner Radii System (Consolidated strictly to 0px, 8px, 12px, 9999px) */
+button, input, select, textarea,
+.auth-tab, .filter-pill, .alert-chip, .alert-tab-btn, .ipo-board-btn,
+.pan-icon-btn, .pan-modal-close, .report-close-btn, #switchToSignup,
+.badge, .card-label, .sec-pill-count, .sort-select {
+  border-radius: 8px !important;
 }
 
-/* 2. Canonical Button Styles (Consolidated to <= 5 distinct styles) */
-/* Style A: Primary Button (Header nav, Hero CTA, Submit) */
+.landing-ticker-wrap, .hero-metric-card, .star-border-container,
+.modern-glass-shell, .step-card, .service-card-premium, .landing-clarity,
+.feature-tab-btn, .orbit-showcase-container, .auth-modal-card,
+.modal-content, .pan-card-item, .dock-item, .alert-stock-banner {
+  border-radius: 12px !important;
+}
+
+.ticker-pill, .hero-feature-badge, .orbit-node, .tab-dot, .hub-live-dot,
+.alert-back-btn, .ipo-modal-close-btn, .step-number-circle, .orbit-hub-pulse,
+.ticker-pulse {
+  border-radius: 9999px !important;
+}
+
+/* 2. Canonical Button System (<= 5 distinct button signatures across entire DOM) */
+/* Style A: Primary Button */
 .btn-primary,
-.nav-links .btn-primary,
-.modern-auth-btn {
+button.btn-primary,
+.modern-auth-btn,
+.modern-submit-btn,
+.auth-submit,
+.report-btn-primary,
+.alert-btn-submit,
+.ipo-wiz-btn-pri {
   background: #8B5CF6 !important;
   color: #FFFFFF !important;
   font-size: 14px !important;
@@ -11532,20 +11553,26 @@ button, input, select, textarea {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  gap: 8px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35) !important;
 }
 .btn-primary:hover,
-.nav-links .btn-primary:hover,
-.modern-auth-btn:hover {
+.modern-auth-btn:hover,
+.auth-submit:hover,
+.report-btn-primary:hover {
   background: #7C3AED !important;
-  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4) !important;
+  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.5) !important;
 }
 
-/* Style B: Secondary / Google Auth Button */
+/* Style B: Secondary / Outlined Button */
+.btn-secondary,
 .google-auth-btn,
 .google-login-btn,
-.btn-secondary {
+.report-btn-outline,
+.add-pan-trigger-btn,
+.use-cmp-btn {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #FFFFFF !important;
@@ -11553,70 +11580,86 @@ button, input, select, textarea {
   font-size: 14px !important;
   font-weight: 600 !important;
   padding: 8px 16px !important;
-  height: 42px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
-  width: 100% !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
+.btn-secondary:hover,
 .google-auth-btn:hover,
-.google-login-btn:hover,
-.btn-secondary:hover {
+.report-btn-outline:hover {
   background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Style C: Segmented Tabs (Log in / Sign up) */
-.auth-tabs.modern-tabs {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 8px !important;
-  padding: 3px !important;
-  gap: 4px !important;
-  margin-bottom: 20px !important;
-}
-.auth-tabs .auth-tab,
-.modern-tabs .auth-tab,
-.auth-tab {
+/* Style C: Segmented Tab Buttons (Active & Inactive share size & structure) */
+.auth-tab,
+.ipo-board-btn,
+.alert-tab-btn,
+.ipo-modal-tab-btn,
+.alert-pill {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  padding: 8px 14px !important;
-  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
   font-size: 13px !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   color: #94A3B8 !important;
   background: transparent !important;
   background-image: none !important;
   border: 1px solid transparent !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
-  box-shadow: none !important;
 }
-.auth-tabs .auth-tab:hover,
-.modern-tabs .auth-tab:hover,
-.auth-tab:hover {
+.auth-tab:hover,
+.ipo-board-btn:hover,
+.alert-tab-btn:hover,
+.ipo-modal-tab-btn:hover {
   color: #FFFFFF !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
 }
-.auth-tabs .auth-tab.active,
-.modern-tabs .auth-tab.active,
-.auth-tab.active {
+.auth-tab.active,
+.ipo-board-btn.active,
+.alert-tab-btn.active,
+.ipo-modal-tab-btn.active {
   background: rgba(139, 92, 246, 0.2) !important;
-  background-image: none !important;
   border: 1px solid rgba(139, 92, 246, 0.45) !important;
   color: #FFFFFF !important;
-  font-weight: 600 !important;
-  box-shadow: none !important;
 }
 
-/* Style D: Inline Link Button */
+/* Style D: Subtle Icon / Close Trigger */
+.auth-pw-toggle,
+#toggleAuthPassword,
+#toggleAuthConfirm,
+.report-close-btn,
+.pan-modal-close,
+.ipo-modal-close-btn,
+.alert-back-btn,
+.pan-icon-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid transparent !important;
+  padding: 6px !important;
+  color: #94A3B8 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+.auth-pw-toggle:hover,
+.report-close-btn:hover,
+.pan-modal-close:hover,
+.ipo-modal-close-btn:hover {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Style E: Text Link Action */
 .auth-switch button,
 #switchToSignup {
   font-size: 14px !important;
@@ -11628,7 +11671,7 @@ button, input, select, textarea {
   border: none !important;
   cursor: pointer !important;
   padding: 2px 6px !important;
-  border-radius: 4px !important;
+  border-radius: 8px !important;
   transition: color 0.15s ease !important;
 }
 .auth-switch button:hover,
@@ -11638,133 +11681,349 @@ button, input, select, textarea {
   outline: 2px solid #8B5CF6 !important;
 }
 
-/* Style E: Subtle Icon Button */
-#toggleAuthPassword {
-  background: transparent !important;
-  border: none !important;
-  padding: 6px !important;
-  color: #64748B !important;
-  border-radius: 6px !important;
+/* 4 & 5. Feature List Interactive Signifiers & High-Contrast Active State */
+.feature-tabs {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.feature-tab-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 18px 20px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 4px solid transparent !important;
   cursor: pointer !important;
-}
-#toggleAuthPassword:hover {
-  color: #FFFFFF !important;
-}
-
-/* 3. Text Divider (Sentence case, no all-caps) */
-.divider-text {
-  text-transform: none !important;
-  font-size: 12px !important;
-  letter-spacing: normal !important;
-  color: #94A3B8 !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  text-decoration: none !important;
+  box-sizing: border-box !important;
 }
 
-/* 5. Get Started in 3 Steps - Vertical alignment & spacing fix */
-.step-number-circle {
-  margin: 0 auto 16px auto !important;
+.feature-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  border-left-color: rgba(139, 92, 246, 0.5) !important;
+  transform: translateX(4px) !important;
+}
+
+.feature-tab-btn.active {
+  background: rgba(139, 92, 246, 0.14) !important;
+  border: 1px solid rgba(139, 92, 246, 0.45) !important;
+  border-left: 4px solid #8B5CF6 !important;
+  box-shadow: 0 4px 20px -4px rgba(139, 92, 246, 0.25) !important;
+}
+
+.feature-tab-header {
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 6px !important;
 }
-.step-card h3 {
-  margin-top: 18px !important;
-  margin-bottom: 12px !important;
-  font-size: 18px !important;
+
+.feature-tab-title {
+  font-size: 15px !important;
   font-weight: 700 !important;
   color: #FFFFFF !important;
-  line-height: 1.35 !important;
-}
-
-/* 6. Hero Visual Hierarchy - Soften auth card dominance */
-.modern-glass-shell {
-  background: rgba(13, 17, 23, 0.75) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-}
-.border-gradient-bottom,
-.border-gradient-top {
-  opacity: 0.25 !important;
-}
-.auth-heading {
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  color: #FFFFFF !important;
-  margin-bottom: 4px !important;
-}
-.auth-subheading {
-  font-size: 13px !important;
-  color: #94A3B8 !important;
-  margin-bottom: 18px !important;
-}
-
-/* 8. Stock Ticker Bar vertical padding & breathing room */
-.landing-ticker-wrap {
-  padding: 18px 0 !important;
-  margin: 22px 0 32px 0 !important;
-}
-
-/* 9. Discoverable Sign Up Link */
-.auth-switch {
-  font-size: 14px !important;
-  color: #94A3B8 !important;
-  margin-top: 18px !important;
-  text-align: center !important;
-}
-
-/* 10. Integrated Financial Ecosystem - Tighten vertical dead space */
-.logo-orbit-section {
-  padding: 36px 0 40px 0 !important;
-}
-.orbit-showcase-container {
-  height: 240px !important;
-  margin: 0 auto !important;
-}
-
-.nav-links .btn-primary,
-.nav-links .btn-sm {
-  font-size: 14px !important;
-  padding: 8px 16px !important;
-  border-radius: 8px !important;
-}
-#toggleAuthPassword {
-  font-size: 14px !important;
-}
-
-/* Ensure primary button standardization */
-.btn-primary,
-.nav-links .btn-primary,
-.modern-submit-btn,
-.auth-submit {
-  background: #8B5CF6 !important;
-  color: #FFFFFF !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  border-radius: 8px !important;
-  padding: 8px 16px !important;
-  border: 1px solid transparent !important;
-  display: inline-flex !important;
+  margin: 0 !important;
+  display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
+  gap: 10px !important;
+}
+
+.feature-tab-btn:not(.active) .feature-tab-title {
+  color: #CBD5E1 !important;
+}
+
+.feature-tab-btn .tab-dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 9999px !important;
+  background: #64748B !important;
+  display: inline-block !important;
   transition: all 0.2s ease !important;
 }
 
-#toggleAuthPassword,
-#toggleAuthConfirm {
-  background: transparent !important;
-  border: none !important;
-  padding: 6px !important;
-  color: #64748B !important;
-  border-radius: 6px !important;
-  font-size: 14px !important;
-  cursor: pointer !important;
+.feature-tab-btn.active .tab-dot {
+  background: #10B981 !important;
+  box-shadow: 0 0 10px #10B981 !important;
 }
 
-.landing-header .nav-links .btn,
-.landing-header .nav-links .btn-primary {
-  font-size: 14px !important;
-  padding: 8px 16px !important;
+.feature-tab-btn .feature-tab-desc {
+  font-size: 13px !important;
+  color: #94A3B8 !important;
+  margin: 0 !important;
+  line-height: 1.45 !important;
+}
+
+.feature-tab-action {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 10px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.feature-tab-btn.active .feature-tab-action {
+  color: #C4B5FD !important;
+  border-top-color: rgba(139, 92, 246, 0.25) !important;
+}
+
+.feature-tab-btn:not(.active) .feature-tab-action {
+  color: #64748B !important;
+}
+
+.feature-active-badge {
+  display: none !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  background: rgba(139, 92, 246, 0.25) !important;
+  color: #A78BFA !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+}
+
+.feature-tab-btn.active .feature-active-badge {
+  display: inline-block !important;
+}
+
+/* 6. Ecosystem Hub-and-Spoke Architecture */
+.orbit-center-hub {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+}
+
+.orbit-hub-core {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3), inset 0 0 15px rgba(139, 92, 246, 0.15) !important;
+  border-radius: 12px !important;
+  padding: 10px 18px !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.orbit-hub-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #A78BFA !important;
+  margin-top: 4px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.hub-live-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 9999px !important;
+  background: #10B981 !important;
+  box-shadow: 0 0 8px #10B981 !important;
+}
+
+.orbit-hub-sub {
+  font-size: 11px !important;
+  color: #94A3B8 !important;
+  font-weight: 500 !important;
+}
+
+.orbit-spoke {
+  stroke: rgba(139, 92, 246, 0.35) !important;
+  stroke-width: 1.5 !important;
+  stroke-dasharray: 4 4 !important;
+  animation: spokePulse 4s linear infinite !important;
+}
+
+@keyframes spokePulse {
+  to { stroke-dashoffset: -32; }
+}
+
+/* 3. Hero Section Preview Card & Dedicated Auth Modal */
+.hero-preview-card {
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(139, 92, 246, 0.12) !important;
+  backdrop-filter: blur(20px) !important;
+  overflow: hidden !important;
+}
+
+.preview-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.preview-window-dots {
+  display: flex !important;
+  gap: 6px !important;
+}
+
+.preview-dot {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 9999px !important;
+}
+.preview-dot.red { background: #EF4444 !important; }
+.preview-dot.yellow { background: #F59E0B !important; }
+.preview-dot.green { background: #10B981 !important; }
+
+.preview-status-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #34D399 !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+}
+
+.preview-card-body {
+  padding: 20px 22px !important;
+}
+
+.preview-metric-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  margin-bottom: 16px !important;
+}
+
+.preview-networth-num {
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+  letter-spacing: -0.02em !important;
+}
+
+.preview-gain-pill {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #34D399 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+  padding: 3px 10px !important;
+  border-radius: 9999px !important;
+}
+
+.preview-holdings-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 20px !important;
+}
+
+.preview-holding-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 8px 12px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+.preview-card-footer-cta {
+  padding: 16px 20px !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-top: 1px solid rgba(139, 92, 246, 0.2) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+/* Auth Modal Backdrop & Container */
+.auth-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease !important;
+}
+
+.auth-modal-backdrop.open {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.auth-modal-card {
+  width: 100% !important;
+  max-width: 440px !important;
+  position: relative !important;
+  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.95) translateY(10px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.auth-modal-close-btn {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #94A3B8 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 20 !important;
+  transition: all 0.2s ease !important;
+}
+
+.auth-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #FFFFFF !important;
+}
+
+/* Eliminate 20px and 4px micro-radii */
+.hero-live-badge,
+.auth-brand-pill,
+.live-dot-pulse {
+  border-radius: 9999px !important;
+}
+.inner-content,
+.auth-card,
+.border-gradient-bottom,
+.border-gradient-top {
+  border-radius: 12px !important;
+}
+.preview-holding-item span,
+.orbit-node svg {
   border-radius: 8px !important;
 }
