@@ -1418,7 +1418,7 @@
           <div class="alert-stock-info">
             <div style="display:flex; align-items:center; gap:6px;">
               <span class="alert-stock-sym" id="alertStockSymbol">RELIANCE</span>
-              <span style="font-size: 12px; color: #94A3B8; background:rgba(255,255,255,0.06); padding:1px 6px; border-radius: 8px;" id="alertStockExchange">NSE</span>
+              <span class="exchange-tag" id="alertStockExchange">NSE</span>
             </div>
             <div class="alert-stock-sub" id="alertStockName">Reliance Industries Ltd</div>
           </div>
@@ -1429,9 +1429,9 @@
         </div>
 
         <!-- Stock Switcher Dropdown (if user wants to pick another holding) -->
-        <div style="margin-bottom: 16px;">
-          <label style="font-size: 12px; color: #94A3B8; display: block; margin-bottom: 5px;">Select Stock</label>
-          <select id="alertStockSelect" style="width: 100%; background: #161B22; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: #FFFFFF; font-size: 13px; outline: none; cursor: pointer;">
+        <div>
+          <label>Select Stock</label>
+          <select id="alertStockSelect">
             <!-- Populated dynamically -->
           </select>
         </div>

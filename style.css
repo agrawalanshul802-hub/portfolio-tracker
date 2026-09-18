@@ -10245,3 +10245,373 @@ td:last-child {
   font-size: 12px !important;
   line-height: 34px !important;
 }
+
+/* ==========================================================================
+   ALERT MODAL – Complete redesign of missing class styles
+   Classes used in HTML but never defined in CSS until now:
+   .alert-body, .alert-stock-banner, .alert-stock-info, .alert-stock-sym,
+   .alert-stock-sub, .alert-cmp-wrap, .alert-cmp-val, .alert-cmp-sub,
+   .alert-row, .alert-row-label, .alert-target-input-wrap, .alert-target-prefix,
+   .alert-quick-chips, .alert-chip, .alert-cond-hint,
+   .alert-notify-pills, .alert-pill, .alert-btn-submit, .alerts-list-wrap
+   ========================================================================== */
+
+/* --- Modal body padding --- */
+.alert-body {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* --- Stock banner (top info card) --- */
+.alert-stock-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.alert-stock-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alert-stock-sym {
+  font-size: 16px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+}
+
+.alert-stock-sub {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.alert-cmp-wrap {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.alert-cmp-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFFFFF;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.alert-cmp-sub {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  color: #64748B;
+}
+
+.alert-cmp-sub.pos { color: #10B981; }
+.alert-cmp-sub.neg { color: #EF4444; }
+
+/* --- Stock selector dropdown --- */
+#alertStockSelect {
+  width: 100%;
+  background: #0F1318;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
+}
+
+#alertStockSelect:focus {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+/* --- Generic form row (label + control inline) --- */
+.alert-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alert-row-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* --- Target price input --- */
+.alert-target-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #0F1318;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.alert-target-input-wrap:focus-within {
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.alert-target-prefix {
+  position: absolute;
+  left: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #475569;
+  pointer-events: none;
+  user-select: none;
+}
+
+.alert-target-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 13px 14px 13px 30px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFFFFF;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.alert-target-input::placeholder { color: #334155; }
+
+/* --- Quick % chips row --- */
+.alert-quick-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.alert-chip {
+  flex: 1;
+  padding: 6px 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94A3B8;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.alert-chip:hover {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.alert-chip[data-alert-pct^="-"]:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* --- Condition hint / trigger preview --- */
+.alert-cond-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+  color: #94A3B8;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.alert-cond-hint span:first-child {
+  flex-shrink: 0;
+  font-size: 14px;
+  margin-top: 1px;
+}
+
+/* --- Notify me pills --- */
+.alert-notify-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.alert-pill {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94A3B8;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.alert-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+.alert-pill.active-every,
+.alert-pill.active {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10B981;
+  font-weight: 700;
+}
+
+/* --- Submit button --- */
+.alert-btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #10B981;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 800;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 20px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  font-family: inherit;
+  margin-top: 2px;
+}
+
+.alert-btn-submit:hover {
+  background: #059669;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+}
+
+.alert-btn-submit:active { transform: translateY(0); }
+
+/* --- Active alerts list --- */
+.alerts-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- Divider in form (optional) --- */
+.alert-form-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  margin: 0;
+}
+
+/* --- Stock select label above dropdown --- */
+.alert-body label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+
+/* --- Alert list card inner elements (from renderActiveAlerts template) --- */
+.alert-item-sym {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 3px;
+}
+
+.alert-item-cond {
+  font-size: 12.5px;
+  color: #94A3B8;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.alert-item-meta {
+  font-size: 11.5px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.alert-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  letter-spacing: 0.03em;
+}
+
+.alert-status-badge.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.alert-status-badge.triggered {
+  background: rgba(245, 158, 11, 0.12);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Exchange tag inside alerts */
+.alert-stock-banner .exchange-tag,
+.alert-item-sym .exchange-tag {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #94A3B8;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Scroll if many alerts */
+.alerts-list-wrap {
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
