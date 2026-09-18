@@ -159,7 +159,7 @@ def index():
 @app.after_request
 def add_no_cache_headers(response):
     ct = response.headers.get('Content-Type', '')
-    if 'text/html' in ct or 'application/json' in ct:
+    if 'text/html' in ct or 'application/json' in ct or 'javascript' in ct or 'text/css' in ct:
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
