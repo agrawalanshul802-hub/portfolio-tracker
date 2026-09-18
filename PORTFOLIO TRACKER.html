@@ -17,273 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <link rel="stylesheet" href="style.css?v=3.2">
 
-  <!-- Price Alert Styles (Groww / Zerodha Dark Theme) -->
-  <style id="alertModalCustomStyles">
-    .alert-modal-overlay {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 10000; padding: 20px;
-    }
-    .alert-modal-overlay.open { display: flex; }
-    .alert-modal-card {
-      background: #12161A; border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px; width: 100%; max-width: 440px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 208, 156, 0.08);
-      overflow: hidden; animation: alertSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes alertSlideUp {
-      from { opacity: 0; transform: translateY(24px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .alert-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 22px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .alert-header-left {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .alert-back-btn {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #FFFFFF; width: 34px; height: 34px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s ease;
-    }
-    .alert-back-btn:hover { background: rgba(255, 255, 255, 0.14); transform: scale(1.05); }
-    .alert-title {
-      font-size: 18px; font-weight: 700; color: #FFFFFF; margin: 0;
-      letter-spacing: -0.2px;
-    }
-    .alert-tabs-nav {
-      display: flex; background: rgba(255, 255, 255, 0.05);
-      padding: 4px; border-radius: 12px; margin: 16px 22px 0; gap: 4px;
-    }
-    .alert-tab-btn {
-      flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 600;
-      background: transparent; border: none; color: #94A3B8;
-      border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
-      text-align: center;
-    }
-    .alert-tab-btn.active {
-      background: #1E242B; color: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    .alert-body { padding: 18px 22px 24px; }
-    .alert-stock-banner {
-      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px; padding: 12px 14px; margin-bottom: 20px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .alert-stock-info { display: flex; flex-direction: column; gap: 2px; }
-    .alert-stock-sym { font-size: 14px; font-weight: 700; color: #FFFFFF; }
-    .alert-stock-sub { font-size: 12px; color: #94A3B8; }
-    .alert-cmp-wrap { text-align: right; }
-    .alert-cmp-val { font-size: 14px; font-weight: 700; color: #10B981; }
-    .alert-cmp-sub { font-size: 12px; color: #94A3B8; }
-    .alert-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 18px;
-    }
-    .alert-row-label { font-size: 14px; color: #94A3B8; font-weight: 500; }
-    .alert-target-input-wrap {
-      display: flex; align-items: center; background: #0D221C;
-      border: 1.5px solid #00D09C; border-radius: 12px;
-      padding: 2px 10px; width: 150px;
-      box-shadow: 0 0 14px rgba(0, 208, 156, 0.15);
-    }
-    .alert-target-prefix { color: #10B981; font-weight: 700; font-size: 14px; margin-right: 4px; }
-    .alert-target-input {
-      background: transparent; border: none; color: #10B981;
-      font-size: 16px; font-weight: 700; width: 100%;
-      text-align: right; outline: none; font-family: inherit;
-    }
-    .alert-quick-chips {
-      display: flex; justify-content: flex-end; gap: 6px; margin-top: -8px; margin-bottom: 18px;
-    }
-    .alert-chip {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #94A3B8; font-size: 12px; font-weight: 600; padding: 3px 8px;
-      border-radius: 12px; cursor: pointer; transition: all 0.15s ease;
-    }
-    .alert-chip:hover { color: #10B981; border-color: #00D09C; background: rgba(0, 208, 156, 0.1); }
-    .alert-cond-hint {
-      background: rgba(0, 208, 156, 0.08); border: 1px solid rgba(0, 208, 156, 0.2);
-      border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #10B981;
-      margin-bottom: 20px; display: flex; align-items: center; gap: 6px;
-    }
-    .alert-notify-pills { display: flex; gap: 8px; }
-    .alert-pill {
-      border-radius: 20px; padding: 7px 18px; font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s ease; background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2); color: #94A3B8;
-    }
-    .alert-pill.active-every {
-      border-color: #FFFFFF; color: #FFFFFF; background: rgba(255, 255, 255, 0.1);
-    }
-    .alert-pill.active-once {
-      border-color: #00D09C; color: #10B981; background: rgba(0, 208, 156, 0.12);
-    }
-    .alert-btn-submit {
-      width: 100%; height: 48px; background: #181D23; border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px; color: #FFFFFF; font-size: 14px; font-weight: 700;
-      letter-spacing: 0.8px; cursor: pointer; transition: all 0.25s ease;
-      margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .alert-btn-submit:hover {
-      background: #00D09C; color: #000000; border-color: #00D09C;
-      box-shadow: 0 0 24px rgba(0, 208, 156, 0.4); transform: translateY(-1px);
-    }
-    /* Active Alerts List */
-    .alerts-list-wrap { max-height: 290px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .alert-item-card {
-      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px; padding: 12px 14px; display: flex;
-      align-items: center; justify-content: space-between;
-      transition: all 0.2s ease;
-    }
-    .alert-item-card:hover { border-color: rgba(0, 208, 156, 0.3); background: rgba(255, 255, 255, 0.05); }
-    .alert-item-left { display: flex; flex-direction: column; gap: 2px; }
-    .alert-item-sym { font-weight: 700; font-size: 14px; color: #FFFFFF; display: flex; align-items: center; gap: 6px; }
-    .alert-item-cond { font-size: 12px; color: #10B981; font-weight: 600; }
-    .alert-item-meta { font-size: 12px; color: #94A3B8; }
-    .alert-item-right { display: flex; align-items: center; gap: 8px; }
-    .alert-status-badge {
-      font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 12px;
-    }
-    .alert-status-badge.active { background: rgba(0, 208, 156, 0.15); color: #10B981; border: 1px solid rgba(0, 208, 156, 0.3); }
-    .alert-status-badge.triggered { background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .alert-del-btn {
-      background: transparent; border: none; color: #94A3B8; cursor: pointer;
-      padding: 4px; border-radius: 8px; font-size: 14px; transition: all 0.15s;
-    }
-    .alert-del-btn:hover { color: #EF4444; background: rgba(239, 68, 68, 0.1); }
-    /* Topbar Alert Button */
-    .topbar-alert-btn {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px; padding: 8px 14px; color: #94A3B8; font-size: 13px; font-weight: 600;
-      display: flex; align-items: center; gap: 7px; cursor: pointer; transition: all 0.2s ease;
-      position: relative;
-    }
-    .topbar-alert-btn:hover {
-      background: rgba(0, 208, 156, 0.12); border-color: #00D09C; color: #10B981;
-    }
-    .alert-badge-count {
-      background: #00D09C; color: #000000; font-size: 12px; font-weight: 800;
-      border-radius: 12px; padding: 1px 6px; min-width: 18px; text-align: center;
-    }
-    /* Table Alert Button */
-    .link-btn.alert-link { color: #10B981; }
-    .link-btn.alert-link:hover { color: #10B981; background: rgba(0, 208, 156, 0.12); }
-    .m-card-bottom button.m-alert-btn { color: #10B981; border-color: rgba(0, 208, 156, 0.3); }
-    .m-card-bottom button.m-alert-btn:hover { background: rgba(0, 208, 156, 0.15); }
-    /* Triggered Floating Notification Banner */
-    .price-alert-banner {
-      position: fixed; top: 20px; right: 20px; z-index: 100000;
-      background: linear-gradient(135deg, #064E3B, #065F46);
-      border: 1.5px solid #00D09C; border-radius: 12px;
-      padding: 14px 18px; color: #FFFFFF; box-shadow: 0 12px 36px rgba(0,0,0,0.6), 0 0 30px rgba(0,208,156,0.3);
-      display: flex; align-items: center; gap: 12px; max-width: 380px;
-      animation: alertBannerSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes alertBannerSlide {
-      from { opacity: 0; transform: translateX(50px) scale(0.9); }
-      to { opacity: 1; transform: translateX(0) scale(1); }
-    }
-      /* Dedicated Section Switcher & MCX Styles */
-    .sec-tabs-wrapper {
-      display: inline-flex;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 4px;
-      gap: 4px;
-    }
-    .sec-tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-    .sec-tab-btn:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .sec-tab-btn.active {
-      background: var(--accent);
-      color: #FFFFFF;
-      font-weight: 700;
-      box-shadow: 0 2px 10px rgba(139, 92, 246, 0.35);
-    }
-    .sec-tab-btn.active#secBtnMcx {
-      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
-      color: #FFFFFF !important;
-      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4) !important;
-    }
-    .sec-tab-btn.active#secBtnStocks {
-      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
-      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4) !important;
-    }
-    .sec-pill-count {
-      font-size: 12px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.16);
-      color: currentColor;
-    }
-    .mcx-quick-btn {
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #F59E0B;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .mcx-quick-btn:hover {
-      background: rgba(245, 158, 11, 0.25);
-      border-color: #F59E0B;
-      transform: translateY(-1px);
-    }
-    .exchange-badge-tag {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 7px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      vertical-align: middle;
-      line-height: 1.2;
-    }
-    .exchange-badge-tag.mcx {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #F59E0B;
-    }
-    .exchange-badge-tag.nse {
-      background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #A78BFA;
-    }
-    .exchange-badge-tag.bse {
-      background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.4);
-      color: #A78BFA;
-    }
-</style>
-
 </head>
 
 <body>
@@ -456,7 +189,6 @@
                     </svg>
                     <span>Continue with Google</span>
                   </button>
-
 
                 </form>
 
@@ -750,8 +482,6 @@
         </div>
       </section>
 
-
-
       <!-- Services List Section -->
       <section class="landing-services" id="services-section">
         <div class="section-title text-center">
@@ -960,14 +690,7 @@
         </div>
       </header>
 
-      <!-- hidden but still present so existing JS wiring (ids) keeps working -->
-      <div style="display:none !important;" aria-hidden="true">
-        <button class="btn btn-primary" id="addHoldingBtn" style="display:none !important;">+ Add holding</button>
-        <button class="btn btn-outline" id="refreshBtn" style="display:none !important;">Refresh</button>
-        <button class="btn btn-outline" id="signOutBtn" style="display:none !important;">Sign out</button>
-      </div>
-
-      <!-- View 1: Portfolio (Default) -->
+<!-- View 1: Portfolio (Default) -->
       <div id="viewPortfolio" class="dashboard-view-content active">
         <!-- Stripe-like stats block featuring Total Net Worth -->
         <div class="stats-row">
@@ -1066,9 +789,7 @@
             <span class="holdings-count" id="holdingsCount">0 holdings</span>
           </div>
           <div id="tableWrap"></div>
-          <div class="footer-bar" id="footerBar" style="display:none;"></div>
-        </div>
-
+</div>
 
       </div><!-- end of viewPortfolio -->
 
@@ -1924,6 +1645,119 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- =========================================================
+       IPO DETAILS MODAL (IPOJi & Groww Comprehensive Breakdown)
+       ========================================================= -->
+  <div id="ipoDetailModal" class="ipo-modal-overlay" onclick="closeIpoDetailModal(event)">
+    <div class="ipo-modal-dialog" onclick="event.stopPropagation()">
+      <!-- Header -->
+      <div class="ipo-modal-header">
+        <div class="ipo-modal-brand">
+          <div id="ipoModalLogo" class="ipo-modal-logo">I</div>
+          <div class="ipo-modal-title-wrap">
+            <h3 id="ipoModalTitle">Company Name</h3>
+            <div class="ipo-modal-tags">
+              <span id="ipoModalType" class="ipo-type-pill">Mainboard</span>
+              <span id="ipoModalSector">General</span>
+              <span>•</span>
+              <span id="ipoModalGmpBadge" class="gmp-pill positive">+₹0 (0.0%)</span>
+            </div>
+          </div>
+        </div>
+        <button class="ipo-modal-close-btn" onclick="closeIpoDetailModal()">✕</button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="ipo-modal-tabs">
+        <button class="ipo-modal-tab-btn active" onclick="switchModalTab('sub')">📊 Subscription &amp; Quotas</button>
+        <button class="ipo-modal-tab-btn" onclick="switchModalTab('essentials')">📑 Issue Specs &amp; Dates</button>
+        <button class="ipo-modal-tab-btn" onclick="switchModalTab('company')">🏢 Company &amp; Financials</button>
+      </div>
+
+      <!-- Body Content -->
+      <div class="ipo-modal-body" id="ipoModalBody">
+        <!-- Loading State -->
+        <div id="ipoModalLoading" class="ipo-loading-state" style="padding: 40px 0;">
+          <div class="ipo-spinner"></div>
+          <p>Fetching full category quotas, subscription rates &amp; financial history...</p>
+        </div>
+
+        <!-- Panel 1: Subscription & Category Distribution (IPOJi Style) -->
+        <div id="ipoPanelSub" class="ipo-tab-panel active">
+          <!-- Live Subscription Rates -->
+          <div class="sub-breakdown-card">
+            <div class="sub-card-title">
+              <span>Category-Wise Subscription (Live)</span>
+              <span id="ipoModalTotalSub" style="color: #A78BFA;font-size:14px;font-weight:800;">-</span>
+            </div>
+            <div id="ipoModalSubList" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+
+          <!-- Category Investor Quotas & Lot Breakdown -->
+          <div class="sub-breakdown-card">
+            <div class="sub-card-title">Investor Quota &amp; Application Limits</div>
+            <div style="overflow-x:auto;">
+              <table class="category-quota-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Lot Size</th>
+                    <th>Min Shares</th>
+                    <th>Price Range</th>
+                    <th>Max Limit</th>
+                  </tr>
+                </thead>
+                <tbody id="ipoModalCategoryRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Issue Specs & Timeline -->
+        <div id="ipoPanelEssentials" class="ipo-tab-panel">
+          <div class="ipo-essentials-grid" id="ipoModalEssentialsGrid"></div>
+
+          <div class="sub-breakdown-card" style="margin-top:12px;">
+            <div class="sub-card-title">IPO Important Dates &amp; Timeline</div>
+            <div class="timeline-list" id="ipoModalTimeline"></div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Company, Financials, Pros & Cons -->
+        <div id="ipoPanelCompany" class="ipo-tab-panel">
+          <div class="sub-breakdown-card">
+            <div class="sub-card-title">About the Company</div>
+            <p id="ipoModalAbout" style="font-size: 13px;color: #94A3B8;line-height:1.6;margin:0;"></p>
+            <div id="ipoModalManagement" style="font-size: 12px;color:#94A3B8;margin-top:10px;"></div>
+          </div>
+
+          <!-- Financial Performance Table -->
+          <div class="sub-breakdown-card" id="ipoModalFinancialsCard">
+            <div class="sub-card-title">Financial Track Record (₹ in Crores)</div>
+            <div style="overflow-x:auto;">
+              <table class="category-quota-table" id="ipoModalFinancialsTable"></table>
+            </div>
+          </div>
+
+          <!-- Strengths and Risks -->
+          <div id="ipoModalProsCons"
+            style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;"></div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="ipo-modal-footer">
+        <div id="ipoModalRegistrarInfo" style="font-size:12px;color:#94A3B8;"></div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <a id="ipoModalDrhpBtn" href="#" target="_blank" rel="noopener" class="ipo-clean-btn secondary"
+            style="display:none;">View DRHP 📄</a>
+          <a id="ipoModalAllotBtn" href="#" target="_blank" rel="noopener" class="ipo-clean-btn">Check Allotment
+            &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       "use strict";
@@ -2647,16 +2481,17 @@
                 const list = filteredSorted();
         const wrap = document.getElementById('tableWrap');
         const footerBar = document.getElementById('footerBar');
-        document.getElementById('holdingsCount').textContent = state.holdings.length + ' holdings';
+        const holdingsCountEl = document.getElementById('holdingsCount');
+        if (holdingsCountEl) holdingsCountEl.textContent = state.holdings.length + ' holdings';
 
         if (!state.holdings.length) {
           wrap.innerHTML = `<div class="empty-state">No holdings yet. Tap <b>+ Add holding</b> to get started.</div>`;
-          footerBar.style.display = 'none';
+          if (footerBar) footerBar.style.display = 'none';
           return;
         }
         if (!list.length) {
           wrap.innerHTML = `<div class="empty-state">No holdings match this filter or search.</div>`;
-          footerBar.style.display = 'none';
+          if (footerBar) footerBar.style.display = 'none';
           return;
         }
         const totalBuy = list.reduce((s, h) => s + h.amount, 0);
@@ -2704,10 +2539,9 @@
           </table>
         </div>
 
-
         `;
 
-        footerBar.innerHTML = `
+        if (footerBar) footerBar.innerHTML = `
       <span>Total Buy: <b>${fmtINR(totalBuy)}</b></span>
       <span>Total Current: <b>${fmtINR(totalCurrent)}</b></span>
       <span>Unrealised: <span class="gain-text ${totalGain >= 0 ? 'pos' : 'neg'}">${totalGain >= 0 ? '+' : '-'}${fmtINR(Math.abs(totalGain))} (${fmtPct(totalGainPct)})</span></span>
@@ -2954,8 +2788,6 @@
 
         return html;
       }
-
-
 
       function renderCharts() {
         const list = allHoldings();
@@ -3579,7 +3411,6 @@
 
       window.fetchAndRenderNews = fetchAndRenderNews;
 
-
       window.sendAiSuggestion = function (text) {
         const input = document.getElementById('aiInput');
         if (input) {
@@ -3910,7 +3741,6 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
             sidebar.classList.toggle('open');
           };
 
-
           if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
           if (desktopBrand) desktopBrand.addEventListener('click', toggleSidebar);
 
@@ -3933,10 +3763,8 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
           });
         });
 
-        document.getElementById('addHoldingBtn').addEventListener('click', () => openModal('add'));
-
-
-
+        const addHoldingBtn = document.getElementById('addHoldingBtn');
+        if (addHoldingBtn) addHoldingBtn.addEventListener('click', () => openModal('add'));
 
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         modalForm.addEventListener('submit', saveModal);
@@ -4029,7 +3857,8 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
           renderTable();
         });
 
-        document.getElementById('refreshBtn').addEventListener('click', refreshPrices);
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) refreshBtn.addEventListener('click', refreshPrices);
 
         document.getElementById('tableWrap').addEventListener('click', e => {
           const chartBtn = e.target.closest('[data-chart]');
@@ -4355,7 +4184,6 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
         await enterDashboard(email);
       }
 
-
       function showAuthScreen() {
         if (typeof window._startDarkVeil === 'function') window._startDarkVeil();
         const auth = document.getElementById('authScreen');
@@ -4482,7 +4310,8 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
         document.getElementById('tabLogin').addEventListener('click', () => setAuthMode('login'));
         document.getElementById('tabSignup').addEventListener('click', () => setAuthMode('signup'));
         document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
-        document.getElementById('signOutBtn').addEventListener('click', signOut);
+        const signOutBtn = document.getElementById('signOutBtn');
+        if (signOutBtn) signOutBtn.addEventListener('click', signOut);
         const sidebarSignOutBtn = document.getElementById('sidebarSignOutBtn');
         if (sidebarSignOutBtn) sidebarSignOutBtn.addEventListener('click', signOut);
         const menuDrawerSignOutBtn = document.getElementById('menuDrawerSignOutBtn');
@@ -4607,9 +4436,6 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
           cachedCenters = [];
         });
       }
-
-
-
 
       /* ---------------- ScrollFloat Vanilla Component (React Bits port) ---------------- */
       function initScrollFloat(elementOrSelector, options = {}) {
@@ -4771,8 +4597,6 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
         }
       }
       window.startGoogleLogin = startGoogleLogin;
-
-
 
       /* ---------------- OrbitImages Vanilla Component (React Bits port) ---------------- */
       function initOrbitImages() {
@@ -5046,8 +4870,6 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
         }, { threshold: 0 });
         observer.observe(canvas);
       }
-
-
 
       
       /* ---------------- PRICE ALERT ENGINE (Groww / Zerodha Dark UI) ---------------- */
@@ -5611,7 +5433,6 @@ try {
         } catch (e) { console.warn('ScrollFloat init:', e); }
       }
 
-
       /* ── Scroll-Reveal for Landing Sections ── */
       function initScrollReveal() {
         const targets = document.querySelectorAll(
@@ -5645,8 +5466,6 @@ try {
           auth.style.display = window.innerWidth <= 768 ? 'block' : 'flex';
         }
       });
-
-
 
             // =========================================================
       //  IPOWIZ MULTI-PAN & 2-STEP ALLOTMENT TRACKER STATE & HANDLERS
@@ -6899,7 +6718,6 @@ try {
         }
       });
 
-
       // =========================================================
       //  MENU BAR & DRAWER NAVIGATION LOGIC
       // =========================================================
@@ -6932,7 +6750,6 @@ try {
           });
         });
       }
-
 
       // =========================================================
       //  PORTFOLIO EXPORT ENGINE (CSV & PDF PRINT GENERATOR)
@@ -7055,140 +6872,7 @@ try {
         window.print();
       };
 
-      init();
-    })();
-  </script>
-
-  <!-- =========================================================
-       IPO DETAILS MODAL (IPOJi & Groww Comprehensive Breakdown)
-       ========================================================= -->
-  <div id="ipoDetailModal" class="ipo-modal-overlay" onclick="closeIpoDetailModal(event)">
-    <div class="ipo-modal-dialog" onclick="event.stopPropagation()">
-      <!-- Header -->
-      <div class="ipo-modal-header">
-        <div class="ipo-modal-brand">
-          <div id="ipoModalLogo" class="ipo-modal-logo">I</div>
-          <div class="ipo-modal-title-wrap">
-            <h3 id="ipoModalTitle">Company Name</h3>
-            <div class="ipo-modal-tags">
-              <span id="ipoModalType" class="ipo-type-pill">Mainboard</span>
-              <span id="ipoModalSector">General</span>
-              <span>•</span>
-              <span id="ipoModalGmpBadge" class="gmp-pill positive">+₹0 (0.0%)</span>
-            </div>
-          </div>
-        </div>
-        <button class="ipo-modal-close-btn" onclick="closeIpoDetailModal()">✕</button>
-      </div>
-
-      <!-- Navigation Tabs -->
-      <div class="ipo-modal-tabs">
-        <button class="ipo-modal-tab-btn active" onclick="switchModalTab('sub')">📊 Subscription &amp; Quotas</button>
-        <button class="ipo-modal-tab-btn" onclick="switchModalTab('essentials')">📑 Issue Specs &amp; Dates</button>
-        <button class="ipo-modal-tab-btn" onclick="switchModalTab('company')">🏢 Company &amp; Financials</button>
-      </div>
-
-      <!-- Body Content -->
-      <div class="ipo-modal-body" id="ipoModalBody">
-        <!-- Loading State -->
-        <div id="ipoModalLoading" class="ipo-loading-state" style="padding: 40px 0;">
-          <div class="ipo-spinner"></div>
-          <p>Fetching full category quotas, subscription rates &amp; financial history...</p>
-        </div>
-
-        <!-- Panel 1: Subscription & Category Distribution (IPOJi Style) -->
-        <div id="ipoPanelSub" class="ipo-tab-panel active">
-          <!-- Live Subscription Rates -->
-          <div class="sub-breakdown-card">
-            <div class="sub-card-title">
-              <span>Category-Wise Subscription (Live)</span>
-              <span id="ipoModalTotalSub" style="color: #A78BFA;font-size:14px;font-weight:800;">-</span>
-            </div>
-            <div id="ipoModalSubList" style="display:flex;flex-direction:column;gap:12px;"></div>
-          </div>
-
-          <!-- Category Investor Quotas & Lot Breakdown -->
-          <div class="sub-breakdown-card">
-            <div class="sub-card-title">Investor Quota &amp; Application Limits</div>
-            <div style="overflow-x:auto;">
-              <table class="category-quota-table">
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th>Lot Size</th>
-                    <th>Min Shares</th>
-                    <th>Price Range</th>
-                    <th>Max Limit</th>
-                  </tr>
-                </thead>
-                <tbody id="ipoModalCategoryRows"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 2: Issue Specs & Timeline -->
-        <div id="ipoPanelEssentials" class="ipo-tab-panel">
-          <div class="ipo-essentials-grid" id="ipoModalEssentialsGrid"></div>
-
-          <div class="sub-breakdown-card" style="margin-top:12px;">
-            <div class="sub-card-title">IPO Important Dates &amp; Timeline</div>
-            <div class="timeline-list" id="ipoModalTimeline"></div>
-          </div>
-        </div>
-
-        <!-- Panel 3: Company, Financials, Pros & Cons -->
-        <div id="ipoPanelCompany" class="ipo-tab-panel">
-          <div class="sub-breakdown-card">
-            <div class="sub-card-title">About the Company</div>
-            <p id="ipoModalAbout" style="font-size: 13px;color: #94A3B8;line-height:1.6;margin:0;"></p>
-            <div id="ipoModalManagement" style="font-size: 12px;color:#94A3B8;margin-top:10px;"></div>
-          </div>
-
-          <!-- Financial Performance Table -->
-          <div class="sub-breakdown-card" id="ipoModalFinancialsCard">
-            <div class="sub-card-title">Financial Track Record (₹ in Crores)</div>
-            <div style="overflow-x:auto;">
-              <table class="category-quota-table" id="ipoModalFinancialsTable"></table>
-            </div>
-          </div>
-
-          <!-- Strengths and Risks -->
-          <div id="ipoModalProsCons"
-            style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;"></div>
-        </div>
-      </div>
-
-      <!-- Footer Actions -->
-      <div class="ipo-modal-footer">
-        <div id="ipoModalRegistrarInfo" style="font-size:12px;color:#94A3B8;"></div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <a id="ipoModalDrhpBtn" href="#" target="_blank" rel="noopener" class="ipo-clean-btn secondary"
-            style="display:none;">View DRHP 📄</a>
-          <a id="ipoModalAllotBtn" href="#" target="_blank" rel="noopener" class="ipo-clean-btn">Check Allotment
-            &rarr;</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<!-- CHART_DIRECT_TRADINGVIEW -->
-<style>
-.link-btn.chart-link {
-  color: var(--text-dim) !important;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.link-btn.chart-link:hover,
-.link-btn.chart-link:focus-visible {
-  color: #A78BFA !important;
-  text-decoration: none;
-}
-</style>
-
-<script>
+  // Direct TradingView web URL generator & chart opener
   function buildTvWebUrl(symbol, exchange) {
     var ex = (exchange || 'NSE').toUpperCase().trim();
     var sym = (symbol || '').toUpperCase().trim();
@@ -7221,7 +6905,10 @@ try {
   }
   window.openChartModal = openChartModal;
   window.closeChartModal = function() {};
-</script>
+
+      init();
+    })();
+  </script>
+
 </body>
 </html>
-

@@ -1285,95 +1285,6 @@ tbody tr:hover {
   padding-top: 20px;
 }
 
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #8B5CF6;
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.user-email {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.user-role {
-  font-size: 12px;
-  color: #A78BFA;
-  font-weight: 500;
-}
-
-.sidebar-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.action-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text-dim);
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.action-link:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.signOutBtn {
-  justify-content: flex-start;
-  width: 100%;
-  border-color: rgba(239, 68, 68, 0.2);
-  color: #EF4444;
-  padding: 10px 14px;
-  font-size: 13px;
-  border-radius: 8px;
-  background: transparent;
-  font-family: inherit;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  transition: all 0.15s ease;
-}
-
-.signOutBtn:hover {
-  background: rgba(239, 68, 68, 0.08) !important;
-  border-color: rgba(239, 68, 68, 0.4) !important;
-}
-
 /* Main Content Area */
 .main-content {
   flex: 1;
@@ -2088,74 +1999,6 @@ tbody tr:hover {
 .section-title.text-center p {
   font-size: 14px;
   color: var(--text-dim);
-}
-
-/* ---------------- LogoLoop Vanilla Component Styling ---------------- */
-.logoloop {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  user-select: none;
-  --logoloop-gap: 40px;
-  --logoloop-logoHeight: 32px;
-  padding: 16px 0;
-}
-
-.logoloop__track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-}
-
-.logoloop__list {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.logoloop__item {
-  flex: 0 0 auto;
-  margin-right: var(--logoloop-gap);
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-dim);
-  font-weight: 600;
-  font-size: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 8px 18px;
-  border-radius: 9999px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.logoloop--scale-hover .logoloop__item:hover {
-  transform: scale(1.05);
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(139, 92, 246, 0.1);
-  color: #FFFFFF;
-}
-
-.logoloop__item img,
-.logoloop__item svg {
-  height: var(--logoloop-logoHeight);
-  width: auto;
-  object-fit: contain;
-  pointer-events: none;
-  transition: transform 0.3s ease;
-}
-
-.logoloop--fade::before,
-.logoloop--fade::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(24px, 12%, 120px);
-  pointer-events: none;
-  z-index: 2;
 }
 
 .logoloop--fade::before {
@@ -3310,100 +3153,6 @@ h1.top-bar-title,
   }
 }
 
-/* ==========================================================================
-   HTML/CSS PHONE MOCKUP FOR LANDING PAGE
-   ========================================================================== */
-.phone-mockup-frame {
-  width: 250px;
-  height: 460px;
-  background: #11111b;
-  border: 8px solid #2d2d3a;
-  border-radius: 20px;
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 0 20px rgba(139, 92, 246, 0.15);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-}
-
-.phone-notch {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 14px;
-  background: #2d2d3a;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  z-index: 100;
-}
-
-.phone-screen {
-  flex: 1;
-  background: #08070e;
-  padding: 20px 12px 12px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.phone-app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.phone-user {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.phone-avatar {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.phone-val-card {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(20, 16, 40, 0.6) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.25);
-  border-radius: 12px;
-  padding: 10px 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.phone-holding-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  padding: 6px 8px;
-}
-
-.phone-holding-badge {
-  font-size: 12px;
-  font-weight: 800;
-  padding: 2px 5px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-}
-
 /* Keep floating action dock visible on mobile touchscreens */
 @media (max-width: 768px) {
   .dock-outer {
@@ -3545,7 +3294,6 @@ h1.top-bar-title,
   animation: orbit-loop 35s linear infinite;
 }
 
-
 .orbit-node:hover {
   background: rgba(26, 26, 46, 0.95);
   border-color: rgba(139, 92, 246, 0.55);
@@ -3585,257 +3333,6 @@ h1.top-bar-title,
   }
 }
 
-/* ==========================================================================
-   STAGGERED MENU COMPONENT
-   ========================================================================== */
-.staggered-menu-wrapper {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.sm-prelayers {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: clamp(320px, 32vw, 460px);
-  pointer-events: none;
-  z-index: 50;
-  opacity: 0;
-}
-
-.sm-prelayer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  transform: translateX(0);
-}
-
-.staggered-menu-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: clamp(320px, 32vw, 460px);
-  height: 100%;
-  background: rgba(8, 8, 10, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  display: flex;
-  flex-direction: column;
-  padding: 100px 48px 48px;
-  overflow-y: auto;
-  z-index: 100;
-  pointer-events: auto;
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.6);
-}
-
-.sm-panel-inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.sm-panel-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  counter-reset: smItem;
-}
-
-.sm-panel-itemWrap {
-  position: relative;
-  overflow: hidden;
-  line-height: 1;
-}
-
-.sm-panel-item {
-  position: relative;
-  color: var(--text-dim);
-  font-weight: 700;
-  font-size: 32px;
-  cursor: pointer;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  display: inline-block;
-  text-decoration: none;
-  padding-right: 1.8em;
-  transition: color 0.25s ease;
-}
-
-.sm-panel-item.active {
-  color: #FFFFFF !important;
-}
-
-.sm-panel-item:hover {
-  color: var(--accent);
-}
-
-.sm-panel-itemLabel {
-  display: inline-block;
-  will-change: transform;
-  transform-origin: 50% 100%;
-}
-
-.sm-panel-list[data-numbering] .sm-panel-item::after {
-  counter-increment: smItem;
-  content: counter(smItem, decimal-leading-zero);
-  position: absolute;
-  top: 0.15em;
-  right: 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0;
-  pointer-events: none;
-  user-select: none;
-  opacity: var(--sm-num-opacity, 0);
-  transition: opacity 0.3s ease;
-}
-
-.sm-socials {
-  margin-top: auto;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.sm-socials-title {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.sm-socials-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.sm-socials-link {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-dim);
-  text-decoration: none;
-  cursor: pointer;
-  display: inline-block;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.sm-socials-link:hover {
-  color: #FFFFFF;
-  transform: translateX(4px);
-}
-
-/* Toggle Menu Buttons */
-.sm-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--text-dim);
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 1;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.02);
-  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
-}
-
-.sm-toggle:hover {
-  color: #FFFFFF;
-  border-color: rgba(139, 92, 246, 0.3);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.sm-toggle-textWrap {
-  position: relative;
-  display: inline-block;
-  height: 14px;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 36px;
-}
-
-.sm-toggle-textInner {
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.sm-toggle-line {
-  display: block;
-  height: 14px;
-  line-height: 14px;
-}
-
-.sm-icon {
-  position: relative;
-  width: 12px;
-  height: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sm-icon-line {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 100%;
-  height: 2px;
-  background: currentColor;
-  border-radius: 4px;
-  transform: translate(-50%, -50%);
-}
-
-.sm-icon-line-v {
-  transform: translate(-50%, -50%) rotate(90deg);
-}
-
-@media (max-width: 768px) {
-
-  .sm-prelayers,
-  .staggered-menu-panel {
-    width: 100vw;
-  }
-
-  .staggered-menu-panel {
-    padding: 100px 32px 32px;
-  }
-
-  .sm-panel-item {
-    font-size: 24px;
-  }
-}
-
 /* Desktop Brand trigger styles */
 .desktop-brand-trigger:hover {
   background-color: rgba(255, 255, 255, 0.05) !important;
@@ -3868,50 +3365,6 @@ h1.top-bar-title,
 
 }
 
-/* Demo Tour Styles */
-.demo-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(90deg, #8B5CF6 0%, #10B981 100%);
-  color: #FFFFFF;
-  text-align: center;
-  padding: 10px;
-  font-weight: 700;
-  font-size: 13px;
-  z-index: 10000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  letter-spacing: 0.02em;
-}
-
-.demo-banner button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #FFFFFF;
-  padding: 4px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.demo-banner button:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.demo-highlight {
-  outline: 3px solid var(--green) !important;
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5) !important;
-  transform: scale(1.02);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* ========================
    Motion One Animation Support
    ======================== */
@@ -3940,9 +3393,6 @@ h1.top-bar-title,
 .app-layout {
   overflow-x: hidden;
 }
-
-
-
 
 /* ==================================================================
    CLEAN & SLEEK MINIMALIST IPO TRACKER
@@ -4246,7 +3696,6 @@ h1.top-bar-title,
   }
 }
 
-
 /* Section Visibility Toggle */
 .ipo-section {
   display: none !important;
@@ -4255,7 +3704,6 @@ h1.top-bar-title,
 .ipo-section.active {
   display: block !important;
 }
-
 
 /* Master Mobile Responsiveness Patch */
 
@@ -4555,8 +4003,6 @@ h1.top-bar-title,
   }
 }
 
-
-
 /* ==================================================================
    RESPONSIVE HOLDINGS: DESKTOP TABLE & SLEEK MOBILE CARDS
    ================================================================== */
@@ -4602,8 +4048,6 @@ h1.top-bar-title,
   border-radius: 8px;
   white-space: nowrap;
 }
-
-
 
 /* ==================================================================
    IPO DETAILS MODAL (IPOJi & Groww Style Comprehensive View)
@@ -4952,8 +4396,6 @@ h1.top-bar-title,
   }
 }
 
-
-
 /* ---------------- Auth vs Dashboard Screen Isolation ---------------- */
 /* When Dashboard is hidden, strictly hide its fixed children (Sidebar, Dock) */
 #dashboardScreen[style*="display: none"] .sidebar,
@@ -4970,16 +4412,11 @@ h1.top-bar-title,
 /* ---------------- Desktop Layout (> 900px) ---------------- */
 @media (min-width: 901px) {
 
-
-
-
   .desktop-brand-trigger {
     display: none !important;
   }
 
 }
-
-
 
 /* ==================================================================
    MENU BAR TOGGLE & MODERN NAVIGATION DRAWER
@@ -5111,8 +4548,6 @@ h1.top-bar-title,
   }
 }
 
-
-
 /* ==================================================================
    MASTER FULLSCREEN DASHBOARD & DEEP BACKDROP BLUR
    ================================================================== */
@@ -5185,8 +4620,6 @@ h1.top-bar-title,
   }
 }
 
-
-
 /* Dashboard Top Bar Alignment */
 .dashboard-top-bar {
   display: flex;
@@ -5206,8 +4639,6 @@ h1.top-bar-title,
   align-self: flex-start;
   margin-left: 0 !important;
 }
-
-
 
 /* ==================================================================
    PERMANENT 3-TAB SEGMENTED CONTROLLER (NEVER SCROLLS OFF-SCREEN)
@@ -5268,8 +4699,6 @@ h1.top-bar-title,
     padding: 8px 4px !important;
   }
 }
-
-
 
 /* ==================================================================
    PRINT & PDF STATEMENT STYLES (Clean Light Theme for Official Printing)
@@ -5577,7 +5006,6 @@ h1.top-bar-title,
     font-size: 12px;
   }
 }
-
 
 /* -------------------------------------------------------------
    REPORTS & ACCOUNT MODALS (Premium Glassmorphism Design)
@@ -6728,7 +6156,6 @@ tbody tr:focus-within .row-actions .link-btn {
   transform: translateX(-50%) translateY(0) !important;
 }
 
-
 /* ==========================================================================
    COMPREHENSIVE MOBILE OPTIMIZATION & TOUCH-FRIENDLY FINTECH SUITE
    Supports screens 320px - 768px (iOS Safari, Android Chrome, Foldables)
@@ -7380,7 +6807,6 @@ html, body {
   }
 }
 
-
 /* ==========================================================================
    COMPREHENSIVE MOBILE UI FIX v2 – Login Page, Home Page & Animations
    ========================================================================== */
@@ -7721,66 +7147,6 @@ html {
   }
 }
 
-
-/* =============================================================
-   MOBILE UI OVERHAUL v2 - Complete Redesign
-   ============================================================= */
-
-/* Section tabs short labels on mobile */
-  #secBtnStocks > span:first-child {
-    font-size: 0 !important;
-    line-height: 0 !important;
-  }
-
-  #secBtnStocks > span:first-child::before {
-    content: '📈 Stocks';
-    font-size: 13px;
-    line-height: 1.3;
-  }
-
-  #secBtnMcx > span:first-child {
-    font-size: 0 !important;
-    line-height: 0 !important;
-  }
-
-  #secBtnMcx > span:first-child::before {
-    content: '🪙 MCX';
-    font-size: 13px;
-    line-height: 1.3;
-  }
-
-  /* Compact panel toolbar: search + sort on same row */
-  .panel-toolbar {
-    padding: 10px 12px 8px !important;
-    gap: 8px !important;
-  }
-
-  .toolbar-left {
-    gap: 8px !important;
-  }
-
-  /* Allow sort-select to sit inline next to search */
-  .sort-select {
-    width: auto !important;
-    max-width: 140px !important;
-    font-size: 14px !important;
-    height: 38px !important;
-    flex-shrink: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Filter pills row */
-  .filter-group {
-    gap: 6px !important;
-    padding-bottom: 2px !important;
-  }
-
-  /* Holdings count below toolbar */
-  .holdings-count {
-    font-size: 12px !important;
-    color: var(--text-dim) !important;
-  }
-}
 /* =============================================================
    CYBERPUNK & MODERN FINTECH GLASSMORPHIC AUTH OVERHAUL
    ============================================================= */
@@ -8286,7 +7652,6 @@ html {
   transform: scale(0.98);
 }
 
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
@@ -8377,7 +7742,6 @@ html {
     font-size: 12px;
   }
 }
-
 
 /* =========================================================
    IPO PAN CARD & ALLOTMENT TRACKER ENHANCEMENTS
@@ -8863,8 +8227,6 @@ html {
   }
 }
 
-
-
 /* Banner pill and info classes */
 .ipo-pan-info {
   display: flex;
@@ -8965,8 +8327,6 @@ html {
   color: #94A3B8;
   font-weight: 600;
 }
-
-
 
 /* =========================================================
    DIRECT ALLOTMENT INSPECTOR (IPOJI / IPOWIZ STYLE)
@@ -9132,7 +8492,6 @@ html {
   color: #F59E0B;
 }
 
-
 .almt-result-card.not-applied {
   border-color: rgba(148, 163, 184, 0.35);
   background: linear-gradient(145deg, rgba(148, 163, 184, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
@@ -9162,7 +8521,6 @@ html {
   border-color: #94A3B8;
   color: #FFFFFF;
 }
-
 
 /* =========================================================
    IPOWIZ MULTI-PAN MANAGER & 2-STEP ALLOTMENT MODAL STYLES
@@ -9507,8 +8865,6 @@ html {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-
-
 /* ==========================================================================
    GROWW & ANGEL ONE INSPIRED FINTECH MOBILE UI/UX OVERHAUL (v3.0)
    ========================================================================== */
@@ -9608,7 +8964,6 @@ html {
   align-items: center !important;
 }
 
-
 /* ==========================================================================
    HIGH PERFORMANCE / ZERO-LAG ACCELERATION OVERRIDES
    ========================================================================== */
@@ -9661,13 +9016,11 @@ tbody tr {
   transition: background-color 0.12s ease !important;
 }
 
-
 /* Usability Issue 6: Hide redundant summary badge when active tab already communicates state */
 #sectionSummaryBadge,
 .section-summary-badge {
   display: none !important;
 }
-
 
 /* Usability Issue 7: High-contrast holdings count (WCAG AAA contrast against dark background) */
 #holdingsCount,
@@ -9677,7 +9030,6 @@ tbody tr {
   font-weight: 500 !important;
   letter-spacing: 0.01em !important;
 }
-
 
 /* Usability Issue 8: Search input comfortable breathing room & padding */
 .search-box {
@@ -10263,7 +9615,6 @@ button, input, select, textarea {
   border-radius: 8px !important;
 }
 
-
 /* ==========================================================================
    ENHANCED PLATFORM SHOWCASE (Inside Look & Interactive Preview)
    ========================================================================== */
@@ -10688,4 +10039,160 @@ button, input, select, textarea {
   .showcase-title {
     font-size: 28px !important;
   }
+}
+/* ==========================================================================
+   PRICE ALERT MODAL STYLES (Groww / Zerodha Dark Theme)
+   ========================================================================== */
+.alert-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 10000; padding: 20px;
+}
+.alert-modal-overlay.open { display: flex; }
+.alert-modal-card {
+  background: #12161A; border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px; width: 100%; max-width: 440px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 208, 156, 0.08);
+  overflow: hidden; animation: alertSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes alertSlideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.alert-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.alert-header-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.alert-back-btn {
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #FFFFFF; width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.alert-back-btn:hover { background: rgba(255, 255, 255, 0.14); transform: scale(1.05); }
+.alert-title {
+  font-size: 18px; font-weight: 700; color: #FFFFFF; margin: 0;
+  letter-spacing: -0.2px;
+}
+.alert-tabs-nav {
+  display: flex; background: rgba(255, 255, 255, 0.05);
+  padding: 4px; border-radius: 12px; margin: 16px 22px 0; gap: 4px;
+}
+.alert-tab-btn {
+  flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 600;
+  color: #94A3B8; background: transparent; border: none;
+  border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.alert-tab-btn.active {
+  background: #10B981; color: #000000; font-weight: 700;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+.alert-body-content { padding: 18px 22px 22px; }
+.alert-view-panel { display: none; }
+.alert-view-panel.active { display: block; }
+.alert-stock-chip {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.alert-stock-name { font-size: 15px; font-weight: 700; color: #FFFFFF; }
+.alert-stock-cmp { font-size: 14px; font-weight: 600; color: #10B981; }
+.alert-field-group { margin-bottom: 16px; }
+.alert-field-label {
+  display: block; font-size: 12px; font-weight: 600; color: #94A3B8;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.alert-input-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.alert-currency-prefix {
+  position: absolute; left: 14px; color: #64748B; font-weight: 600; font-size: 15px;
+}
+.alert-target-input {
+  width: 100%; background: #0A0D0F; border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px; padding: 12px 14px 12px 28px; font-size: 17px;
+  font-weight: 700; color: #FFFFFF; box-sizing: border-box;
+  transition: all 0.2s ease; outline: none;
+}
+.alert-target-input:focus {
+  border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+}
+.alert-quick-offsets {
+  display: flex; gap: 8px; margin-top: 10px;
+}
+.alert-offset-chip {
+  flex: 1; padding: 6px 8px; background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px;
+  font-size: 11px; font-weight: 600; color: #94A3B8; cursor: pointer;
+  text-align: center; transition: all 0.15s ease;
+}
+.alert-offset-chip:hover {
+  background: rgba(255, 255, 255, 0.1); color: #FFFFFF; border-color: rgba(255, 255, 255, 0.2);
+}
+.alert-condition-select {
+  width: 100%; background: #0A0D0F; border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px; padding: 12px 14px; font-size: 14px;
+  font-weight: 600; color: #FFFFFF; box-sizing: border-box;
+  outline: none; transition: all 0.2s ease; cursor: pointer;
+}
+.alert-condition-select:focus {
+  border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+}
+.alert-note-input {
+  width: 100%; background: #0A0D0F; border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px; padding: 10px 14px; font-size: 13px;
+  color: #FFFFFF; box-sizing: border-box; outline: none; transition: all 0.2s ease;
+}
+.alert-note-input:focus {
+  border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+}
+.alert-action-btn-primary {
+  width: 100%; background: #10B981; color: #000000; font-size: 15px;
+  font-weight: 700; border: none; border-radius: 12px; padding: 13px;
+  cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  margin-top: 8px;
+}
+.alert-action-btn-primary:hover { background: #059669; transform: translateY(-1px); }
+.alert-action-btn-primary:active { transform: translateY(0); }
+.alert-item-card {
+  background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: all 0.2s ease;
+}
+.alert-item-card:hover { border-color: rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.05); }
+.alert-item-card.triggered { border-color: rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.05); }
+.alert-item-left { display: flex; flex-direction: column; gap: 4px; }
+.alert-item-symbol { font-size: 15px; font-weight: 700; color: #FFFFFF; display: flex; align-items: center; gap: 8px; }
+.alert-item-condition { font-size: 12px; color: #94A3B8; font-weight: 500; }
+.alert-item-target { font-size: 14px; font-weight: 700; color: #10B981; }
+.alert-item-right { display: flex; align-items: center; gap: 10px; }
+.alert-del-btn {
+  background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #EF4444; width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s ease; font-size: 14px;
+}
+.alert-del-btn:hover { background: rgba(239, 68, 68, 0.25); transform: scale(1.05); }
+.alert-empty-state {
+  text-align: center; padding: 32px 16px; color: #64748B; font-size: 13px;
+}
+
+/* TradingView Chart Direct Link */
+.link-btn.chart-link {
+  color: var(--text-dim) !important;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.link-btn.chart-link:hover,
+.link-btn.chart-link:focus-visible {
+  color: #A78BFA !important;
+  text-decoration: none;
 }
