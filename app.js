@@ -1658,7 +1658,6 @@
         selectedModel: { key: 'groq', name: 'Groq Llama 3.3', tag: 'Fast', desc: 'Ultra-low latency inference' },
         models: [
           { key: 'groq', name: 'Groq Llama 3.3', tag: 'Fast', desc: 'Ultra-low latency inference' },
-          { key: 'gemini', name: 'Gemini 2.0 Flash', tag: 'Smart', desc: 'Google multimodal intelligence' },
           { key: 'local', name: 'Local Engine', tag: 'Offline', desc: 'Rules-based offline analyzer' }
         ],
         effortLevels: ['Low', 'Medium', 'High', 'Extra', 'Max'],
