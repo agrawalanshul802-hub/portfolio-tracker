@@ -573,89 +573,149 @@
       </section>
 
       <!-- Inside Look / Feature Overview Section -->
-      <section class="landing-clarity" id="live-showcase-section" style="margin: 80px 0;">
-        <div class="clarity-left" style="display: flex; flex-direction: column; justify-content: center;">
-          <span class="clarity-badge" style="margin-bottom: 16px;">🔥 Inside Look</span>
-          <h2 style="margin-bottom: 12px;">Explore the Active Platform Features</h2>
-          <p style="margin-bottom: 24px; font-size: 14px;">Click on any feature below to preview the actual interface
-            you will get after logging in:</p>
+      <section class="landing-clarity" id="live-showcase-section">
+        <!-- Left Column: Header + Feature Cards Stack -->
+        <div class="showcase-left-col">
+          <div class="showcase-header">
+            <div class="showcase-badge">
+              <span class="showcase-badge-dot"></span>
+              <span>Interactive Live Preview</span>
+            </div>
+            <h2 class="showcase-title">
+              Explore the <span class="showcase-title-gradient">Active Platform</span> Features
+            </h2>
+            <p class="showcase-subtitle">
+              Click on any module below to preview the exact real-time interface and analytical workflows you receive inside your private session.
+            </p>
+          </div>
 
-          <div class="feature-tabs" style="display: flex; flex-direction: column; gap: 12px;">
-            <!-- Tab 1 -->
-            <div class="feature-tab-btn active" data-target="holdings"
-              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); transition: all 0.25s ease;"
-              onclick="switchShowcaseTab(this, 'holdings')">
-              <h3
-                style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                <span class="tab-dot"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block;"></span>
-                Holdings Dashboard
-              </h3>
-              <p style="font-size: 13px; color: var(--text-dim); margin: 0; line-height: 1.4;">Track stocks (NSE/BSE)
-                and custom assets with live price updates and automatic profit/loss computations.</p>
+          <div class="showcase-cards-list" role="tablist" aria-label="Platform Feature Previews">
+            <!-- Card 1: Holdings -->
+            <div class="showcase-feature-card feature-tab-btn active" data-target="holdings" role="tab" aria-selected="true" tabindex="0" onclick="switchShowcaseTab(this, 'holdings')">
+              <div class="showcase-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+              </div>
+              <div class="showcase-card-body">
+                <div class="showcase-card-header-row">
+                  <h3 class="showcase-card-title">Holdings Dashboard</h3>
+                  <span class="showcase-card-tag tag-violet">Live NSE/BSE</span>
+                </div>
+                <p class="showcase-card-desc">
+                  Track stocks, ETFs, mutual funds and custom assets with live price feeds and automatic profit/loss computations.
+                </p>
+              </div>
+              <div class="showcase-card-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
             </div>
-            <!-- Tab 2 -->
-            <div class="feature-tab-btn" data-target="analytics"
-              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
-              onclick="switchShowcaseTab(this, 'analytics')">
-              <h3
-                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                <span class="tab-dot"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
-                Interactive Chart Analytics
-              </h3>
-              <p
-                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
-                Visual asset allocation breakdowns and holding distributions powered by customizable Chart.js donut and
-                bar charts.</p>
+
+            <!-- Card 2: Analytics -->
+            <div class="showcase-feature-card feature-tab-btn" data-target="analytics" role="tab" aria-selected="false" tabindex="0" onclick="switchShowcaseTab(this, 'analytics')">
+              <div class="showcase-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <div class="showcase-card-body">
+                <div class="showcase-card-header-row">
+                  <h3 class="showcase-card-title">Interactive Chart Analytics</h3>
+                  <span class="showcase-card-tag tag-cyan">Visual Intel</span>
+                </div>
+                <p class="showcase-card-desc">
+                  Visual asset allocation breakdowns, concentration risk scoring, and holding distribution donut analytics.
+                </p>
+              </div>
+              <div class="showcase-card-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
             </div>
-            <!-- Tab 3 -->
-            <div class="feature-tab-btn" data-target="ai"
-              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
-              onclick="switchShowcaseTab(this, 'ai')">
-              <h3
-                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                <span class="tab-dot"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
-                Ask AI Investment Analyst
-              </h3>
-              <p
-                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
-                Chat directly with a personalized AI assistant (Gemini/Grok) to audit your risk, concentration, and
-                diversification.</p>
+
+            <!-- Card 3: AI Analyst -->
+            <div class="showcase-feature-card feature-tab-btn" data-target="ai" role="tab" aria-selected="false" tabindex="0" onclick="switchShowcaseTab(this, 'ai')">
+              <div class="showcase-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                </svg>
+              </div>
+              <div class="showcase-card-body">
+                <div class="showcase-card-header-row">
+                  <h3 class="showcase-card-title">Ask AI Investment Analyst</h3>
+                  <span class="showcase-card-tag tag-pink">AI Pro</span>
+                </div>
+                <p class="showcase-card-desc">
+                  Chat directly with an AI copilot (Groq/Gemini) to audit concentration risk, capital allocation, and portfolio health.
+                </p>
+              </div>
+              <div class="showcase-card-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
             </div>
-            <!-- Tab 4 -->
-            <div class="feature-tab-btn" data-target="news"
-              style="cursor: pointer; padding: 16px 20px; border-radius: 12px; background: transparent; border: 1px solid transparent; transition: all 0.25s ease;"
-              onclick="switchShowcaseTab(this, 'news')">
-              <h3
-                style="font-size: 14px; font-weight: 700; color: var(--text-dim); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                <span class="tab-dot"
-                  style="width: 8px; height: 8px; border-radius: 50%; background: transparent; display: inline-block; transition: background-color 0.2s;"></span>
-                Aggregated Ticker News
-              </h3>
-              <p
-                style="font-size: 13px; color: var(--text-faint); margin: 0; line-height: 1.4; transition: color 0.2s;">
-                A consolidated news feed matching your holdings from Moneycontrol recommendations and Yahoo Finance
-                feeds.</p>
+
+            <!-- Card 4: News Feed -->
+            <div class="showcase-feature-card feature-tab-btn" data-target="news" role="tab" aria-selected="false" tabindex="0" onclick="switchShowcaseTab(this, 'news')">
+              <div class="showcase-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
+                  <path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"></path>
+                </svg>
+              </div>
+              <div class="showcase-card-body">
+                <div class="showcase-card-header-row">
+                  <h3 class="showcase-card-title">Aggregated Ticker News</h3>
+                  <span class="showcase-card-tag tag-amber">Real-time Feed</span>
+                </div>
+                <p class="showcase-card-desc">
+                  Consolidated market feeds matching your portfolio holdings from Moneycontrol, Economic Times, and Yahoo Finance.
+                </p>
+              </div>
+              <div class="showcase-card-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
-        <div class="clarity-mockup" style="display: flex; align-items: center; justify-content: center;">
-          <div
-            style="position: relative; width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: #08070e; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);">
-            <img id="showcaseImage" src="holdings_preview.png" alt="Portfolio Tracker Live Preview"
-              style="width: 100%; height: auto; display: block; will-change: opacity, transform; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" />
-            <div
-              style="position: absolute; top: 0; left: 0; right: 0; height: 28px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; padding: 0 12px; pointer-events: none;">
-              <span
-                style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
-              <span
-                style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span>
-              <span
-                style="width: 8px; height: 8px; border-radius: 50%; background: #8B5CF6; display: inline-block;"></span>
-              <span
-                style="margin-left: 8px; font-size: 12px; color: #94A3B8; font-weight: 500; font-family: monospace;">portfolio_tracker_secure_session</span>
+
+        <!-- Right Column: Glassmorphic Browser Window Mockup -->
+        <div class="showcase-right-col">
+          <div class="showcase-mockup-wrapper">
+            <div class="showcase-mockup-glow"></div>
+            <div class="showcase-browser-frame">
+              <div class="showcase-chrome-bar">
+                <div class="showcase-traffic-lights">
+                  <span class="traffic-light traffic-red"></span>
+                  <span class="traffic-light traffic-yellow"></span>
+                  <span class="traffic-light traffic-green"></span>
+                </div>
+                <div class="showcase-url-capsule">
+                  <svg class="showcase-url-lock" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span id="showcaseUrlPath">portfoliotracker.pro/dashboard/holdings</span>
+                </div>
+                <div class="showcase-chrome-actions">
+                  <span class="showcase-live-pill">
+                    <span class="showcase-live-dot"></span>
+                    Live Preview
+                  </span>
+                </div>
+              </div>
+              <div class="showcase-screen-viewport">
+                <img id="showcaseImage" src="holdings_preview.png" alt="Portfolio Tracker Live Interactive Preview" />
+              </div>
             </div>
           </div>
         </div>
@@ -4647,35 +4707,23 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
       }
 
       function switchShowcaseTab(element, tabName) {
-        // Find all tab buttons
-        const tabs = document.querySelectorAll('.feature-tab-btn');
-        tabs.forEach(tab => {
-          // Reset styling
-          tab.style.background = 'transparent';
-          tab.style.borderColor = 'transparent';
-
-          const h3 = tab.querySelector('h3');
-          if (h3) h3.style.color = 'var(--text-dim)';
-
-          const dot = tab.querySelector('.tab-dot');
-          if (dot) dot.style.backgroundColor = 'transparent';
-
-          const p = tab.querySelector('p');
-          if (p) p.style.color = 'var(--text-faint)';
+        // Find all showcase cards and toggle active class
+        const cards = document.querySelectorAll('.showcase-feature-card, .feature-tab-btn');
+        cards.forEach(card => {
+          card.classList.remove('active');
+          card.setAttribute('aria-selected', 'false');
         });
 
-        // Activate current tab
-        element.style.background = 'rgba(139, 92, 246, 0.08)';
-        element.style.borderColor = 'rgba(139, 92, 246, 0.25)';
+        if (element) {
+          element.classList.add('active');
+          element.setAttribute('aria-selected', 'true');
+        }
 
-        const h3 = element.querySelector('h3');
-        if (h3) h3.style.color = '#FFF';
-
-        const dot = element.querySelector('.tab-dot');
-        if (dot) dot.style.backgroundColor = 'var(--accent)';
-
-        const p = element.querySelector('p');
-        if (p) p.style.color = 'var(--text-dim)';
+        // Update URL bar path
+        const urlElem = document.getElementById('showcaseUrlPath');
+        if (urlElem) {
+          urlElem.textContent = `portfoliotracker.pro/dashboard/${tabName}`;
+        }
 
         // Update image with smooth GSAP transition
         const img = document.getElementById('showcaseImage');
@@ -4683,14 +4731,15 @@ const desktopBrand = document.getElementById('desktopBrandTrigger');
           if (typeof gsap !== 'undefined') {
             gsap.to(img, {
               opacity: 0,
-              y: 10,
-              duration: 0.15,
+              y: 8,
+              duration: 0.14,
+              ease: 'power2.in',
               onComplete: () => {
                 img.src = `${tabName}_preview.png`;
                 gsap.to(img, {
                   opacity: 1,
                   y: 0,
-                  duration: 0.25,
+                  duration: 0.24,
                   ease: 'power2.out'
                 });
               }
