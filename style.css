@@ -7213,96 +7213,6 @@ html {
   100% { transform: translate(35px, 20px) scale(1); opacity: 0.26; }
 }
 
-/* -- Live Market Benchmark Ticker Strip -- */
-.landing-ticker-wrap {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  background: rgba(15, 23, 42, 0.55);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 8px 0;
-  margin: 12px 0 28px 0;
-  border-radius: 12px;
-  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
-}
-
-.landing-ticker-track {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: max-content;
-  animation: tickerScroll 34s linear infinite;
-}
-
-.landing-ticker-track:hover {
-  animation-play-state: paused;
-}
-
-@keyframes tickerScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.ticker-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 6px 13px;
-  font-size: 12px;
-  color: #94A3B8;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
-  transition: all 0.2s ease;
-}
-
-.ticker-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(139, 92, 246, 0.4);
-  transform: translateY(-1px);
-}
-
-.ticker-pill strong {
-  color: #FFFFFF;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.ticker-up {
-  color: #10B981;
-  font-weight: 600;
-}
-
-.ticker-down {
-  color: #EF4444;
-  font-weight: 600;
-}
-
-.ticker-pulse {
-  width: 6.5px;
-  height: 6.5px;
-  border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 8px #10B981;
-  animation: pulseLight 1.8s infinite;
-}
-
-.ticker-pulse.red {
-  background: #EF4444;
-  box-shadow: 0 0 8px #EF4444;
-}
-
-@keyframes pulseLight {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.8); }
-}
-
 /* -- Hero Left: Live Badge & Metric Cards -- */
 .hero-live-badge {
   display: inline-flex;
@@ -9543,12 +9453,6 @@ button, input, select, textarea {
   font-size: 13px !important;
   color: #94A3B8 !important;
   margin-bottom: 18px !important;
-}
-
-/* 8. Stock Ticker Bar vertical padding & breathing room */
-.landing-ticker-wrap {
-  padding: 18px 0 !important;
-  margin: 22px 0 32px 0 !important;
 }
 
 /* 9. Discoverable Sign Up Link */
