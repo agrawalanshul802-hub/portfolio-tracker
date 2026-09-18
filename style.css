@@ -10100,3 +10100,148 @@ button, input, select, textarea {
   color: #A78BFA !important;
   text-decoration: none;
 }
+
+/* ==========================================================================
+   USABILITY FIX 2 – Row Actions: icon-only, appear on row hover
+   ========================================================================== */
+.row-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 4px !important;
+}
+
+.row-action-icon {
+  width: 30px !important;
+  height: 30px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 7px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: #64748B !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+  /* Hidden by default, revealed on row hover */
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+tbody tr:hover .row-action-icon,
+tbody tr:focus-within .row-action-icon {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.row-action-icon:hover {
+  background: rgba(255,255,255,0.08) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+.row-action-icon.alert-link:hover {
+  background: rgba(16, 185, 129, 0.14) !important;
+  color: #10B981 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+.row-action-icon.sell-link:hover {
+  background: rgba(99, 102, 241, 0.14) !important;
+  color: #818CF8 !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+.row-action-icon.danger:hover {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #EF4444 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Keep actions column narrow when buttons are hidden */
+td:last-child {
+  min-width: 160px;
+}
+
+/* Legacy .link-btn inside .row-actions fallback */
+.row-actions .link-btn {
+  display: none !important;
+}
+
+/* ==========================================================================
+   USABILITY FIX 3 – Stats Row: uniform 3-column grid
+   ========================================================================== */
+.stats-row {
+  display: grid !important;
+  grid-template-columns: 1.4fr 1fr 1fr !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
+  align-items: stretch !important;
+  flex-wrap: unset !important;
+}
+
+/* Remove old flex sizing from net-worth-card */
+.net-worth-card {
+  flex: unset !important;
+  min-width: unset !important;
+}
+
+/* Remove old stats-grid-side wrapper sizing (element is now gone) */
+.stats-grid-side {
+  display: contents !important;
+}
+
+@media (max-width: 900px) {
+  .stats-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .net-worth-card {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .stats-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   USABILITY FIX 4 – Filter bar: consistent gap and vertical alignment
+   ========================================================================== */
+.panel-toolbar {
+  gap: 16px !important;
+  align-items: center !important;
+}
+
+.toolbar-left {
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+.holdings-count {
+  align-self: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+/* ==========================================================================
+   USABILITY FIX 1 – Button consolidation: null out stale duplicate overrides
+   ========================================================================== */
+
+/* Hide orphaned sortDirBtn (removed from HTML but belt+suspenders) */
+#sortDirBtn { display: none !important; }
+
+/* Ensure .row-action-icon is NOT captured by legacy .link-btn rules */
+.row-actions .link-btn:not(.row-action-icon) { display: none !important; }
+
+/* Tighten the sort select to match other controls */
+.sort-select {
+  height: 34px !important;
+  padding: 0 28px 0 10px !important;
+  font-size: 12px !important;
+  line-height: 34px !important;
+}
