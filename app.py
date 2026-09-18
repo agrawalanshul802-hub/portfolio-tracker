@@ -1975,11 +1975,22 @@ def ask_ai():
     data = request.get_json() or {}
     message = data.get('message', '').strip()
     holdings = data.get('holdings', []) or []
+    preferred_model = (data.get('model') or 'groq').lower()
+    effort = (data.get('effort') or 'medium').lower()
 
     if not message:
         return jsonify({'error': 'Message is required'}), 400
 
-    groq_key   = os.getenv('GROQ_API_KEY')
+    effort_token_map = {'low': 600, 'medium': 1200, 'high': 1800, 'extra': 2400, 'max': 3200}
+    ai_max_tokens = effort_token_map.get(effort, 1200)
+
+    if preferred_model == 'local':
+        # User explicitly requested local rules engine
+        groq_key = None
+        gemini_key = None
+        openrouter_key = None
+    else:
+        groq_key   = os.getenv('GROQ_API_KEY')
     gemini_key = os.getenv('GEMINI_API_KEY')
     openrouter_key = os.getenv('OPENROUTER_API_KEY')
 

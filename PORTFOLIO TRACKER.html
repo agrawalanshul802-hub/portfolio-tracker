@@ -854,10 +854,48 @@
             <div class="suggestion-chip" onclick="sendAiSuggestion('Which is my best performing stock?')">Which is my
               best performing stock?</div>
           </div>
-          <div class="ai-input-bar">
-            <input type="text" id="aiInput" placeholder="Ask a question about your portfolio..."
-              onkeydown="if(event.key === 'Enter') sendAiMessage()">
-            <button class="btn btn-primary" onclick="sendAiMessage()" id="aiSendBtn">Send</button>
+          <!-- React Bits PromptBar Integration -->
+          <div class="ai-prompt-bar-wrap">
+            <div id="aiPromptBar" class="prompt-bar" style="--pb-bg: #141724; --pb-ink: #F1F5F9; --pb-menu: #1A1F30; --pb-spark: #b39dff; --pb-radius: 16px;">
+              <!-- Popover Menu (Sources / Commands / Models / Effort Slider) -->
+              <div id="promptBarMenu" class="prompt-bar__menu" style="display:none;" role="listbox" aria-label="AI Options"></div>
+              
+              <!-- Interactive Field Area -->
+              <div class="prompt-bar__field" id="promptBarField">
+                <canvas id="promptBarSparks" class="prompt-bar__sparks" aria-hidden="true"></canvas>
+                <div id="promptBarChips" class="prompt-bar__chips"></div>
+                <textarea id="aiInput" class="prompt-bar__input" rows="1" placeholder="Ask anything about your investments... (/ for commands, @ for assets)"></textarea>
+                
+                <!-- Bottom Action Bar -->
+                <div class="prompt-bar__bar">
+                  <button type="button" class="prompt-bar__tool" id="pbPlusBtn" aria-label="Add sources or tickers" title="Mention asset (@)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </button>
+                  
+                  <button type="button" class="prompt-bar__pick" id="pbModelBtn" aria-label="Choose AI model" title="Switch AI Model">
+                    <span id="pbModelLabel">Groq Llama 3.3</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  
+                  <button type="button" class="prompt-bar__pick" id="pbEffortBtn" aria-label="Choose reasoning effort" title="Adjust Reasoning Effort">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6.4-4.8-6.4 4.8 2.4-7.2-6-4.8h7.6z"></path></svg>
+                    <span id="pbEffortLabel">Medium</span>
+                  </button>
+                  
+                  <span class="prompt-bar__spacer"></span>
+                  
+                  <button type="button" class="prompt-bar__tool" id="pbMicBtn" aria-label="Dictate question" title="Voice dictation">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  </button>
+                  
+                  <button type="button" class="prompt-bar__send" id="aiSendBtn" aria-label="Send prompt" disabled>
+                    <svg id="pbSendGlyph" class="prompt-bar__glyph" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+                      <path id="pbSendPath" d="M12 4.5 L18.5 11 L14.25 11 L14.25 19.5 L9.75 19.5 L9.75 11 L5.5 11 Z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
