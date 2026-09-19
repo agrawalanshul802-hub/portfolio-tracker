@@ -11,9 +11,12 @@
 
 import os, json, re, time, datetime, urllib.parse, urllib.request
 from flask import Blueprint, jsonify, request, session
-from routes import supabase, _LOCAL_USER_PANS, _LOCAL_IPO_APPS, DEMO_PANS, DIRECTORY
+from routes import supabase, _LOCAL_USER_PANS, _LOCAL_IPO_APPS, DEMO_PANS, DIRECTORY, load_env_file
 
 ipo_bp = Blueprint('ipo', __name__)
+
+_ipo_cache = {'data': None, 'ts': 0}
+_IPO_CACHE_TTL = 600  # 10 minutes
 
 def _strip_tags(s):
 

@@ -9,6 +9,26 @@ from supabase import create_client, Client as SupabaseClient
 # Root project directory
 DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+def load_env_file():
+    """Read key=value pairs from .env or env file into os.environ if present."""
+    for name in ['.env', 'env']:
+        env_path = os.path.join(DIRECTORY, name)
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith('#'):
+                            key_val = line.split('=', 1)
+                            if len(key_val) == 2:
+                                k, v = key_val
+                                os.environ[k.strip()] = v.strip().strip('"').strip("'")
+                break
+            except Exception as e:
+                print(f"[load_env_file] Warning reading {name}: {e}")
+
+load_env_file()
+
 # Supabase connection
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")

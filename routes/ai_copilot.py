@@ -6,7 +6,7 @@
 
 import os, json, re, time, urllib.parse, urllib.request
 from flask import Blueprint, jsonify, request, session
-from routes import supabase, DIRECTORY
+from routes import supabase, DIRECTORY, load_env_file
 
 ai_bp = Blueprint('ai_copilot', __name__)
 
@@ -663,12 +663,34 @@ def generate_fallback_analysis(holdings_summary, total_val, total_inv, total_pnl
 
 @ai_bp.route('/api/ask-ai', methods=['POST'])
 def ask_ai():
-    load_env_file()
-    email = session.get('email')
-    if not email:
-        return jsonify({'error': 'Unauthorized'}), 401
+    try:
+        return _ask_ai_impl()
+    except Exception as e:
+        print(f"[ask_ai] Top-level error: {e}")
+        data = request.get_json(silent=True) or {}
+        message = data.get('message', '')
+        holdings = data.get('holdings', [])
+        try:
+            reply = run_local_analysis(message, holdings)
+            return jsonify({
+                'reply': reply,
+                'response': reply,
+                'mode': 'local',
+                'provider': 'Portfolio Analytics Engine (Rule-Based)'
+            })
+        except Exception:
+            return jsonify({
+                'reply': "I am ready to analyze your portfolio. Please ask me about diversification, asset class distribution, or performance!",
+                'response': "I am ready to analyze your portfolio. Please ask me about diversification, asset class distribution, or performance!",
+                'mode': 'local',
+                'provider': 'Portfolio Analytics Engine (Rule-Based)'
+            })
 
-    data = request.get_json() or {}
+def _ask_ai_impl():
+    load_env_file()
+    email = session.get('email') or 'guest'
+
+    data = request.get_json(silent=True) or {}
     message = data.get('message', '').strip()
     holdings = data.get('holdings', []) or []
     preferred_model = (data.get('model') or 'groq').lower()
@@ -861,16 +883,4 @@ Please provide your expert financial analysis directly answering this question:"
     # 4. Fallback: Intelligent Heuristic Engine
     analysis = generate_fallback_analysis(holdings_summary, total_val, total_inv, total_pnl, total_pnl_pct, message, stock_quote)
     return jsonify({'reply': analysis, 'response': analysis, 'mode': 'local', 'provider': 'Portfolio Analytics Engine (Rule-Based)'})
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# IPO Data Route  - NSE (Live Sub) + Groww (Open/Upcoming/Listed) + IPOWatch (Live GMP)
-
-# Cache: 10 minutes in-memory
-
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-_ipo_cache = {'data': None, 'ts': 0}
-
-_IPO_CACHE_TTL = 600  # 10 minutes
 

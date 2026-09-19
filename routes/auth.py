@@ -15,7 +15,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from flask import Blueprint, jsonify, request, session, redirect
-from routes import supabase, hash_password, verify_password, DIRECTORY
+from routes import supabase, hash_password, verify_password, DIRECTORY, load_env_file
 
 auth_bp = Blueprint('auth', __name__)
 
