@@ -83,18 +83,6 @@ def index():
             return send_from_directory(DIRECTORY, filename)
     return "HTML file not found.", 404
 
-@app.route('/final-report')
-@app.route('/final-docs')
-def serve_final_report():
-    return send_from_directory(DIRECTORY, 'FINAL_PROJECT_REPORT.html')
-
-@app.route('/project-report')
-def project_report():
-    for name in ['FINAL_PROJECT_REPORT.html', 'project_report.html']:
-        if os.path.exists(os.path.join(DIRECTORY, name)):
-            return send_from_directory(DIRECTORY, name)
-    return "Report not found", 404
-
 @app.route('/admin')
 
 def admin_panel():
