@@ -64,11 +64,11 @@
   --text-danger:    #EF4444;
   --text-accent:    #A78BFA;
 
-  /* Corner-Radius Tokens - Issue 2: 5 values */
+  /* Corner-Radius Tokens - Consistent 4-scale system */
   --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg: 16px;
-  --radius-xl: 16px; /* mapped to radius-lg */
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   16px; /* mapped to radius-lg */
   --radius-full: 9999px;
 }
 
@@ -3405,19 +3405,24 @@ h1.top-bar-title,
    ================================================================== */
 
 .ipo-clean-container {
-  max-width: 1060px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   padding-bottom: 40px;
 }
 
-/* Issue 4 fix: keep Refresh btn close to its heading (proximity) */
+/* Issue 4 & 5 fix: single vertical alignment and adjacent refresh button */
 .ipo-clean-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;  /* btn stays adjacent to title, not far-right */
-  gap: 20px;
+  justify-content: flex-start;
   margin-bottom: 24px;
-  flex-wrap: wrap;
+}
+
+.ipo-clean-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
 /* Issue 7 fix: add margin:0 and line-height so flex center works cleanly */
@@ -8228,47 +8233,56 @@ html {
   padding: 6px 12px;
   border-radius: var(--radius-md);
 }
-/* Issue 6 fix: KPI pills are display-only stat indicators, NOT interactive.
-   Remove cursor, hover lift and onclick to eliminate false affordance. */
-/* Issue 5 fix: KPI pills are primary goals → increase visual weight */
-.ipo-kpi-pill {
+/* Issue 3 fix: Compact horizontal stat pills to prevent zero-state cards from dominating the fold */
+.ipo-kpi-ribbon {
   display: flex;
-  flex-direction: column;
+  gap: 8px;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
-  background: rgba(15, 23, 42, 0.70);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: var(--radius-md);
-  padding: 14px 24px;
-  cursor: default;
-  pointer-events: none;
-  min-width: 90px;
-  text-align: center;
+}
+.ipo-kpi-pill {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  cursor: pointer;
+  pointer-events: auto;
+  min-width: unset;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+.ipo-kpi-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 .ipo-kpi-pill.positive {
-  border-color: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.06);
 }
 .ipo-kpi-pill.positive .ipo-kpi-val {
   color: var(--green);
 }
 .ipo-kpi-pill.warning {
-  border-color: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.06);
 }
 .ipo-kpi-pill.warning .ipo-kpi-val {
   color: var(--amber);
 }
-/* Issue 5 fix: bigger number for primary stat readability */
 .ipo-kpi-val {
-  font-size: var(--fs-2xl);   /* 32px – prominent stat number */
-  font-weight: 800;
-  color: var(--text-primary);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-secondary);
   line-height: 1;
 }
-/* Issue 5 fix: label legibility below the stat number */
 .ipo-kpi-lbl {
-  font-size: var(--fs-sm);   /* 13px – clearer label */
-  color: var(--text-secondary);
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 /* =========================================================
@@ -11775,3 +11789,255 @@ tbody tr:focus-within .row-action-icon {
   background: rgba(255, 255, 255, 0.10) !important;
   color: var(--text-secondary) !important;
 }
+
+/* ==========================================================================
+   USABILITY CONSOLIDATION: 5 COHESIVE BUTTON VARIANTS (Issue 2)
+   Unifies 24 ad-hoc button styles into 5 system-wide variants:
+   1. Primary  2. Secondary/Outline  3. Ghost/Icon  4. Filter/Pill  5. Danger
+   ========================================================================== */
+
+/* Base button reset & typography */
+.btn,
+button.btn,
+.modern-submit-btn,
+.ipo-wiz-btn-pri,
+.report-btn-primary,
+.alert-btn-submit,
+.alert-action-btn-primary,
+.btn-outline,
+.btn-secondary,
+.ipo-clean-btn,
+.ipo-wiz-btn-sec,
+.export-btn,
+.report-btn-outline,
+.btn-ghost,
+.icon-btn,
+.btn-danger,
+.alert-del-btn {
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+/* 1. Primary Action */
+.btn-primary,
+.modern-submit-btn,
+.ipo-wiz-btn-pri,
+.report-btn-primary,
+.alert-btn-submit,
+.alert-action-btn-primary {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  padding: 8px 18px !important;
+  min-height: 38px !important;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35) !important;
+}
+.btn-primary:hover,
+.modern-submit-btn:hover,
+.ipo-wiz-btn-pri:hover,
+.report-btn-primary:hover,
+.alert-btn-submit:hover,
+.alert-action-btn-primary:hover {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45) !important;
+}
+
+/* 2. Secondary / Outline */
+.btn-outline,
+.btn-secondary,
+.ipo-clean-btn,
+.ipo-wiz-btn-sec,
+.export-btn,
+.report-btn-outline {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #FFFFFF !important;
+  border: 1px solid var(--card-border) !important;
+  padding: 8px 16px !important;
+  min-height: 38px !important;
+  box-shadow: none !important;
+}
+.btn-outline:hover,
+.btn-secondary:hover,
+.ipo-clean-btn:hover,
+.ipo-wiz-btn-sec:hover,
+.export-btn:hover,
+.report-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px) !important;
+}
+
+/* 3. Ghost / Icon */
+.btn-ghost,
+.icon-btn,
+.topbar-menu-btn,
+.topbar-alert-btn,
+.sidebar-close-btn,
+.report-close-btn,
+.privacy-eye-btn,
+.pan-icon-btn {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid transparent !important;
+  padding: 8px 12px !important;
+  min-height: 36px !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: none !important;
+}
+.btn-ghost:hover,
+.icon-btn:hover,
+.topbar-menu-btn:hover,
+.topbar-alert-btn:hover,
+.sidebar-close-btn:hover,
+.report-close-btn:hover,
+.privacy-eye-btn:hover,
+.pan-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* 4. Standalone Filter Pills (Non-segmented) */
+.filter-pill,
+.tab-btn,
+.feature-tab-btn,
+.sec-tab-btn,
+.alert-tab-btn {
+  border-radius: var(--radius-full) !important;
+  padding: 6px 14px !important;
+  font-size: var(--fs-xs) !important;
+  font-weight: 500 !important;
+  border: 1px solid var(--card-border) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-muted) !important;
+  min-height: 32px !important;
+}
+.filter-pill:hover,
+.tab-btn:hover,
+.feature-tab-btn:hover,
+.sec-tab-btn:hover,
+.alert-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #FFFFFF !important;
+}
+.filter-pill.active,
+.tab-btn.active,
+.feature-tab-btn.active,
+.sec-tab-btn.active,
+.alert-tab-btn.active {
+  background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%) !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.4) !important;
+}
+
+/* 4b. Premium Segmented Controls (IPO Primary & Board Tabs)
+   Clean, unified Apple/Linear segmented track - no nested pills or double borders */
+.ipo-segmented-tabs,
+.ipo-board-tabs {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  padding: 3px !important;
+  gap: 2px !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+.ipo-seg-btn,
+.ipo-board-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 6px 14px !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  border: none !important;
+  color: #94A3B8 !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+  min-height: 30px !important;
+  box-shadow: none !important;
+}
+
+.ipo-seg-btn:hover:not(.active),
+.ipo-board-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+}
+
+.ipo-seg-btn.active,
+.ipo-board-btn.active {
+  background: #7C3AED !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  border: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35) !important;
+}
+
+.ipo-seg-count,
+.ipo-board-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 6px !important;
+  border-radius: 9999px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #94A3B8 !important;
+  transition: all 0.15s ease !important;
+}
+
+.ipo-seg-btn.active .ipo-seg-count,
+.ipo-board-btn.active .ipo-board-count {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
+}
+
+/* 5. Danger / Destructive */
+.btn-danger,
+.alert-del-btn {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #FCA5A5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  padding: 8px 16px !important;
+  min-height: 38px !important;
+  box-shadow: none !important;
+}
+.btn-danger:hover,
+.alert-del-btn:hover {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #FFFFFF !important;
+}
+
+/* Size modifier */
+.btn-sm {
+  padding: 5px 10px !important;
+  min-height: 30px !important;
+  font-size: var(--fs-xs) !important;
+}
+

@@ -963,7 +963,7 @@ function renderIpoList(section, ipos) {
     listWrap.innerHTML = `
             <div class="ipo-subgroup-header">
               <div class="ipo-subgroup-title">
-                <span>🏢 Mainboard Issues</span>
+                <span>Mainboard Issues</span>
                 <span class="ipo-subgroup-badge mainboard">${mainList.length}</span>
               </div>
               <span class="ipo-subgroup-desc">Min retail lot ~₹14,000–₹15,000 • Regular NSE &amp; BSE</span>
@@ -972,7 +972,7 @@ function renderIpoList(section, ipos) {
 
             <div class="ipo-subgroup-header" style="margin-top:24px;">
               <div class="ipo-subgroup-title">
-                <span>🚀 SME Board Issues</span>
+                <span>SME Board Issues</span>
                 <span class="ipo-subgroup-badge sme">${smeList.length}</span>
               </div>
               <span class="ipo-subgroup-desc">Lot size ~₹1 Lakh+ • BSE SME &amp; NSE Emerge</span>
