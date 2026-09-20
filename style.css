@@ -12120,8 +12120,7 @@ button.btn,
 
 /* 4. Standalone Filter Pills (Non-segmented) */
 .filter-pill,
-.tab-btn,
-.feature-tab-btn {
+.tab-btn {
   border-radius: var(--radius-full) !important;
   padding: 6px 14px !important;
   font-size: var(--fs-xs) !important;
@@ -12132,14 +12131,12 @@ button.btn,
   min-height: 32px !important;
 }
 .filter-pill:hover,
-.tab-btn:hover,
-.feature-tab-btn:hover {
+.tab-btn:hover {
   background: rgba(255, 255, 255, 0.07) !important;
   color: #FFFFFF !important;
 }
 .filter-pill.active,
-.tab-btn.active,
-.feature-tab-btn.active {
+.tab-btn.active {
   background: linear-gradient(135deg, #7C3AED 0%, #6366F1 100%) !important;
   color: #FFFFFF !important;
   border-color: transparent !important;
