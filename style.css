@@ -10217,9 +10217,10 @@ td:last-child {
   min-width: 160px;
 }
 
-/* Legacy .link-btn inside .row-actions fallback */
-.row-actions .link-btn {
-  display: none !important;
+/* Row actions buttons are visible and accessible */
+.row-actions .link-btn,
+.row-actions .row-action-icon {
+  display: inline-flex !important;
 }
 
 /* ==========================================================================
@@ -10288,8 +10289,11 @@ td:last-child {
 /* Hide orphaned sortDirBtn (removed from HTML but belt+suspenders) */
 #sortDirBtn { display: none !important; }
 
-/* Ensure .row-action-icon is NOT captured by legacy .link-btn rules */
-.row-actions .link-btn:not(.row-action-icon) { display: none !important; }
+/* Ensure .row-action-icon and .link-btn are visible */
+.row-actions .link-btn,
+.row-actions .row-action-icon {
+  display: inline-flex !important;
+}
 
 /* Tighten the sort select to match other controls */
 .sort-select {
@@ -11539,42 +11543,78 @@ thead th {
 
 
 /* ══════════════════════════════════════════════════════════════
-   Issue 7 Fix: De-clutter Actions Column
-   Primary chart action is subtly visible; secondary actions reveal on hover
+   Holdings Table Actions Column - Clean, visible icon buttons
    ══════════════════════════════════════════════════════════════ */
 .row-actions {
   display: flex !important;
   align-items: center !important;
   justify-content: flex-end !important;
-  gap: 4px !important;
+  gap: 6px !important;
+  width: 100% !important;
 }
 
-/* Primary action icon stays subtly visible for immediate affordance */
-.row-action-icon.chart-link {
-  opacity: 0.75 !important;
+.row-action-icon,
+.row-actions .link-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-secondary) !important;
+  opacity: 0.85 !important;
   pointer-events: auto !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
 }
 
-/* Secondary actions hidden by default to eliminate repetitive visual noise */
-.row-action-icon:not(.chart-link) {
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transition: opacity 0.18s ease, transform 0.18s ease !important;
-}
-
-/* Reveal all actions on row hover / focus */
-tbody tr:hover .row-action-icon,
-tbody tr:focus-within .row-action-icon {
+.row-action-icon:hover,
+.row-actions .link-btn:hover {
   opacity: 1 !important;
-  pointer-events: auto !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px) !important;
 }
 
-@media (hover: none) {
-  .row-action-icon {
-    opacity: 0.8 !important;
-    pointer-events: auto !important;
-  }
+.row-action-icon.chart-link:hover,
+.row-actions .link-btn.chart-link:hover {
+  background: rgba(139, 92, 246, 0.15) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+  color: #A78BFA !important;
+}
+
+.row-action-icon.alert-link:hover,
+.row-actions .link-btn.alert-link:hover {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  color: #10B981 !important;
+}
+
+.row-action-icon.sell-link:hover,
+.row-actions .link-btn.sell-link:hover {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  color: #60A5FA !important;
+}
+
+.row-action-icon.edit-link:hover,
+.row-actions .link-btn.edit-link:hover {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  color: #FBBF24 !important;
+}
+
+.row-action-icon.danger:hover,
+.row-actions .link-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  color: #EF4444 !important;
 }
 
 
